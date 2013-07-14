@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Run this script on a new install of Raspberry Pi Raspian
+
+# Add repo for Robot operating System
+sudo sh -c 'echo \
+"deb http://64.91.227.57/repos/rospbian wheezy main" > \
+/etc/apt/sources.list.d/rospbian.list'
+wget http://64.91.227.57/repos/rospbian.key -O - | sudo apt-key add -
+
+# Get updated package list
+sudo apt-get update
+
+# Make sure we using the lastest veriosn of config script
+sudo apt-get install -y raspi-config
+
+#Expand the rootfs and reboot
+sudo raspi-config --expand-rootfs
+sudo init 6 

@@ -1,0 +1,28 @@
+#!/usr/bin/sh
+
+
+
+echo About to fuly upgrade all relevent packges and install ROS
+echo This could take some time
+
+# Make sure system is fully up to date
+sudo apt-get -y dist-upgrade
+
+#Install ROS , i2c and lm sensors
+sudo apt-get -y install ros-groovy-ros-comm \
+  ros-groovy-rqt-gui ros-groovy-rqt-common-plugins \
+  ros-groovy-roscpp-tutorials ros-groovy-turtlesim \
+  i2c-tools lm-sensors
+
+# Remove anything out of date
+sudo apt-get autoremove
+
+# Save a few hundred Mb of disk space by removing archives
+sudo apt-get clean # Optional. Frees up disk space
+
+# Enable i2c and SPI
+sudo sed /etc/modprobe.d/raspi-blacklist.conf \
+  -i -e "s/^blacklist spi-bcm2708/#blacklist spi-bcm2708/" \
+  -e "s/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/"
+
+# Now please procedd with manual configuration
