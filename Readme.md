@@ -50,23 +50,24 @@ Now continue Andy’s notes at http://tinyurl.com/enr-workshop-1n
 
 Additional Notes
 
-This imahe is missing following Occidentals features:
-* avahi daemon
-* Realtek RTL8188CUS wifi support
-* One wire support on GPIO #4 when loaded
-* Kernel modules for: DS1307, AD626 I2C digipots, HMC6352, BMP085, ADS1015
+* This image is missing following Occidentals features:
+  * avahi daemon
+  * Realtek RTL8188CUS wifi support
+  * One wire support on GPIO #4 when loaded
+  * Kernel modules for: DS1307, AD626 I2C digipots, HMC6352, BMP085, ADS1015
 
-* Run the command ```sudo apt-get update && sudo apt-get dist-upgrade``` on a regular basis
+* Run the command `sudo apt-get update && sudo apt-get dist-upgrade` on a regular basis
 (e.g. once a week) to keep the software up to date
 * To install Java JDK (optional) see http://elinux.org/RPi_Java
 * If you have a WiFi adaptor and want to use the local wireless
-  Edit the file /etc/network/interfaces (needs sudo access)
-  Make sure the file contains a stanza similar to the following
-    auto wlan0
+  * Edit the file /etc/network/interfaces (needs sudo access)
+  * Make sure the file contains a stanza similar to the following
+    ```auto wlan0
     allow-hotplug wlan0
     iface wlan0 inet dhcp
             wpa-ssid "SSID"
             wpa-psk "WIFI_PASSWORD"
+```
   N.B. you will nee to know the correct values for the SSID and WIFI_PASSWORD for your site
-  Run the command ```sudo /etc/init.d/networking restart```
+  * Run the command `sudo /etc/init.d/networking restart`
 
