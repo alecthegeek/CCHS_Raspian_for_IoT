@@ -25,4 +25,5 @@ sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -i -e "s/^blacklist spi-bcm2708/#blacklist spi-bcm2708/" \
   -e "s/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/"
 
-# Now please procedd with manual configuration
+echo  Now please procedd with manual configuration
+echo  as explained in the Readme
