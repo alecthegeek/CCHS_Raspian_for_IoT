@@ -9,13 +9,13 @@ Based On Raspian and ROS installed as per http://www.ros.org/wiki/groovy/Install
 * Make sure your Pi has access to the Internet
 * Log in and run the following commands
 
-`wget https://raw.github.com/alecthegeek/CCHS_Raspian_for_ROS/master/runme1st -O - | bash`
+`wget http://tinyurl.com/runme1st -O - | bash`
 
 Pi now reboots
 
 * Log in and run the following commands
 
-`wget https://raw.github.com/alecthegeek/CCHS_Raspian_for_ROS/master/runme2nd -O - | bash`
+`wget http://tinyurl.com/runme2nd -O - | bash`
 
 * Now run sudo raspi-config interactively and set following options
 
