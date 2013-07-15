@@ -14,16 +14,17 @@ Based On Raspian and ROS installed as per http://www.ros.org/wiki/groovy/Install
 Pi now reboots
 
 * Log in and run the following commands
+
 `runme2nd`
 
 * Now run sudo raspi-config interactively and set following options
 
-  Default  Locale: (e.g. en_AU.UTF-8)
-  Local Time Zone
-  Keyboard: 105 Int Generic English US  (also suggest CTRL_ALT_BKSPC kills X)
-  Enable camera (optional)
-  Clock set HIGH -- 950MHz ARM 250MHz core 450MHz SDRAM 6 overvolt (suggested)
-  Memory Split:   16MB for GPU (suggested)
+  * Default  Locale: (e.g. en_AU.UTF-8)
+  * Local Time Zone
+  * Keyboard: 105 Int Generic English US  (also suggest CTRL_ALT_BKSPC kills X)
+  * Enable camera (optional)
+  * Clock set HIGH -- 950MHz ARM 250MHz core 450MHz SDRAM 6 overvolt (suggested)
+  * Memory Split:   16MB for GPU (suggested)
 
 * Run command
 
@@ -32,11 +33,11 @@ Pi now reboots
 You can use the already existing pi user account for development or feel free to create a different user account if you want. The rest of these notes should be run as that development account. 
 Edit ~/.bashrc and add the line source /opt/ros/groovy/setup.bash
 Logout and login again
-Read and review [http://www.ros.org/wiki/ROS/StartGuide]
+Read and review http://www.ros.org/wiki/ROS/StartGuide
 Run the following ROS tutorials
 
-[http://www.ros.org/wiki/ROS/Tutorials/InstallingandConfiguringROSEnvironment#Create_a_ROS_Workspace]
-[http://www.ros.org/wiki/ROS/Tutorials/NavigatingTheFilesystem]
+http://www.ros.org/wiki/ROS/Tutorials/InstallingandConfiguringROSEnvironment#Create_a_ROS_Workspace
+http://www.ros.org/wiki/ROS/Tutorials/NavigatingTheFilesystem
 
 Run Andy’s demo. This requires that you have X running as you will need to run multiple terminals at once and display an image.
 Terminal session 1: Run the command `cd catkin_ws; roscore`
