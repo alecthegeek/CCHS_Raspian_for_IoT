@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Copyright (c) 2013 All Right Reserved  Alec Clews
 #
 # author: Alec Clews

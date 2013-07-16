@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/env bash
 # Copyright (c) 2013 All Right Reserved  Alec Clews
 #
 # author: Alec Clews
@@ -73,9 +73,9 @@ then
 
   sudo apt-get install wpasupplicant
 
-  read -p  "Please enter WiFI SID" -n 1 -r
+  read -p  "Please enter WiFI SID"
   SSID=$REPLY
-  read -p  "Please enter WiFI Password" -n 1 -r
+  read -p  "Please enter WiFI Password"
   PWD=$REPLY
 
   if grep $SSID  /etc/wpa_supplicant/wpa_supplicant.conf ; then
@@ -122,7 +122,7 @@ then
 
 fi
 
-Echo System will now reboot
+echo System will now reboot
 read x
 
 sudo shutdown -rF now
