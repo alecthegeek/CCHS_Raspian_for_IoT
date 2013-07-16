@@ -78,12 +78,15 @@ then
   read -p  "Please enter WiFI Password" -n 1 -r
   PWD=$REPLY
 
-  sudo wpa_passphrase $SSID $PWD >> /etc/wpa_supplicant/wpa_supplicant.conf
+  if grep $SSID  /etc/wpa_supplicant/wpa_supplicant.conf ; then
+    echo $SSID is already configured. Please update  /etc/wpa_supplicant/wpa_supplicant.conf
+    echo manually if required
+  else
+    sudo wpa_passphrase $SSID $PWD >> /etc/wpa_supplicant/wpa_supplicant.conf
 
-  sudo ifdown wlan0
-  sudo ifup wlan0
-
-
+    sudo ifdown wlan0
+    sudo ifup wlan0
+  fi
 fi
 
 read -p  "Do you wish to install a JDK?" -n 1 -r
