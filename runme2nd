@@ -60,13 +60,14 @@ sudo dpkg-reconfigure locales
 sudo dpkg-reconfigure tzdata
 sudo dpkg-reconfigure keyboard-configuration
 
-echo Now set up camera, clock rate and video memory split
+echo Now set up camera, clock rate and video memory split \(on advanced menu\)
 read -p "Press any key to continue" -n 1 -r x
 
 sudo raspi-config
 
 
 read -p  "Do you wish to support WiFI?" -n 1 -r
+
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
@@ -86,6 +87,7 @@ then
 fi
 
 read -p  "Do you wish to install a JDK?" -n 1 -r
+
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
