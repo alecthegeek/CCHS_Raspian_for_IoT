@@ -1,4 +1,23 @@
 #!/usr/bin/sh
+# Copyright (c) 2013 All Right Reserved  Alec Clews
+#
+# author: Alec Clews
+# alecclews@gmail.com
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
 
 
 echo About to fuly upgrade all relevent packges and optionally install ROS
@@ -51,7 +70,16 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
   sudo apt-get install wpasupplicant
-  
+
+  read -p  "Please enter WiFI SID" -n 1 -r
+  SSID=$REPLY
+  read -p  "Please enter WiFI Password" -n 1 -r
+  PWD=$REPLY
+
+  sudo wpa_passphrase $SSID $PWD >> /etc/wpa_supplicant/wpa_supplicant.conf
+
+  sudo ifdown wlan0
+  sudo ifup wlan0
 
 
 fi
@@ -88,3 +116,7 @@ then
 
 fi
 
+Echo System will now reboot
+read x
+
+sudo shutdown -rF now
