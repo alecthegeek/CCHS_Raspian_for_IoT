@@ -125,4 +125,4 @@ fi
 echo System will now reboot
 read x
 
-sudo shutdown -rF now
+# sudo shutdown -rF now
