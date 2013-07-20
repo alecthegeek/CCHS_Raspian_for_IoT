@@ -101,7 +101,7 @@ then
   select n in "OpenJDK" "Oracle Java 8 beta" "No JDK required"; do
     case $REPLY in 
       "1" ) 
-      wget $(wget https://jdk8.java.net/download.html -O - 2>/dev/null | sed -ne 's/^..*"linARMhfJDK"..*"\(http:\/\/..*\)".*$/\1/p')
+      wget --no-check-certificate $(wget --no-check-certificate https://jdk8.java.net/download.html -O - 2>/dev/null | sed -ne 's/^..*"linARMhfJDK"..*"\(http:\/\/..*\)".*$/\1/p')
 
       tar xzf jdk-8*.tar.gz
 
