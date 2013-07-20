@@ -48,12 +48,6 @@ then
 fi
 
 
-# Remove anything out of date
-sudo apt-get autoremove
-
-# Save a few hundred Mb of disk space by removing archives
-sudo apt-get clean
-
 echo  Now please proceed with manual configuration
 read -p "Press any key to continue" -n 1 -r < /dev/tty
 
@@ -130,5 +124,11 @@ then
 fi
 
 read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
+
+# Remove anything out of date
+sudo apt-get autoremove
+
+# Save a few hundred Mb of disk space by removing archives
+sudo apt-get clean
 
 sudo shutdown -rF now
