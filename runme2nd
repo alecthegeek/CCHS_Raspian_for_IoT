@@ -78,7 +78,7 @@ then
   read -p  "Please enter WiFI Password" -r < /dev/tty
   PWD=$REPLY
 
-  if grep $SSID  /etc/wpa_supplicant/wpa_supplicant.conf ; then
+  if sudo grep $SSID  /etc/wpa_supplicant/wpa_supplicant.conf ; then
     echo $SSID is already configured. Please update  /etc/wpa_supplicant/wpa_supplicant.conf
     echo manually if required
   else
