@@ -19,7 +19,7 @@
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 
-
+echo
 echo About to fuly upgrade all relevent packges and optionally install ROS
 echo This will take some time
 
@@ -34,7 +34,7 @@ sudo sed /etc/modprobe.d/raspi-blacklist.conf \
 
 #Install ROS , i2c and lm sensors
 
-read -p  "Do you wish to install the Robot OS? (http://ros.org)" -n 1 -r < /dev/tty
+read -p  "Do you wish to install the Robot OS? (http://ros.org)[y/N] " -n 1 -r < /dev/tty
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
@@ -103,7 +103,7 @@ then
     case $REPLY in 
 
       "1" )
-        sudo apt-get -y install openjdk
+        sudo apt-get -y install openjdk-7-jdk openjdk-7-doc
         break
         ;;
       "2" ) 
@@ -112,6 +112,7 @@ then
 
         tar xzf jdk-8*.tar.gz
 
+        test  -d /opt/jdk1.8.0/ && sudo rm -rf /opt/jdk1.8.0/
         sudo mv ./jdk1.8.0/ /opt/
         sudo chown root:root -R /opt/jdk1.8.0/
         sudo ln -s /opt/jdk1.8.0/ /opt/jdk8
