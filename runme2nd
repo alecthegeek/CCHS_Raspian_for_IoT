@@ -54,28 +54,28 @@ sudo apt-get autoremove
 sudo apt-get clean
 
 echo  Now please proceed with manual configuration
-read -p "Press any key to continue" -n 1 -r x
+read -p "Press any key to continue" -n 1 -r < /dev/tty
 
 sudo dpkg-reconfigure locales
 sudo dpkg-reconfigure tzdata
 sudo dpkg-reconfigure keyboard-configuration
 
 echo Now set up camera, clock rate and video memory split \(on advanced menu\)
-read -p "Press any key to continue" -n 1 -r x
+read -p "Press any key to continue" -n 1 -r < /dev/tty
 
 sudo raspi-config
 
 
-read -p  "Do you wish to support WiFI?" -n 1 -r
+read -p  "Do you wish to support WiFI?" -n 1 -r < /dev/tty
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
   sudo apt-get install wpasupplicant
 
-  read -p  "Please enter WiFI SID"
+  read -p  "Please enter WiFI SID" -r < /dev/tty
   SSID=$REPLY
-  read -p  "Please enter WiFI Password"
+  read -p  "Please enter WiFI Password" -r < /dev/tty
   PWD=$REPLY
 
   if grep $SSID  /etc/wpa_supplicant/wpa_supplicant.conf ; then
@@ -89,7 +89,7 @@ then
   fi
 fi
 
-read -p  "Do you wish to install a JDK?" -n 1 -r
+read -p  "Do you wish to install a JDK?" -n 1 -r  < /dev/tty
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
@@ -123,6 +123,6 @@ then
 fi
 
 echo System will now reboot
-read x
+read x < /dev/tty
 
 # sudo shutdown -rF now
