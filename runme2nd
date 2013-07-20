@@ -28,7 +28,7 @@ sudo apt-get -y dist-upgrade
 
 #Install ROS , i2c and lm sensors
 
-read -p  "Do you wish to install the Robot OS? \(http://ros.org\)" -n 1 -r < /dev/tty
+read -p  "Do you wish to install the Robot OS? (http://ros.org)" -n 1 -r < /dev/tty
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
@@ -83,7 +83,7 @@ then
     echo $SSID is already configured. Please update  /etc/wpa_supplicant/wpa_supplicant.conf
     echo manually if required
   else
-    sudo wpa_passphrase $SSID $SSID_PWD | sudo tee  /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null
+    sudo wpa_passphrase $SSID $SSID_PWD | sudo tee  /etc/wpa_supplicant/wpa_supplicant.conf >> /dev/null
 
     sudo ifdown wlan0
     sudo ifup wlan0
