@@ -131,4 +131,4 @@ fi
 
 read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
 
-# sudo shutdown -rF now
+sudo shutdown -rF now

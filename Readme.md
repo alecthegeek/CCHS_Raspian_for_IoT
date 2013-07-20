@@ -26,7 +26,7 @@ Based On Raspian and ROS installed as per http://www.ros.org/wiki/groovy/Install
 ## Instructions
 
 * Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough (leaves about 1Gb free)
-* Boot the Pi from the new SD image.
+* Boot the Pi from the new SD image and log in as the pi user
 * Make sure your Pi has access to the Internet
 * Log in and run the following commands
 
@@ -38,18 +38,11 @@ Pi now reboots
 
 `wget http://tinyurl.com/runme2nd -O - | bash`
 
-* Now run sudo raspi-config interactively and set following options
+This is a long process and will require user input at various stages.
 
-  * Default  Locale: (e.g. en_AU.UTF-8)
-  * Local Time Zone
-  * Keyboard: 105 Int Generic English US  (also suggest CTRL_ALT_BKSPC kills X)
-  * Enable camera (optional)
-  * Clock set HIGH -- 950MHz ARM 250MHz core 450MHz SDRAM 6 overvolt (suggested)
-  * Memory Split:   16MB for GPU (suggested)
+At the end the Pi will reboot
 
-* Run command
 
-`sudo shutdown -rF now # reboots`
 
 You can use the already existing pi user account for development or feel free to create a different user account if you want. The rest of these notes should be run as that development account. 
 Edit ~/.bashrc and add the line source /opt/ros/groovy/setup.bash
