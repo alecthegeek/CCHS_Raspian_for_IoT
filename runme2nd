@@ -26,6 +26,12 @@ echo This will take some time
 # Make sure system is fully up to date
 sudo apt-get -y dist-upgrade
 
+# Enable i2c and SPI
+sudo apt-get -y install i2c-tools lm-sensors
+sudo sed /etc/modprobe.d/raspi-blacklist.conf \
+  -i -e "s/^blacklist spi-bcm2708/#blacklist spi-bcm2708/" \
+  -e "s/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/"
+
 #Install ROS , i2c and lm sensors
 
 read -p  "Do you wish to install the Robot OS? (http://ros.org)" -n 1 -r < /dev/tty
@@ -41,11 +47,6 @@ then
   echo source /opt/ros/groovy/setup.bash >> ~/.bashrc
 fi
 
-# Enable i2c and SPI
-sudo apt-get -y install i2c-tools lm-sensors
-sudo sed /etc/modprobe.d/raspi-blacklist.conf \
-  -i -e "s/^blacklist spi-bcm2708/#blacklist spi-bcm2708/" \
-  -e "s/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/"
 
 # Remove anything out of date
 sudo apt-get autoremove
@@ -100,25 +101,26 @@ then
 
   select n in "OpenJDK" "Oracle Java 8 beta" "No JDK required"; do
     case $REPLY in 
-      "1" ) 
-      wget --no-check-certificate $(wget --no-check-certificate https://jdk8.java.net/download.html -O - 2>/dev/null | sed -ne 's/^..*"linARMhfJDK"..*"\(http:\/\/..*\)".*$/\1/p')
 
-      tar xzf jdk-8*.tar.gz
-
-      sudo mv ./jdk1.8.0/ /opt/
-      sudo chown root:root -R /opt/jdk1.8.0/
-      sudo ln -s /opt/jdk1.8.0/ /opt/jdk8
-      rm  jdk-8*.tar.gz
-
-      echo '# Setup for Java 8' >> ~/.bashrc
-      echo PATH="$PATH":/opt/jdk8/bin  >> ~/.bashrc
-      echo JAVA_HOME=/opt/jdk8  >> ~/.bashrc
-      break ;;
-
-      "2" )
-        sudo apt-get -i install openjdk
+      "1" )
+        sudo apt-get -y install openjdk
         break
         ;;
+      "2" ) 
+
+        wget --no-check-certificate $(wget --no-check-certificate https://jdk8.java.net/download.html -O - 2>/dev/null | sed -ne 's/^..*"linARMhfJDK"..*"\(http:\/\/..*\)".*$/\1/p')
+
+        tar xzf jdk-8*.tar.gz
+
+        sudo mv ./jdk1.8.0/ /opt/
+        sudo chown root:root -R /opt/jdk1.8.0/
+        sudo ln -s /opt/jdk1.8.0/ /opt/jdk8
+        rm  jdk-8*.tar.gz
+
+        echo '# Setup for Java 8' >> ~/.bashrc
+        echo PATH="$PATH":/opt/jdk8/bin  >> ~/.bashrc
+        echo JAVA_HOME=/opt/jdk8  >> ~/.bashrc
+        break ;;
 
       *) break;; 
 
