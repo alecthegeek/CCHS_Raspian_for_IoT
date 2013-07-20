@@ -73,9 +73,10 @@ then
 
   sudo apt-get install wpasupplicant
 
-  read -p  "Please enter WiFI SID" -r < /dev/tty
+  read -p  "Please enter WiFI SID " -r < /dev/tty
   SSID=$REPLY
-  read -p  "Please enter WiFI Password" -r < /dev/tty
+
+  read -p  "Please enter WiFI Password " -r < /dev/tty
   SSID_PWD=$REPLY
 
   if sudo grep $SSID  /etc/wpa_supplicant/wpa_supplicant.conf ; then
