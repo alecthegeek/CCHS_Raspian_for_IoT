@@ -72,7 +72,7 @@ read -p  "Do you wish to support WiFI?" -n 1 -r < /dev/tty
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
-  sudo apt-get install wpasupplicant
+  sudo apt-get install -y wpasupplicant
 
   read -p  "Please enter WiFI SID " -r < /dev/tty
   SSID=$REPLY
@@ -93,13 +93,24 @@ else
   echo
 fi
 
+read -p  "Do you wish to support Zero Conf Bonjour?" -n 1 -r < /dev/tty
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+
+  sudo apt-get install -y avahi-daemon avahi-utils
+
+else
+  echo
+fi
+
 read -p  "Do you wish to install a JDK?" -n 1 -r  < /dev/tty
 echo
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
-  select n in "OpenJDK" "Oracle Java 8 beta" "No JDK required"; do
+  select n in "OpenJDK" "Oracle Java 8 beta" "Finished"; do
     case $REPLY in 
 
       "1" )
@@ -123,7 +134,7 @@ then
         echo JAVA_HOME=/opt/jdk8  >> ~/.bashrc
         break ;;
 
-      *) break;; 
+      "3" ) break;; 
 
     esac
   done  < /dev/tty
