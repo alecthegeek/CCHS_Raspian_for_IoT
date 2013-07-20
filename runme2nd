@@ -96,7 +96,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
   select n in "OpenJDK" "Oracle Java 8 beta" "No JDK required"; do
-    case $REPLY in 
+    case $n in 
       "Oracle Java 8 beta") 
       wget $(wget https://jdk8.java.net/download.html -O - 2>/dev/null | sed -ne 's/^..*"linARMhfJDK"..*"\(http:\/\/..*\)".*$/\1/p')
 
