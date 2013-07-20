@@ -28,7 +28,7 @@ sudo apt-get -y dist-upgrade
 
 #Install ROS , i2c and lm sensors
 
-read -p  "Do you wish to install the Robot OS? \(http://ros.org\)" -n 1 -r
+read -p  "Do you wish to install the Robot OS? \(http://ros.org\)" -n 1 -r < /dev/tty
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
