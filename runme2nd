@@ -32,6 +32,10 @@ sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -i -e "s/^blacklist spi-bcm2708/#blacklist spi-bcm2708/" \
   -e "s/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/"
 
+# Install a few dev tools
+sudo apt-get -y install vim git git-gui git-doc git-svn subversion
+
+
 #Install ROS , i2c and lm sensors
 
 read -p  "Do you wish to install the Robot OS? (http://ros.org)[y/N] " -n 1 -r < /dev/tty
@@ -108,10 +112,16 @@ then
     case $REPLY in 
 
       "1" )
-        sudo apt-get -y install openjdk-7-jdk openjdk-7-doc
-        break
+        udo apt-get -y install openjdk-7-jdk openjdk-7-doc
         ;;
+
       "2" ) 
+
+        echo "Note that by installing the Oracle JDK you are agreeing to Early Adopter Development License Agreement for Java SE"
+        echo "You can read the agreement at http://www.oracle.com/technetwork/licenses/ea-license-152003.html"
+        reply -p "Do you accept the license? [y/N] " -n 1 -r < /dev/tty
+
+        [[ $REPLY =~ ^[Yy]$ ]] || break
 
         wget --no-check-certificate $(wget --no-check-certificate https://jdk8.java.net/download.html -O - 2>/dev/null | sed -ne 's/^..*"linARMhfJDK"..*"\(http:\/\/..*\)".*$/\1/p')
 
@@ -126,7 +136,7 @@ then
         echo '# Setup for Java 8' >> ~/.bashrc
         echo PATH="$PATH":/opt/jdk8/bin  >> ~/.bashrc
         echo JAVA_HOME=/opt/jdk8  >> ~/.bashrc
-        break ;;
+        ;;
 
       "3" ) break;; 
 

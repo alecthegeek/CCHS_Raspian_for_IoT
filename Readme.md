@@ -1,4 +1,5 @@
-#Creating a working ROS Image for @geekscape's Embedded Network Robots workshop
+#Guided install and configuration for Rapsberry Pi Debian
+
 ##Date : July/2013
 
  Copyright (c) 2013 All Right Reserved  Alec Clews
@@ -21,12 +22,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
+These scripts are designed to support @geekscape's Embedded Network Robots workshop at the Melbourne
+Connected Community Hacker Space. They should be generally useful.
+
+After following this process you should have
+
+1. A fully updated Raspian system
+2. The Robot Operating System installed and ready to use
+3. Working Wifi
+4. Working Zero Conf (to access your Pi by hostname instead IP address)
+5. Java development kit installed (optional -- larger SD card recommended)
+6. Installation of lm-sensors and i2c software
+7. Raspian configured for your environment (location, language etc)
+8. A few select development tools installed (Vim, Git and Subversion)
 
 Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 ## Instructions
 
 * Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough (leaves about 1Gb free)
 * Boot the Pi from the new SD image and log in as the pi user
+* If the Raspi Config menu uniltiy runs exit back to the command prompt
 * Make sure your Pi has access to the Internet
 * Log in and run the following commands
 
