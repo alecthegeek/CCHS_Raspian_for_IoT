@@ -33,7 +33,7 @@ sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -e "s/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/"
 
 # Install a few dev tools
-sudo apt-get -y install vim git git-gui git-doc git-svn subversion term mtux 
+sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux
 
 
 #Install ROS , i2c and lm sensors
@@ -112,14 +112,14 @@ then
     case $REPLY in 
 
       "1" )
-        udo apt-get -y install openjdk-7-jdk openjdk-7-doc
+        sudo apt-get -y install openjdk-7-jdk openjdk-7-doc
         ;;
 
       "2" ) 
 
         echo "Note that by installing the Oracle JDK you are agreeing to Early Adopter Development License Agreement for Java SE"
         echo "You can read the agreement at http://www.oracle.com/technetwork/licenses/ea-license-152003.html"
-        reply -p "Do you accept the license? [y/N] " -n 1 -r < /dev/tty
+        read -p "Do you accept the license? [y/N] " -n 1 -r < /dev/tty
 
         [[ $REPLY =~ ^[Yy]$ ]] || break
 
