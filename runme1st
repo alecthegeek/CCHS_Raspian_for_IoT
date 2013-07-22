@@ -35,7 +35,7 @@ sudo apt-get install -y raspi-config
 
 echo It is highly recommended that the hostname is changed to something unique on the network.
 echo Later you will have the option to install Zero conf which requires ALL machines to have
-echo a unique name. If you can\'t tink of anything I suggest something like <yourName>pi<n> where
+echo a unique name. If you can\'t tink of anything I suggest something like \<yourName\>pi\<n\> where
 echo n is some single digit number
 
 read -p  "Please enter the hostname (letters and numbers only) " -r < /dev/tty
