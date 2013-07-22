@@ -70,7 +70,7 @@ of these notes should be run as that development account.
 
    [http://www.ros.org/wiki/ROS/Tutorials/NavigatingTheFilesystem]
 
-  * Run Andy’s demo. This requires that you have X running as you will need to run multiple terminals at once and display an image.
+  * Run the ROS demo. This requires that you have X running as you will need to run multiple terminals at once and display an image.
 
   Terminal session 1: Run the command `cd catkin_ws; roscore`
 
