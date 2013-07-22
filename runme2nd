@@ -33,7 +33,7 @@ sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -e "s/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/"
 
 # Install a few dev tools
-sudo apt-get -y install vim git git-gui git-doc git-svn subversion
+sudo apt-get -y install vim git git-gui git-doc git-svn subversion term mtux 
 
 
 #Install ROS , i2c and lm sensors
