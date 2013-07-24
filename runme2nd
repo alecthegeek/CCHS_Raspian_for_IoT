@@ -45,7 +45,8 @@ then
 
   sudo apt-get -y install ros-groovy-ros-comm \
     ros-groovy-rqt-gui ros-groovy-rqt-common-plugins \
-    ros-groovy-roscpp-tutorials ros-groovy-turtlesim
+    ros-groovy-roscpp-tutorials ros-groovy-turtlesim \
+    ros-groovy-rosserial-arduino 
 
   echo '# Setup for ROS ' >> ~/.bashrc
   echo source /opt/ros/groovy/setup.bash >> ~/.bashrc
@@ -144,6 +145,15 @@ then
   done  < /dev/tty
 fi
 
+
+read -p  "Do you wish to install the Arduino IDE (NB Will install OpenJDK if needed) ? " -n 1 -r  < /dev/tty
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]] ; then
+
+        sudo apt-get -y install openjdk-7-jdk arduino arduino-mk
+
+fi
 read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
 
 # Remove anything out of date
