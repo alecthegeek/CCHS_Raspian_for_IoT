@@ -41,7 +41,7 @@ Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Instal
 
 * Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough (leaves about 1Gb free)
 * Boot the Pi from the new SD image and log in as the pi user
-* If the Raspi Config menu uniltiy runs exit back to the command prompt
+* If the Raspi Config menu uniltiy appears then configure your keyboard and exit back to the command prompt
 * Make sure your Pi has access to the Internet
 * Log in and run the following commands
 
