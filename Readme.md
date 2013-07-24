@@ -61,7 +61,7 @@ At the end the Pi will reboot
 
 You can use the already existing pi user account for development or feel free to create a different user account if you want. The rest
 of these notes should be run as that development account. 
-  * Edit ``~/.bashrc`` and add the line``source /opt/ros/groovy/setup.bash``
+  * Edit ``~/.bashrc`` and add the line``source /opt/ros/groovy/setup.bash`` (if you are using the ``pi`` user account this has already been done for you)
   * Logout and login again
   * Read and review [http://www.ros.org/wiki/ROS/StartGuide]
   * Run the following ROS tutorials
