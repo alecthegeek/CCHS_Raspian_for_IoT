@@ -86,7 +86,6 @@ Now continue Andy’s notes at ``http://tinyurl.com/enr-workshop-1n``
 Additional Notes
 
 * This image is missing following Occidentals features:
-  * Realtek RTL8188CUS wifi support
   * Kernel modules for: DS1307, AD626 I2C digipots, HMC6352, BMP085, ADS1015
 
 * Run the command `sudo apt-get update && sudo apt-get dist-upgrade` on a regular basis
