@@ -38,9 +38,13 @@ echo Later you will have the option to install Zero conf which requires ALL mach
 echo a unique name. If you can\'t tink of anything I suggest something like \<yourName\>pi\<n\> where
 echo n is some single digit number
 
+oldhostname=$(/etc/hostname)
+
 read -p  "Please enter the hostname (letters and numbers only) " -r < /dev/tty
 
 echo $REPLY | sudo tee /etc/hostname > /dev/null
+
+sudo sed -i -e 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
 
 
 #Expand the rootfs and reboot
