@@ -26,7 +26,7 @@ echo This will take some time
 # Make sure system is fully up to date
 sudo apt-get -y dist-upgrade
 
-# Enable i2c and SPI
+# Install and enable i2c and SPI
 sudo apt-get -y install i2c-tools lm-sensors
 sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -i -e "s/^blacklist spi-bcm2708/#blacklist spi-bcm2708/" \
@@ -35,8 +35,6 @@ sudo sed /etc/modprobe.d/raspi-blacklist.conf \
 # Install a few dev tools
 sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux
 
-
-#Install ROS , i2c and lm sensors
 
 read -p  "Do you wish to install the Robot OS? (http://ros.org)[y/N] " -n 1 -r < /dev/tty
 
@@ -98,6 +96,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
   sudo apt-get install -y avahi-daemon avahi-utils
+  echo If all has gone well you will be able to access this device using ssh pi@$(hostname -s).local
 
 else
   echo
