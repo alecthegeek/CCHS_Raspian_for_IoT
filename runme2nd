@@ -134,7 +134,7 @@ then
         rm  jdk-8*.tar.gz
 
         echo '# Setup for Java 8' >> ~/.bashrc
-        echo PATH="$PATH":/opt/jdk8/bin  >> ~/.bashrc
+        echo PATH='$PATH':/opt/jdk8/bin  >> ~/.bashrc
         echo JAVA_HOME=/opt/jdk8  >> ~/.bashrc
         ;;
 
