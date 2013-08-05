@@ -37,6 +37,7 @@ sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux
 
 
 read -p  "Do you wish to install the Robot OS? (http://ros.org)[y/N] " -n 1 -r < /dev/tty
+echo
 
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
