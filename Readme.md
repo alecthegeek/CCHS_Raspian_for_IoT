@@ -43,7 +43,10 @@ Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Instal
 * Boot the Pi from the new SD image and log in as the pi user
 * If the Raspi Config menu uniltiy appears then configure your keyboard and exit back to the command prompt
 * Make sure your Pi has access to the Internet
-* Log in and run the following commands
+  * If you have a supported WiFi adaptor you can configure it as follows:
+  `wpa_passphrase <SSID> <WPA_PASSWORD> | sudo tee -a /etc/wpa_supplicant/wpa_suplicant.conf`
+
+* Now run the following command.
 
 `wget http://tinyurl.com/runme1st -O - | bash`
 
