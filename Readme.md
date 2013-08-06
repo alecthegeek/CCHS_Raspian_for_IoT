@@ -40,19 +40,20 @@ Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Instal
 ## Instructions
 
 * Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough (leaves about 1Gb free)
-* Boot the Pi from the new SD image and log in as the pi user
+* Boot the Pi from the new SD image and log in as the `pi` user
 * If the Raspi Config menu uniltiy appears then configure your keyboard and exit back to the command prompt
 * Make sure your Pi has access to the Internet
-  * If you have a supported WiFi adaptor you can configure it as follows:
+ * If you have a supported WiFi adaptor you can configure it as follows:
   `wpa_passphrase <SSID> <WPA_PASSWORD> | sudo tee -a /etc/wpa_supplicant/wpa_suplicant.conf`
+   then reboot and log as `pi` again
 
 * Now run the following command.
 
 `wget http://tinyurl.com/runme1st -O - | bash`
 
-Pi now reboots
+Pi computer now reboots
 
-* Log in and run the following commands
+* Log in as `pi` and run the following commands
 
 `wget http://tinyurl.com/runme2nd -O - | bash`
 
