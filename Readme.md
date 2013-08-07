@@ -28,13 +28,14 @@ Connected Community Hacker Space. They should be generally useful.
 After following this process you should have
 
 1. A fully updated Raspian system
-2. The Robot Operating System installed and ready to use
+2. The Robot Operating System installed and ready to use (optional)
 3. Working Wifi
 4. Working Zero Conf (to access your Pi by hostname instead IP address)
 5. Java development kit installed (optional -- larger SD card recommended)
 6. Installation of lm-sensors and i2c software
 7. Raspian configured for your environment (location, language etc)
-8. A few select development tools installed (Vim, Git and Subversion)
+8. A few select development tools installed (Vim, Git, GNU Screen, tmux and Subversion)
+9. Arduino development environment (optional)
 
 Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 ## Instructions
