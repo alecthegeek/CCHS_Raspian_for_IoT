@@ -33,7 +33,7 @@ sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -e 's/^#blacklist i2c-bcm2708/blacklist i2c-bcm2708/'
 
 # Install a few dev tools
-sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux
+sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep
 
 
 read -p  "Do you wish to install the Robot OS? (http://ros.org)[y/N] " -n 1 -r < /dev/tty
