@@ -38,7 +38,7 @@ echo
 echo It is highly recommended that the hostname is changed to something unique on the network.
 echo Later you will have the option to install Zero conf which requires ALL machines to have
 echo a unique name. If you can\'t think of anything I suggest something like \<yourName\>pi\<n\> where
-echo n is some single digit number. The current hostname is \"$oldhosname\"
+echo n is some single digit number. The current hostname is \"$oldhostname\"
 echo
 
 read -p  "Do you wish to change the hostname?[y/N] " -n 1 -r < /dev/tty
@@ -60,7 +60,7 @@ echo
 echo "You will now be offered to the chance to change the user name of the current user account"
 echo "from $USER to something of your own choosing"
 echo
-echo "N.B. If this process fails you will probablu have to re-image your SD card"A
+echo "N.B. If this process fails you will probably have to re-image your SD card"A
 echo
 
 read -p  "Do you wish to rename the $USER user account?[y/N] " -n 1 -r < /dev/tty
