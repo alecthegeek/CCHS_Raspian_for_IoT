@@ -33,19 +33,27 @@ sudo apt-get update
 # Make sure we using the lastest veriosn of config script
 sudo apt-get install -y raspi-config
 
+oldhostname=$(cat /etc/hostname)
+echo
 echo It is highly recommended that the hostname is changed to something unique on the network.
 echo Later you will have the option to install Zero conf which requires ALL machines to have
 echo a unique name. If you can\'t think of anything I suggest something like \<yourName\>pi\<n\> where
-echo n is some single digit number
+echo n is some single digit number. The current hostname is \"$oldhosname\"
+echo
 
-oldhostname=$(cat /etc/hostname)
+read -p  "Do you wish to change the hostname?[y/N] " -n 1 -r < /dev/tty
+echo
 
-read -p  "Please enter the hostname (letters and numbers only) " -r < /dev/tty
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
 
-echo $REPLY | sudo tee /etc/hostname > /dev/null
+  read -p  "Please enter the hostname (letters and numbers only) " -r < /dev/tty
 
-sudo sed -i -e 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
+  echo $REPLY | sudo tee /etc/hostname > /dev/null
 
+  sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
+
+fi
 
 # Rename the pi user accountA
 echo
@@ -67,7 +75,7 @@ cat <<'EOF' | sudo bash -s $USER $REPLY $HOME
      for i in /etc/group /etc/passwd /etc/sudoers /etc/shadow ; do 
           sed -rie '/\b'$1'\b/s/\b'$1'\b/'$2'/g' $i
      done
-     mv $3 ~$2
+     mv $3 /home/$2
 EOF
 
     echo "User name changed to $USER"
@@ -76,4 +84,4 @@ fi
 
 #Expand the rootfs and reboot
 sudo raspi-config --expand-rootfs
-sudo init 6 
+sudo init 6
