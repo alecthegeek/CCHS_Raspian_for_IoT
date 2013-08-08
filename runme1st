@@ -35,7 +35,7 @@ sudo apt-get install -y raspi-config
 
 echo It is highly recommended that the hostname is changed to something unique on the network.
 echo Later you will have the option to install Zero conf which requires ALL machines to have
-echo a unique name. If you can\'t tink of anything I suggest something like \<yourName\>pi\<n\> where
+echo a unique name. If you can\'t think of anything I suggest something like \<yourName\>pi\<n\> where
 echo n is some single digit number
 
 oldhostname=$(cat /etc/hostname)
@@ -46,6 +46,31 @@ echo $REPLY | sudo tee /etc/hostname > /dev/null
 
 sudo sed -i -e 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
 
+
+# Rename the pi user accountA
+
+echo "You will now be offered to the chance to change the user name of the current user account"
+echo "from $USER to something of your own choosing"
+echo
+echo "N.B. If this process fails you will probablu have to re-image your SD card"A
+echo
+
+read -p  "Do you wish to rename the $USER user account?[y/N] " -n 1 -r < /dev/tty
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+
+read -p  "Please enter the new user name " -r < /dev/tty
+
+cat <<'EOF' | sudo bash -s $USER $REPLY
+     OH=~$1
+     for i in /etc/group /etc/passwd /etc/sudoers /etc/shadow ; do 
+          sed -rie '/\b'$1'\b/s/\b'$1'\b/'$2'/g' $i
+     done
+     mv $OH ~$2
+EOF
+fi
 
 #Expand the rootfs and reboot
 sudo raspi-config --expand-rootfs
