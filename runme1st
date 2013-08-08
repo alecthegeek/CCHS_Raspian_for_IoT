@@ -48,7 +48,7 @@ sudo sed -i -e 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
 
 
 # Rename the pi user accountA
-
+echo
 echo "You will now be offered to the chance to change the user name of the current user account"
 echo "from $USER to something of your own choosing"
 echo
@@ -61,15 +61,17 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
-read -p  "Please enter the new user name " -r < /dev/tty
+    read -p  "Please enter the new user name " -r < /dev/tty
 
-cat <<'EOF' | sudo bash -s $USER $REPLY
-     OH=~$1
+cat <<'EOF' | sudo bash -s $USER $REPLY $HOME
      for i in /etc/group /etc/passwd /etc/sudoers /etc/shadow ; do 
           sed -rie '/\b'$1'\b/s/\b'$1'\b/'$2'/g' $i
      done
-     mv $OH ~$2
+     mv $3 ~$2
 EOF
+
+    echo "User name changed to $USER"
+
 fi
 
 #Expand the rootfs and reboot
