@@ -36,17 +36,18 @@ After following this process you should have
 7. Raspian configured for your environment (location, language etc)
 8. A few select development tools installed (Vim, Git, GNU Screen, tmux, ack-grep and Subversion)
 9. Arduino development environment (optional)
+10. The default user account renamed to something of your own choice (optional)
 
 Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 ## Instructions
 
 * Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough (leaves about 1Gb free)
-* Boot the Pi from the new SD image and log in as the `pi` user
+* Boot the Pi from the new SD image and log in as the default user (initially `pi`)
 * If the Raspi Config menu uniltiy appears then configure your keyboard and exit back to the command prompt
 * Make sure your Pi has access to the Internet
  * If you have a supported WiFi adaptor you can configure it as follows:
   `wpa_passphrase <SSID> <WPA_PASSWORD> | sudo tee -a /etc/wpa_supplicant/wpa_suplicant.conf`
-   then reboot and log as `pi` again
+   then reboot and log as teh default user again
 
 * Now run the following command.
 
@@ -54,7 +55,7 @@ Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Instal
 
 Pi computer now reboots
 
-* Log in as `pi` and run the following commands
+* Log in as teh default user and run the following commands
 
 `wget http://tinyurl.com/runme2nd -O - | bash`
 
@@ -64,9 +65,9 @@ At the end the Pi will reboot
 
 
 
-You can use the already existing pi user account for development or feel free to create a different user account if you want. The rest
+You can use the already existing default user account for development or feel free to create a different user account if you want. The rest
 of these notes should be run as that development account. 
-  * Edit ``~/.bashrc`` and add the line``source /opt/ros/groovy/setup.bash`` (if you are using the ``pi`` user account this has already been done for you)
+  * Edit ``~/.bashrc`` and add the line``source /opt/ros/groovy/setup.bash`` (if you are using the default user account this has already been done for you)
   * Logout and login again
   * Read and review [http://www.ros.org/wiki/ROS/StartGuide]
   * Run the following ROS tutorials
@@ -90,8 +91,10 @@ Now continue Andy’s notes at ``http://tinyurl.com/enr-workshop-1n``
 
 Additional Notes
 
-* This image is missing following Occidentals features:
+* This image is _possibly_ missing following Occidentals features:
   * Kernel modules for: DS1307, AD626 I2C digipots, HMC6352, BMP085, ADS1015
 
 * Run the command `sudo apt-get update && sudo apt-get dist-upgrade` on a regular basis
 (e.g. once a week) to keep the software up to date
+
+* These scripts can be re-run as needed. There is not need to re-image your SD card beforehand.
