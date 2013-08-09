@@ -28,15 +28,15 @@ Connected Community Hacker Space. They should be generally useful.
 After following this process you should have
 
 1. A fully updated Raspian system
-2. The Robot Operating System installed and ready to use (optional)
+2. The [Robot Operating System](http://www.ros.org/wiki/) installed and ready to use (optional)
 3. Working Wifi
-4. Working Zero Conf (to access your Pi by hostname instead IP address)
+4. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software) (to access your Pi by hostname instead IP address)
 5. Java development kit installed (optional -- larger SD card recommended)
-6. Installation of lm-sensors and i2c software
+6. Installation of lm-sensors and [i2c](http://en.wikipedia.org/wiki/I%C2%B2C) software
 7. [WiringPi](http://wiringpi.com/) library 
 8. Raspian configured for your environment (location, language etc)
 9. A few select development tools installed (Vim, Git, GNU Screen, tmux, ack-grep and Subversion)
-10. Arduino development environment (optional)
+10. [Arduino](http://arduino.cc/en/Main/Software) development environment (optional)
 11. The default user account renamed to something of your own choice (optional)
 
 Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
@@ -68,7 +68,7 @@ At the end the Pi will reboot
 
 You can use the already existing default user account for development or feel free to create a different user account if you want. The rest
 of these notes should be run as that development account. 
-  * Edit ``~/.bashrc`` and add the line``source /opt/ros/groovy/setup.bash`` (if you are using the default user account this has already been done for you)
+  * Edit `~/.bashrc` and add the line `source /opt/ros/groovy/setup.bash` (if you are using the default user account this has already been done for you)
   * Logout and login again
   * Read and review [http://www.ros.org/wiki/ROS/StartGuide]
   * Run the following ROS tutorials
