@@ -42,6 +42,33 @@ echo
 # Install a few dev tools
 sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep
 
+# Install the WiringPi
+
+WP=/usr/src/wiringPi
+
+sudo mkdir -p $WP
+sudo chown $USER:$(id -g -n $USER) $WP
+
+cd $WP
+
+git clone git://git.drogon.net/wiringPi .
+./build
+
+cat <<EOF > /usr/local/bin/updateWiringPi
+#!/usr/bin/env sh
+# Keep wiringPi updated
+
+WP=/usr/src/wiringPi
+cd $WP
+git pull origin &&
+./build &&
+echo WiringPi updated ||
+echo WiringPi update failed
+EOF
+
+
+
+
 
 read -p  "Do you wish to install the Robot OS? (http://ros.org)[y/N] " -n 1 -r < /dev/tty
 echo
@@ -161,12 +188,11 @@ if [[ $REPLY =~ ^[Yy]$ ]] ; then
         sudo apt-get -y install openjdk-7-jdk arduino arduino-mk
 
 fi
-read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
 
 # Remove anything out of date
 sudo apt-get autoremove
-
 # Save a few hundred Mb of disk space by removing archives
 sudo apt-get clean
 
-sudo shutdown -rF now
+read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
+sudo shutdown -rF now # Force disk check
