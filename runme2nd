@@ -132,7 +132,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
   sudo apt-get install -y avahi-daemon avahi-utils
-  echo If all has gone well you will be able to access this device using ssh pi@$(hostname -s).local
+  echo If all has gone well you will be able to access this device using ssh $USER@$(hostname -s).local
 
 else
   echo
