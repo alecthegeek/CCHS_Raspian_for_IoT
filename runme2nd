@@ -20,8 +20,8 @@
 #
 
 echo
-echo About to fuly upgrade all relevent packges and optionally install ROS
-echo This will take some timeA
+echo About to fully upgrade all relevent packges and optionally install ROS
+echo This will take some time
 echo
 
 # Make sure system is fully up to date
@@ -58,7 +58,6 @@ cat <<EOF |sudo tee /usr/local/bin/updateWiringPi
 #!/usr/bin/env sh
 # Keep wiringPi updated
 
-WP=/usr/src/wiringPi
 cd $WP
 git pull origin &&
 ./build &&
@@ -66,7 +65,10 @@ echo WiringPi updated ||
 echo WiringPi update failed
 EOF
 
+sudo chmod + /usr/local/bin/updateWiringPi
+
 echo "To update the wiringPi library run the script /usr/local/bin/updateWiringPi as needed"
+echo
 
 
 read -p  "Do you wish to install the Robot OS? (http://ros.org)[y/N] " -n 1 -r < /dev/tty
