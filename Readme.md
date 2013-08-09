@@ -33,10 +33,11 @@ After following this process you should have
 4. Working Zero Conf (to access your Pi by hostname instead IP address)
 5. Java development kit installed (optional -- larger SD card recommended)
 6. Installation of lm-sensors and i2c software
-7. Raspian configured for your environment (location, language etc)
-8. A few select development tools installed (Vim, Git, GNU Screen, tmux, ack-grep and Subversion)
-9. Arduino development environment (optional)
-10. The default user account renamed to something of your own choice (optional)
+7. [WiringPi](http://wiringpi.com/) library 
+8. Raspian configured for your environment (location, language etc)
+9. A few select development tools installed (Vim, Git, GNU Screen, tmux, ack-grep and Subversion)
+10. Arduino development environment (optional)
+11. The default user account renamed to something of your own choice (optional)
 
 Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 ## Instructions
