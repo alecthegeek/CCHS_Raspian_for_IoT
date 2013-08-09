@@ -54,7 +54,7 @@ cd $WP
 git clone git://git.drogon.net/wiringPi .
 ./build
 
-cat <<EOF > /usr/local/bin/updateWiringPi
+cat <<EOF |sudo tee /usr/local/bin/updateWiringPi
 #!/usr/bin/env sh
 # Keep wiringPi updated
 
@@ -66,8 +66,7 @@ echo WiringPi updated ||
 echo WiringPi update failed
 EOF
 
-
-
+echo "To update the wiringPi library run the script /usr/local/bin/updateWiringPi as needed"
 
 
 read -p  "Do you wish to install the Robot OS? (http://ros.org)[y/N] " -n 1 -r < /dev/tty
