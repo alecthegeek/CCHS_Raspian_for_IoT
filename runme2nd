@@ -21,7 +21,8 @@
 
 echo
 echo About to fuly upgrade all relevent packges and optionally install ROS
-echo This will take some time
+echo This will take some timeA
+echo
 
 # Make sure system is fully up to date
 sudo apt-get -y dist-upgrade
@@ -31,6 +32,12 @@ sudo apt-get -y install i2c-tools lm-sensors
 sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -i -e 's/^#blacklist spi-bcm2708/blacklist spi-bcm2708/' \
   -e 's/^#blacklist i2c-bcm2708/blacklist i2c-bcm2708/'
+  
+sudo adduser $USER i2c
+
+echo Installed support for I2C serial interface and LM sensors
+echo added $USER to the i2c group
+echo
 
 # Install a few dev tools
 sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep
