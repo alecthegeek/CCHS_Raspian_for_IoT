@@ -186,7 +186,7 @@ echo
 
 if [[ $REPLY =~ ^[Yy]$ ]] ; then
 
-        sudo apt-get -y install openjdk-7-jdk arduino arduino-mk
+        sudo apt-get -y install openjdk-7-jdk arduino arduino-mk libdevice-serialport-perl
 
 fi
 
