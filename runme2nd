@@ -95,6 +95,8 @@ sudo dpkg-reconfigure tzdata
 sudo dpkg-reconfigure keyboard-configuration
 
 echo Now set up camera, clock rate and video memory split \(on advanced menu\)
+echo
+echo IMPORTANT NOTE If prompted to reboot select \"NO\"
 read -p "Press any key to continue" -n 1 -r < /dev/tty
 
 sudo raspi-config
