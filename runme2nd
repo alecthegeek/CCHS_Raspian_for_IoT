@@ -23,8 +23,58 @@ echo
 echo About to fuly upgrade all relevent packges and optionally install ROS
 echo This will take some time
 
+UPDATE_LABEL="Updated $(date +%F)"
+
 # Make sure system is fully up to date
-sudo apt-get -y dist-upgrade
+sudo apt-get -y dist-upgrade  # Important. Must be using new firmware before we do rest
+
+ask() {
+  read -p "$1" -r < /dev/tty
+  echo $REPLY
+}
+
+setConfigOption() {
+  CONFIG_FILE=/boot/config.txt
+  if grep "$1=" $CONFIG_FILE ; then
+    sudo sed -ire "s/^#?$1=.+$/$1=$2 #$UPDATE_LABEL/" $CONFIG_FILE
+  else
+    echo $1=$2 | sudo tee -a $CONFIG_FILE
+    #echo $1=$2'  #'$UPDATE_LABEL| sudo tee -a $CONFIG_FILE
+  fi
+}
+
+export -f setConfigOption 
+
+setOverclock() {
+
+  clockSettings=("None ARM:700MHz core:250MHz SDRAM:400MHz overvolt:0"\
+                 "Modest ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0"\
+                 "Medium ARM:900MHz core:250MHz SDRAM:450MHz overvolt:2"\
+                 "High ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6"\
+                 "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6")
+
+  echo "Please select your clock settings from the following list. NB Turbo is NOT recommended"
+
+  select c in "${clockSettings[@]}"; do
+    echo "$c" | 
+    sed -re 's/^[A-Za-z]+ ARM:([0-9]+)MHz core:([0-9]+)MHz SDRAM:([0-9]+)MHz overvolt:([0-9]+)$/arm_freq \1 core_freq \2 sdram_freq \3 over_voltage \4/' |
+    xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
+    break
+  done
+
+}
+
+splitMemory() {
+  REPLY=0
+  while [[ ! $REPLY =~ (16|32|64|128|256) ]] ; do
+    read -p  "How much video memory do you want? (16|32|64|128|256) " -r < /dev/tty
+  done
+
+  setConfigOption gpu_mem $REPLY
+}
+
+
+
 
 # Enable i2c and SPI
 sudo apt-get -y install i2c-tools lm-sensors
@@ -38,9 +88,7 @@ sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux
 
 #Install ROS , i2c and lm sensors
 
-read -p  "Do you wish to install the Robot OS? (http://ros.org)[y/N] " -n 1 -r < /dev/tty
-
-if [[ $REPLY =~ ^[Yy]$ ]]
+if [[ $(ask "Do you wish to install the Robot OS? (http://ros.org)[y/N] ") =~ ^[Yy]$ ]]
 then
 
   sudo apt-get -y install ros-groovy-ros-comm \
@@ -49,25 +97,22 @@ then
 
   echo '# Setup for ROS ' >> ~/.bashrc
   echo source /opt/ros/groovy/setup.bash >> ~/.bashrc
+else
+  echo
 fi
 
 
-echo  Now please proceed with manual configuration
-read -p "Press any key to continue" -n 1 -r < /dev/tty
-
+echo Processing
 sudo dpkg-reconfigure locales
 sudo dpkg-reconfigure tzdata
+echo Processing
 sudo dpkg-reconfigure keyboard-configuration
-
-echo Now set up camera, clock rate and video memory split \(on advanced menu\)
-read -p "Press any key to continue" -n 1 -r < /dev/tty
-
-sudo raspi-config
+sudo invoke-rc.d keyboard-setup start
+splitMemory
+setOverclock
 
 
-read -p  "Do you wish to support WiFI?" -n 1 -r < /dev/tty
-
-if [[ $REPLY =~ ^[Yy]$ ]]
+if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
 then
 
   sudo apt-get install -y wpasupplicant
@@ -91,13 +136,9 @@ else
   echo
 fi
 
-read -p  "Do you wish to support Zero Conf Bonjour?" -n 1 -r < /dev/tty
-
-if [[ $REPLY =~ ^[Yy]$ ]]
+if [[ $(ask "Do you wish to support Zero Conf Bonjour? [y/N] ") =~ ^[Yy]$ ]]
 then
-
   sudo apt-get install -y avahi-daemon avahi-utils
-
 else
   echo
 fi
@@ -144,12 +185,11 @@ then
   done  < /dev/tty
 fi
 
-read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
-
 # Remove anything out of date
 sudo apt-get autoremove
-
 # Save a few hundred Mb of disk space by removing archives
 sudo apt-get clean
+
+read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
 
 sudo shutdown -rF now
