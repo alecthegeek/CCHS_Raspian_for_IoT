@@ -28,28 +28,35 @@ Connected Community Hacker Space. They should be generally useful.
 After following this process you should have
 
 1. A fully updated Raspian system
-2. The Robot Operating System installed and ready to use
+2. The [Robot Operating System](http://www.ros.org/wiki/) installed and ready to use (optional)
 3. Working Wifi
-4. Working Zero Conf (to access your Pi by hostname instead IP address)
+4. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software) (to access your Pi by hostname instead IP address)
 5. Java development kit installed (optional -- larger SD card recommended)
-6. Installation of lm-sensors and i2c software
-7. Raspian configured for your environment (location, language etc)
-8. A few select development tools installed (Vim, Git and Subversion)
+6. Installation of lm-sensors and [i2c](http://en.wikipedia.org/wiki/I%C2%B2C) software
+7. [WiringPi](http://wiringpi.com/) library 
+8. Raspian configured for your environment (location, language etc)
+9. A few select development tools installed (Vim, Git, GNU Screen, tmux, ack-grep and Subversion)
+10. [Arduino](http://arduino.cc/en/Main/Software) development environment (optional)
+11. The default user account renamed to something of your own choice (optional)
 
 Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 ## Instructions
 
 * Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough (leaves about 1Gb free)
-* Boot the Pi from the new SD image and log in as the pi user
-* If the Raspi Config menu uniltiy runs exit back to the command prompt
+* Boot the Pi from the new SD image and log in as the default user (initially `pi`)
+* If the Raspi Config menu uniltiy appears then configure your keyboard and exit back to the command prompt
 * Make sure your Pi has access to the Internet
-* Log in and run the following commands
+ * If you have a supported WiFi adaptor you can configure it as follows:
+  `wpa_passphrase <SSID> <WPA_PASSWORD> | sudo tee -a /etc/wpa_supplicant/wpa_suplicant.conf`
+   then reboot and log as teh default user again
+
+* Now run the following command.
 
 `wget http://tinyurl.com/runme1st -O - | bash`
 
-Pi now reboots
+Pi computer now reboots
 
-* Log in and run the following commands
+* Log in as teh default user and run the following commands
 
 `wget http://tinyurl.com/runme2nd -O - | bash`
 
@@ -59,9 +66,9 @@ At the end the Pi will reboot
 
 
 
-You can use the already existing pi user account for development or feel free to create a different user account if you want. The rest
+You can use the already existing default user account for development or feel free to create a different user account if you want. The rest
 of these notes should be run as that development account. 
-  * Edit ``~/.bashrc`` and add the line``source /opt/ros/groovy/setup.bash``
+  * Edit `~/.bashrc` and add the line `source /opt/ros/groovy/setup.bash` (if you are using the default user account this has already been done for you)
   * Logout and login again
   * Read and review [http://www.ros.org/wiki/ROS/StartGuide]
   * Run the following ROS tutorials
@@ -70,7 +77,7 @@ of these notes should be run as that development account.
 
    [http://www.ros.org/wiki/ROS/Tutorials/NavigatingTheFilesystem]
 
-  * Run Andy’s demo. This requires that you have X running as you will need to run multiple terminals at once and display an image.
+  * Run the ROS tutorials. E.g. This requires that you have X running as you will need to run multiple terminals at once and display an image.
 
   Terminal session 1: Run the command `cd catkin_ws; roscore`
 
@@ -85,10 +92,10 @@ Now continue Andy’s notes at ``http://tinyurl.com/enr-workshop-1n``
 
 Additional Notes
 
-* This image is missing following Occidentals features:
-  * Realtek RTL8188CUS wifi support
-  * One wire support on GPIO #4 when loaded
+* This image is _possibly_ missing following Occidentals features:
   * Kernel modules for: DS1307, AD626 I2C digipots, HMC6352, BMP085, ADS1015
 
 * Run the command `sudo apt-get update && sudo apt-get dist-upgrade` on a regular basis
 (e.g. once a week) to keep the software up to date
+
+* These scripts can be re-run as needed. There is not need to re-image your SD card beforehand.

@@ -20,8 +20,9 @@
 #
 
 echo
-echo About to fuly upgrade all relevent packges and optionally install ROS
+echo About to fully upgrade all relevent packges and optionally install ROS
 echo This will take some time
+echo
 
 UPDATE_LABEL="Updated $(date +%F)"
 
@@ -76,24 +77,57 @@ splitMemory() {
 
 
 
-# Enable i2c and SPI
+# Install and enable i2c and SPI
 sudo apt-get -y install i2c-tools lm-sensors
 sudo sed /etc/modprobe.d/raspi-blacklist.conf \
-  -i -e "s/^blacklist spi-bcm2708/#blacklist spi-bcm2708/" \
-  -e "s/^blacklist i2c-bcm2708/#blacklist i2c-bcm2708/"
+  -i -e 's/^#blacklist spi-bcm2708/blacklist spi-bcm2708/' \
+  -e 's/^#blacklist i2c-bcm2708/blacklist i2c-bcm2708/'
+  
+sudo adduser $USER i2c
+
+echo Installed support for I2C serial interface and LM sensors
+echo added $USER to the i2c group
+echo
 
 # Install a few dev tools
-sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux
+sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep emacs
 
+# Install the WiringPi
 
-#Install ROS , i2c and lm sensors
+WP=/usr/src/wiringPi
+
+sudo mkdir -p $WP
+sudo chown $USER:$(id -g -n $USER) $WP
+
+cd $WP
+
+git clone git://git.drogon.net/wiringPi .
+./build
+
+cat <<EOF |sudo tee /usr/local/bin/updateWiringPi
+#!/usr/bin/env sh
+# Keep wiringPi updated
+
+cd $WP
+git pull origin &&
+./build &&
+echo WiringPi updated ||
+echo WiringPi update failed
+EOF
+
+sudo chmod + /usr/local/bin/updateWiringPi
+
+echo "To update the wiringPi library run the script /usr/local/bin/updateWiringPi as needed"
+echo
+
 
 if [[ $(ask "Do you wish to install the Robot OS? (http://ros.org)[y/N] ") =~ ^[Yy]$ ]]
 then
 
   sudo apt-get -y install ros-groovy-ros-comm \
     ros-groovy-rqt-gui ros-groovy-rqt-common-plugins \
-    ros-groovy-roscpp-tutorials ros-groovy-turtlesim
+    ros-groovy-roscpp-tutorials ros-groovy-turtlesim \
+    ros-groovy-rosserial-arduino 
 
   echo '# Setup for ROS ' >> ~/.bashrc
   echo source /opt/ros/groovy/setup.bash >> ~/.bashrc
@@ -110,7 +144,6 @@ sudo dpkg-reconfigure keyboard-configuration
 sudo invoke-rc.d keyboard-setup start
 splitMemory
 setOverclock
-
 
 if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
 then
@@ -139,6 +172,7 @@ fi
 if [[ $(ask "Do you wish to support Zero Conf Bonjour? [y/N] ") =~ ^[Yy]$ ]]
 then
   sudo apt-get install -y avahi-daemon avahi-utils
+  echo If all has gone well you will be able to access this device using ssh $USER@$(hostname -s).local
 else
   echo
 fi
@@ -175,7 +209,7 @@ then
         rm  jdk-8*.tar.gz
 
         echo '# Setup for Java 8' >> ~/.bashrc
-        echo PATH="$PATH":/opt/jdk8/bin  >> ~/.bashrc
+        echo PATH='$PATH':/opt/jdk8/bin  >> ~/.bashrc
         echo JAVA_HOME=/opt/jdk8  >> ~/.bashrc
         ;;
 
@@ -185,11 +219,24 @@ then
   done  < /dev/tty
 fi
 
+
+read -p  "Do you wish to install the Arduino IDE (NB Will install OpenJDK if needed) ? " -n 1 -r  < /dev/tty
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]] ; then
+        sudo apt-get -y install openjdk-7-jdk arduino arduino-mk libdevice-serialport-perl
+
+fi
+
 # Remove anything out of date
 sudo apt-get autoremove
 # Save a few hundred Mb of disk space by removing archives
 sudo apt-get clean
 
 read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
+<<<<<<< HEAD
 
 sudo shutdown -rF now
+=======
+sudo shutdown -rF now # Force disk check
+>>>>>>> 5b90c3315c9b5e7909ebab4dd9a31c4b88ce7329
