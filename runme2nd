@@ -234,9 +234,5 @@ sudo apt-get autoremove
 sudo apt-get clean
 
 read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
-<<<<<<< HEAD
 
-sudo shutdown -rF now
-=======
 sudo shutdown -rF now # Force disk check
->>>>>>> 5b90c3315c9b5e7909ebab4dd9a31c4b88ce7329
