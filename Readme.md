@@ -47,7 +47,7 @@ Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Instal
 * If the Raspi Config menu uniltiy appears then configure your keyboard and exit back to the command prompt
 * Make sure your Pi has access to the Internet
  * If you have a supported WiFi adaptor you can configure it as follows:
-  `wpa_passphrase <SSID> <WPA_PASSWORD> | sudo tee -a /etc/wpa_supplicant/wpa_suplicant.conf`
+  `wpa_passphrase <SSID> <WPA_PASSWORD> | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf`
    then reboot and log as teh default user again
 
 * Now run the following command.
