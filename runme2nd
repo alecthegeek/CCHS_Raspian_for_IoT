@@ -61,7 +61,7 @@ setOverclock() {
     sed -re 's/^[A-Za-z]+ ARM:([0-9]+)MHz core:([0-9]+)MHz SDRAM:([0-9]+)MHz overvolt:([0-9]+)$/arm_freq \1 core_freq \2 sdram_freq \3 over_voltage \4/' |
     xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
     break
-  done
+  done < /dev/tty
 
 }
 
