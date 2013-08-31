@@ -24,7 +24,7 @@ echo About to fully upgrade all relevent packges and optionally install ROS
 echo This will take some time
 echo
 
-UPDATE_LABEL="Updated $(date +%F)"
+UPDATE_LABEL="Updated_$(date +%F)"
 
 # Make sure system is fully up to date
 sudo apt-get -y dist-upgrade  # Important. Must be using new firmware before we do rest
@@ -37,10 +37,9 @@ ask() {
 setConfigOption() {
   CONFIG_FILE=/boot/config.txt
   if grep "$1=" $CONFIG_FILE ; then
-    sudo sed -ire "s/^#?$1=.+$/$1=$2 #$UPDATE_LABEL/" $CONFIG_FILE
+    sudo sed --in-place -re "s/^#?$1=.+$/$1=$2 #$UPDATE_LABEL/" $CONFIG_FILE
   else
-    echo $1=$2 | sudo tee -a $CONFIG_FILE
-    #echo $1=$2'  #'$UPDATE_LABEL| sudo tee -a $CONFIG_FILE
+    echo $1=$2'  #'$UPDATE_LABEL| sudo tee -a $CONFIG_FILE
   fi
 }
 
