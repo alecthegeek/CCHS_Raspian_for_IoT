@@ -24,7 +24,7 @@ echo About to fully upgrade all relevent packges and optionally install ROS
 echo This will take some time
 echo
 
-UPDATE_LABEL="Updated_$(date +%F)"
+export UPDATE_LABEL="Updated_$(date +%F)"
 
 # Make sure system is fully up to date
 sudo apt-get -y dist-upgrade  # Important. Must be using new firmware before we do rest
