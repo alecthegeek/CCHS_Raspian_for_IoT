@@ -1,6 +1,5 @@
 #Guided install and configuration for Rapsberry Pi Debian
 
-##Date : July/2013
 
  Copyright (c) 2013 All Right Reserved  Alec Clews
 
@@ -35,9 +34,10 @@ After following this process you should have
 6. Installation of lm-sensors and [i2c](http://en.wikipedia.org/wiki/I%C2%B2C) software
 7. [WiringPi](http://wiringpi.com/) library 
 8. Raspian configured for your environment (location, language etc)
-9. A few select development tools installed (Vim, Git, GNU Screen, tmux, ack-grep and Subversion)
+9. A few select development tools installed (Vim, Emacs, Git, GNU Screen, tmux, ack-grep and Subversion)
 10. [Arduino](http://arduino.cc/en/Main/Software) development environment (optional)
-11. The default user account renamed to something of your own choice (optional)
+11. [NodeBots](http://nodebots.io/) (optional). Will also install Arduino and Java SDK.
+12. The default user account renamed to something of your own choice (optional)
 
 Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 ## Instructions
@@ -48,7 +48,7 @@ Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Instal
 * Make sure your Pi has access to the Internet
  * If you have a supported WiFi adaptor you can configure it as follows:
   `wpa_passphrase <SSID> <WPA_PASSWORD> | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf`
-   then reboot and log as teh default user again
+   then reboot and log as the default user again
 
 * Now run the following command.
 
@@ -99,3 +99,9 @@ Additional Notes
 (e.g. once a week) to keep the software up to date
 
 * These scripts can be re-run as needed. There is not need to re-image your SD card beforehand.
+
+#TO DO
+
+1. Ask user all questions at the start and then perform an unattended install
+2. Provide an activity log
+3. Better error detection
