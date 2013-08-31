@@ -224,7 +224,15 @@ echo
 
 if [[ $REPLY =~ ^[Yy]$ ]] ; then
         sudo apt-get -y install openjdk-7-jdk arduino arduino-mk libdevice-serialport-perl
+fi
 
+read -p  "Do you wish to install the NodBots (NB Will install Arduino and OpenJDK if needed) ? " -n 1 -r  < /dev/tty
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]] ; then
+        sudo apt-get -y install openjdk-7-jdk
+        sudo apt-get -y install nodejs npm minicom arduino arduino-mk libdevice-serialport-perl
+        sudo npm install compulsive serialport johnny-five
 fi
 
 # Remove anything out of date
