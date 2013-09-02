@@ -18,6 +18,8 @@
 #    with this program; if not, write to the Free Software Foundation, Inc.,
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
+#
+#    Special thanks to @mikered for wifi set up code
 
 echo
 echo About to fully upgrade all relevent packges and optionally install ROS
@@ -33,6 +35,106 @@ ask() {
   read -p "$1" -r < /dev/tty
   echo $REPLY
 }
+
+
+do_wifi() {
+# Written by @mikerr and stolen by @alecthegeek, see https://github.com/mikerr/raspi-config
+
+wifidevice=wlan0
+WPAFILE=/etc/wpa_supplicant/wpa_supplicant.conf
+
+{
+iwlist $wifidevice scan | grep 'ESSID' | sed -e 's/.*ESSID:"\([^"]\+\)".*/  \1/' > /tmp/ap_list.txt 
+} | whiptail --gauge "Scanning Wifi, please wait" 5 50 10
+
+echo "whiptail --title \"Choose SSID, or enter manually\" \\" > /tmp/choose_ap.sh
+echo "--radiolist \"Choose SSID\" \\" >> /tmp/choose_ap.sh
+
+LINES=`wc -l < /tmp/ap_list.txt`
+LINES=$((${LINES}+1))
+echo "10 60 ${LINES} \\" >> /tmp/choose_ap.sh
+for LINE in `cat /tmp/ap_list.txt`
+    do
+    echo "$LINE '' off \\" >> /tmp/choose_ap.sh
+    done
+echo "Enter\ manually '' on 2>/tmp/ssid.ans" >>/tmp/choose_ap.sh
+    
+chmod 777 /tmp/choose_ap.sh
+. /tmp/choose_ap.sh
+      
+if [ $? -ne 0 ]; then return 0; fi
+
+SSID=`cat /tmp/ssid.ans`
+if [ "$SSID" = "Enter manually" ]; then
+      SSID=$(whiptail --inputbox "SSID Name" 20 70 3>&1 1>&2 2>&3)
+    if [ -z $SSID ]; then return 0 ; fi
+fi
+
+ENCRYPTION=$(whiptail --title "Encryption" --menu "Encryption for network: $SSID " $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+          "1" "WPA/WPA2" \
+          "2" "WEP (hex)" \
+          "3" "WEP (ascii)" \
+          "4" "None" \
+        3>&1 1>&2 2>&3)
+
+if [ $? -ne 0 ]; then return 0; fi
+
+WPANEW=/tmp/wpanew.conf
+WPATMP=/tmp/wpa.conf
+
+case $ENCRYPTION in
+    '1')
+        PASSPHRASE=$(whiptail --inputbox "WPA Passphrase for $SSID" 20 70 3>&1 1>&2 2>&3)
+        if [ $? -ne 0 ]; then return 0; fi
+       CRYPTPASS=$(wpa_passphrase $SSID $PASSPHRASE | grep -v "^#" | grep -v "#psk=")
+      PASSERROR="Passphrase must be 8..63 characters"
+        if [ "$CRYPTPASS" != "$PASSERROR" ]; then 
+        echo "$CRYPTPASS" > $WPANEW
+      else
+        whiptail --msgbox "ERROR: $PASSERROR" 20 70 1
+        return 0;
+      fi
+    ;;
+    '2')
+        PASSPHRASE=$(whiptail --inputbox "WEP key (Hex)" 20 70 3>&1 1>&2 2>&3)
+        if [ $? -ne 0 ]; then return 0; fi
+
+                  echo "network={
+                           ssid=\"$SSID\"
+                          key_mgmt=NONE
+                            wep_key0=$PASSPHRASE
+                            }" > $WPANEW
+    ;;
+    '3')
+        PASSPHRASE=$(whiptail --inputbox "WEP key (ascii)" 20 70 3>&1 1>&2 2>&3)
+        if [ $? -ne 0 ]; then return 0; fi
+
+       echo "network={
+                   ssid=\"$SSID\"
+                   key_mgmt=NONE
+                   wep_key0=\"$PASSPHRASE\"
+                   }" > $WPANEW
+    ;;
+    '4')
+      echo "network={
+                   ssid=\"$SSID\"
+                   key_mgmt=NONE
+                   }" > $WPANEW
+    ;;
+esac
+# Remove previous matching SSID config first
+perl -00 -pe "s/network=\{[^}]*ssid=\"$SSID\"*[^}]*\}//g" $WPAFILE > $WPATMP
+# append /merge new config at end of config file
+cat $WPATMP $WPANEW > $WPAFILE
+
+whiptail --msgbox "Wifi settings updated for SSID: $SSID" 20 60 1
+
+# connect right now ?
+#wpa_supplicant -B -i$wifidevice -c $WPAFILE
+#dhclient $wifidevice -1 
+
+}
+
 
 setConfigOption() {
   CONFIG_FILE=/boot/config.txt
@@ -149,21 +251,10 @@ then
 
   sudo apt-get install -y wpasupplicant
 
-  read -p  "Please enter WiFI SID " -r < /dev/tty
-  SSID=$REPLY
+  do_wifi()
 
-  read -p  "Please enter WiFI Password " -r < /dev/tty
-  SSID_PWD=$REPLY
-
-  if sudo grep $SSID  /etc/wpa_supplicant/wpa_supplicant.conf ; then
-    echo $SSID is already configured. Please update  /etc/wpa_supplicant/wpa_supplicant.conf
-    echo manually if required
-  else
-    sudo wpa_passphrase $SSID $SSID_PWD | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf >> /dev/null
-
-    sudo ifdown wlan0
-    sudo ifup wlan0
-  fi
+  sudo ifdown wlan0
+  sudo ifup wlan0
 else
   echo
 fi
