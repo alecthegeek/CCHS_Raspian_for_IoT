@@ -143,7 +143,7 @@ esac
 # Remove previous matching SSID config first
 sudo cat $WPAFILE | perl -00 -pe "s/network=\{[^}]*ssid=\"$SSID\"*[^}]*\}//g" > $WPATMP
 # append /merge new config at end of config file
-cat $WPATMP $WPANEW | sudo tee -f  $WPAFILE
+cat $WPATMP $WPANEW | sudo tee  $WPAFILE
 
 whiptail --msgbox "Wifi settings updated for SSID: $SSID" 20 60 1
 
