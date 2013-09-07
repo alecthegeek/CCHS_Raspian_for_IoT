@@ -251,7 +251,7 @@ then
 
   sudo apt-get install -y wpasupplicant
 
-  do_wifi()
+  do_wifi
 
   sudo ifdown wlan0
   sudo ifup wlan0
