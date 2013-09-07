@@ -52,6 +52,8 @@ calc_wt_size() {
   WT_MENU_HEIGHT=$(($WT_HEIGHT-8))
 }
 
+calc_wt_size
+
 
 do_wifi() {
 # Written by @mikerr and stolen by @alecthegeek, see https://github.com/mikerr/raspi-config
