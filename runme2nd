@@ -349,7 +349,7 @@ sudo apt-get autoremove
 # Save a few hundred Mb of disk space by removing downloaded deb archives
 sudo apt-get clean
 
-[[ -e /etc/profile.d/raspi-config.sh ]] && rm -f /etc/profile.d/raspi-config.sh
+[[ -e /etc/profile.d/raspi-config.sh ]] && sudo rm -f /etc/profile.d/raspi-config.sh
 
 echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis
 
