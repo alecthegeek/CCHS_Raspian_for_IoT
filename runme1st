@@ -21,39 +21,46 @@
 #
 # Run this script on a new install of Raspberry Pi Raspian
 
-# Add repo for Robot operating System
-sudo sh -c 'echo \
-"deb http://64.91.227.57/repos/rospbian wheezy main" > \
-/etc/apt/sources.list.d/rospbian.list'
-wget http://64.91.227.57/repos/rospbian.key -O - | sudo apt-key add -
 
-# Get updated package list
-sudo apt-get update
 
-# Make sure we using the lastest veriosn of config script
-sudo apt-get install -y raspi-config
+setConfigOption() {
+  CONFIG_FILE=/boot/config.txt
+  if grep "$1=" $CONFIG_FILE ; then
+    sudo sed --in-place -re "s/^#?$1=.+$/$1=$2 #$UPDATE_LABEL/" $CONFIG_FILE
+  else
+    echo $1=$2'  #'$UPDATE_LABEL| sudo tee -a $CONFIG_FILE
+  fi
+}
 
-oldhostname=$(cat /etc/hostname)
-echo
-echo It is highly recommended that the hostname is changed to something unique on the network.
-echo Later you will have the option to install Zero conf which requires ALL machines to have
-echo a unique name. If you can\'t think of anything I suggest something like \<yourName\>pi\<n\> where
-echo n is some single digit number. The current hostname is \"$oldhostname\"
-echo
+export -f setConfigOption 
 
-read -p  "Do you wish to change the hostname?[y/N] " -n 1 -r < /dev/tty
-echo
+setOverclock() {
 
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
+  clockSettings=("None ARM:700MHz core:250MHz SDRAM:400MHz overvolt:0"\
+                 "Modest ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0"\
+                 "Medium ARM:900MHz core:250MHz SDRAM:450MHz overvolt:2"\
+                 "High ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6"\
+                 "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6")
 
-  read -p  "Please enter the hostname (letters and numbers only) " -r < /dev/tty
+  echo "Please select your clock settings from the following list. NB Turbo is NOT recommended"
 
-  echo $REPLY | sudo tee /etc/hostname > /dev/null
+  select c in "${clockSettings[@]}"; do
+    echo "$c" | 
+    sed -re 's/^[A-Za-z]+ ARM:([0-9]+)MHz core:([0-9]+)MHz SDRAM:([0-9]+)MHz overvolt:([0-9]+)$/arm_freq \1 core_freq \2 sdram_freq \3 over_voltage \4/' |
+    xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
+    break
+  done < /dev/tty
 
-  sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
+}
 
-fi
+splitMemory() {
+  REPLY=0
+  while [[ ! $REPLY =~ (16|32|64|128|256) ]] ; do
+    read -p  "How much video memory do you want? (16|32|64|128|256) " -r < /dev/tty
+  done
+
+  setConfigOption gpu_mem $REPLY
+}
 
 
 calc_wt_size() {
@@ -178,6 +185,41 @@ ask() {
   read -p "$1" -r < /dev/tty
   echo $REPLY
 }
+
+
+# Add repo for Robot operating System
+sudo sh -c 'echo \
+"deb http://64.91.227.57/repos/rospbian wheezy main" > \
+/etc/apt/sources.list.d/rospbian.list'
+wget http://64.91.227.57/repos/rospbian.key -O - | sudo apt-key add -
+
+# Get updated package list
+sudo apt-get update
+
+# Make sure we using the lastest veriosn of config script
+sudo apt-get install -y raspi-config
+
+oldhostname=$(cat /etc/hostname)
+echo
+echo It is highly recommended that the hostname is changed to something unique on the network.
+echo Later you will have the option to install Zero conf which requires ALL machines to have
+echo a unique name. If you can\'t think of anything I suggest something like \<yourName\>pi\<n\> where
+echo n is some single digit number. The current hostname is \"$oldhostname\"
+echo
+
+read -p  "Do you wish to change the hostname?[y/N] " -n 1 -r < /dev/tty
+echo
+
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+
+  read -p  "Please enter the hostname (letters and numbers only) " -r < /dev/tty
+
+  echo $REPLY | sudo tee /etc/hostname > /dev/null
+
+  sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
+
+fi
 
 echo Processing
 sudo dpkg-reconfigure locales
