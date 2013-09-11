@@ -55,6 +55,162 @@ then
 
 fi
 
+
+calc_wt_size() {
+  # NOTE: it's tempting to redirect stderr to /dev/null, so supress error
+  # output from tput. However in this case, tput detects neither stdout or
+  # stderr is a tty and so only gives default 80, 24 values
+  WT_HEIGHT=17
+  WT_WIDTH=$(tput cols)
+
+  if [ -z "$WT_WIDTH" ] || [ "$WT_WIDTH" -lt 60 ]; then
+    WT_WIDTH=80
+  fi
+  if [ "$WT_WIDTH" -gt 178 ]; then
+    WT_WIDTH=120
+  fi
+  WT_MENU_HEIGHT=$(($WT_HEIGHT-8))
+}
+
+calc_wt_size
+
+
+do_wifi() {
+# Written by @mikerr and stolen by @alecthegeek, see https://github.com/mikerr/raspi-config
+
+wifidevice=wlan0
+WPAFILE=/etc/wpa_supplicant/wpa_supplicant.conf
+
+{
+iwlist $wifidevice scan | grep 'ESSID' | sed -e 's/.*ESSID:"\([^"]\+\)".*/  \1/' > /tmp/ap_list.txt 
+} | whiptail --gauge "Scanning Wifi, please wait" 5 50 10
+
+echo "whiptail --title \"Choose SSID, or enter manually\" \\" > /tmp/choose_ap.sh
+echo "--radiolist \"Choose SSID\" \\" >> /tmp/choose_ap.sh
+
+LINES=`wc -l < /tmp/ap_list.txt`
+LINES=$((${LINES}+1))
+echo "10 60 ${LINES} \\" >> /tmp/choose_ap.sh
+for LINE in `cat /tmp/ap_list.txt`
+    do
+    echo "$LINE '' off \\" >> /tmp/choose_ap.sh
+    done
+echo "Enter\ manually '' on 2>/tmp/ssid.ans" >>/tmp/choose_ap.sh
+    
+chmod 777 /tmp/choose_ap.sh
+. /tmp/choose_ap.sh
+      
+if [ $? -ne 0 ]; then return 0; fi
+
+SSID=`cat /tmp/ssid.ans`
+if [ "$SSID" = "Enter manually" ]; then
+      SSID=$(whiptail --inputbox "SSID Name" 20 70 3>&1 1>&2 2>&3)
+    if [ -z $SSID ]; then return 0 ; fi
+fi
+
+ENCRYPTION=$(whiptail --title "Encryption" --menu "Encryption for network: $SSID " $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+          "1" "WPA/WPA2" \
+          "2" "WEP (hex)" \
+          "3" "WEP (ascii)" \
+          "4" "None" \
+        3>&1 1>&2 2>&3)
+
+if [ $? -ne 0 ]; then return 0; fi
+
+WPANEW=/tmp/wpanew.conf
+WPATMP=/tmp/wpa.conf
+
+case $ENCRYPTION in
+    '1')
+        PASSPHRASE=$(whiptail --inputbox "WPA Passphrase for $SSID" 20 70 3>&1 1>&2 2>&3)
+        if [ $? -ne 0 ]; then return 0; fi
+       CRYPTPASS=$(wpa_passphrase $SSID $PASSPHRASE | grep -v "^#" | grep -v "#psk=")
+      PASSERROR="Passphrase must be 8..63 characters"
+        if [ "$CRYPTPASS" != "$PASSERROR" ]; then 
+        echo "$CRYPTPASS" > $WPANEW
+      else
+        whiptail --msgbox "ERROR: $PASSERROR" 20 70 1
+        return 0;
+      fi
+    ;;
+    '2')
+        PASSPHRASE=$(whiptail --inputbox "WEP key (Hex)" 20 70 3>&1 1>&2 2>&3)
+        if [ $? -ne 0 ]; then return 0; fi
+
+                  echo "network={
+                           ssid=\"$SSID\"
+                          key_mgmt=NONE
+                            wep_key0=$PASSPHRASE
+                            }" > $WPANEW
+    ;;
+    '3')
+        PASSPHRASE=$(whiptail --inputbox "WEP key (ascii)" 20 70 3>&1 1>&2 2>&3)
+        if [ $? -ne 0 ]; then return 0; fi
+
+       echo "network={
+                   ssid=\"$SSID\"
+                   key_mgmt=NONE
+                   wep_key0=\"$PASSPHRASE\"
+                   }" > $WPANEW
+    ;;
+    '4')
+      echo "network={
+                   ssid=\"$SSID\"
+                   key_mgmt=NONE
+                   }" > $WPANEW
+    ;;
+esac
+# Remove previous matching SSID config first
+sudo cat $WPAFILE | perl -00 -pe "s/network=\{[^}]*ssid=\"$SSID\"*[^}]*\}//g" > $WPATMP
+# append /merge new config at end of config file
+cat $WPATMP $WPANEW | sudo tee  $WPAFILE
+
+whiptail --msgbox "Wifi settings updated for SSID: $SSID" 20 60 1
+
+# connect right now ?
+#wpa_supplicant -B -i$wifidevice -c $WPAFILE
+#dhclient $wifidevice -1 
+
+}
+
+
+ask() {
+  read -p "$1" -r < /dev/tty
+  echo $REPLY
+}
+
+echo Processing
+sudo dpkg-reconfigure locales
+sudo dpkg-reconfigure tzdata
+echo Processing
+sudo dpkg-reconfigure keyboard-configuration
+sudo invoke-rc.d keyboard-setup start
+splitMemory
+setOverclock
+
+if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
+then
+
+  sudo apt-get install -y wpasupplicant
+
+  do_wifi
+
+  sudo ifdown wlan0
+  sudo ifup wlan0
+else
+  echo
+fi
+
+if [[ $(ask "Do you wish to support Zero Conf Bonjour (recommended)? [y/N] ") =~ ^[Yy]$ ]]
+then
+  sudo apt-get install -y avahi-daemon avahi-utils
+  echo If all has gone well you will be able to access this device using ssh $USER@$(hostname -s).local
+else
+  echo
+fi
+
+
+
 # Rename the pi user accountA
 echo
 echo "You will now be offered to the chance to change the user name of the current user account"
