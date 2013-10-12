@@ -1,4 +1,4 @@
-#Guided install and configuration for Rapsberry Pi Debian
+#Guided install and configuration for Raspberry Pi Debian
 
 
  Copyright (c) 2013 All Right Reserved  Alec Clews
@@ -28,7 +28,7 @@ After following this process you should have
 
 1. A fully updated Raspian system
 2. The [Robot Operating System](http://www.ros.org/wiki/) installed and ready to use (optional)
-3. Working Wifi
+3. Working WiFi
 4. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software) (to access your Pi by hostname instead IP address)
 5. Java development kit installed (optional -- larger SD card recommended)
 6. Installation of lm-sensors and [i2c](http://en.wikipedia.org/wiki/I%C2%B2C) software
@@ -44,9 +44,9 @@ Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Instal
 
 * Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough (leaves about 1Gb free)
 * Boot the Pi from the new SD image and log in as the default user (initially `pi`)
-* If the Raspi Config menu uniltiy appears then configure your keyboard and exit back to the command prompt
+* If the Raspi Config menu utility appears then configure your keyboard and exit back to the command prompt
 * Make sure your Pi has access to the Internet
- * If you have a supported WiFi adaptor you can configure it as follows:
+ * If you have a supported WiFi adapter you can configure it as follows:
   `wpa_passphrase <SSID> <WPA_PASSWORD> | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf`
    then reboot and log as the default user again
 
@@ -56,7 +56,7 @@ Based on Raspian and ROS installed as per [http://www.ros.org/wiki/groovy/Instal
 
 Pi computer now reboots
 
-* Log in as teh default user and run the following commands
+* Log in as the default user and run the following commands
 
 `wget http://tinyurl.com/runme2nd -O - | bash`
 
@@ -92,7 +92,7 @@ Now continue Andy’s notes at ``http://tinyurl.com/enr-workshop-1n``
 
 Additional Notes
 
-* This image is _possibly_ missing following Occidentals features:
+* This image is _possibly_ missing following Occidentalis [http://learn.adafruit.com/adafruit-raspberry-pi-educational-linux-distro/occidentalis-v0-dot-2] features:
   * Kernel modules for: DS1307, AD626 I2C digipots, HMC6352, BMP085, ADS1015
 
 * Run the command `sudo apt-get update && sudo apt-get dist-upgrade` on a regular basis
