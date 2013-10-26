@@ -22,6 +22,7 @@
 # Run this script on a new install of Raspberry Pi Raspian
 
 
+export UPDATE_LABEL="Updated_$(date +%F)"
 
 setConfigOption() {
   CONFIG_FILE=/boot/config.txt
@@ -32,21 +33,27 @@ setConfigOption() {
   fi
 }
 
-export -f setConfigOption 
+export -f setConfigOption
 
 setOverclock() {
 
-  clockSettings=("None ARM:700MHz core:250MHz SDRAM:400MHz overvolt:0"\
-                 "Modest ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0"\
-                 "Medium ARM:900MHz core:250MHz SDRAM:450MHz overvolt:2"\
-                 "High ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6"\
-                 "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6")
 
-  echo "Please select your clock settings from the following list. NB Turbo is NOT recommended"
+  clockSettings=( "None" "ARM:700MHz core:250MHz SDRAM:400MHz overvolt:0" \
+    "Modest" "ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0" \
+    "Medium" "ARM:900MHz core:250MHz SDRAM:450MHz overvolt:2" \
+    "High" "ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6" \
+    "Turbo" "ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6" )
 
-  select c in "${clockSettings[@]}"; do
-    echo "$c" | 
-    sed -re 's/^[A-Za-z]+ ARM:([0-9]+)MHz core:([0-9]+)MHz SDRAM:([0-9]+)MHz overvolt:([0-9]+)$/arm_freq \1 core_freq \2 sdram_freq \3 over_voltage \4/' |
+  echo
+
+CLOCKSETTINGS=$(echo --title "Over Clocking" --menu "Please select your clock settings from the following list. NB Turbo is NOT recommended " \
+              $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+              $(for ((i=0; i < $(("${clockSettings[@]}"/2));i++)) ; do echo \"${clockSettings[0]:$((i*2)):2}\" ; done) \
+        3>&1 1>&2 2>&3)
+
+  select c in "${clockSettings[$CLOCKSETTINGS]}"; do
+    echo "$c" |
+    sed -re 's/^ARM:([0-9]+)MHz core:([0-9]+)MHz SDRAM:([0-9]+)MHz overvolt:([0-9]+)$/arm_freq \1 core_freq \2 sdram_freq \3 over_voltage \4/' |
     xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
     break
   done < /dev/tty
@@ -103,7 +110,7 @@ for LINE in `cat /tmp/ap_list.txt`
     echo "$LINE '' off \\" >> /tmp/choose_ap.sh
     done
 echo "Enter\ manually '' on 2>/tmp/ssid.ans" >>/tmp/choose_ap.sh
-    
+
 chmod 777 /tmp/choose_ap.sh
 . /tmp/choose_ap.sh
       
@@ -185,7 +192,6 @@ ask() {
   read -p "$1" -r < /dev/tty
   echo $REPLY
 }
-
 
 # Add experimental repository for Robot Operating System (ROS Groovy)
 # See http://wiki.ros.org/groovy/Installation/Raspbian
