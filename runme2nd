@@ -122,7 +122,7 @@ if [[ $REPLY =~ ^[Yy]$ ]] ; then
   sudo apt-get -y install oracle-java7-jdk
   sudo apt-get -y install minicom arduino arduino-mk libdevice-serialport-perl
 
-  node_ver=v0.01.17   # Modify to lastest that works
+  node_ver=v0.10.17   # Modify to lastest that works
   wget http://nodejs.org/dist/$node_ver/node-$node_ver-linux-arm-pi.tar.gz
   sudo tar -zxpf node-$node_ver-linux-arm-pi.tar.gz -C /opt
   sudo lnk -s /opt/node-$node_ver-linux-arm-pi /opt/node
