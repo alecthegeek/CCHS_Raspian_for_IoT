@@ -38,11 +38,11 @@ export -f setConfigOption
 setOverclock() {
 
 
-  clockSettings=( "None" "ARM:700MHz core:250MHz SDRAM:400MHz overvolt:0" \
-    "Modest" "ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0" \
-    "Medium" "ARM:900MHz core:250MHz SDRAM:450MHz overvolt:2" \
-    "High" "ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6" \
-    "Turbo" "ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6" )
+  clockSettings=( "None ARM:700MHz core:250MHz SDRAM:400MHz overvolt:0" \
+    "Modest ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0" \
+    "Medium ARM:900MHz core:250MHz SDRAM:450MHz overvolt:2" \
+    "High ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6" \
+    "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6" )
 
   echo
 
@@ -51,9 +51,9 @@ CLOCKSETTINGS=$(echo --title "Over Clocking" --menu "Please select your clock se
               $(for ((i=0; i < $(("${clockSettings[@]}"/2));i++)) ; do echo \"${clockSettings[0]:$((i*2)):2}\" ; done) \
         3>&1 1>&2 2>&3)
 
-  select c in "${clockSettings[$CLOCKSETTINGS]}"; do
+  select c in "${clockSettings[@]}"; do
     echo "$c" |
-    sed -re 's/^ARM:([0-9]+)MHz core:([0-9]+)MHz SDRAM:([0-9]+)MHz overvolt:([0-9]+)$/arm_freq \1 core_freq \2 sdram_freq \3 over_voltage \4/' |
+    sed -re 's/^.+ARM:([0-9]+)MHz core:([0-9]+)MHz SDRAM:([0-9]+)MHz overvolt:([0-9]+)$/arm_freq \1 core_freq \2 sdram_freq \3 over_voltage \4/' |
     xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
     break
   done < /dev/tty
