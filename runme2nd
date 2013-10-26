@@ -122,20 +122,21 @@ if [[ $REPLY =~ ^[Yy]$ ]] ; then
   sudo apt-get -y install oracle-java7-jdk
   sudo apt-get -y install minicom arduino arduino-mk libdevice-serialport-perl
 
-  wget http://nodejs.org/dist/v0.10.17/node-v0.10.17-linux-arm-pi.tar.gz
-  sudo tar -zxpf node-v0.10.17-linux-arm-pi.tar.gz -C /opt
-  sudo mv /opt/node-v0.10.17-linux-arm-pi /opt/node
+  node_ver=v0.01.17   # Modify to lastest that works
+  wget http://nodejs.org/dist/$node_ver/node-$node_ver-linux-arm-pi.tar.gz
+  sudo tar -zxpf node-$node_ver-linux-arm-pi.tar.gz -C /opt
+  sudo lnk -s /opt/node-$node_ver-linux-arm-pi /opt/node
 
-  echo 'NODE_JS_HOME=/opt/node' |sudo tee -a /etc/profile
+  echo 'NODE_JS_HOME=/opt/node; export NODE_JS_HOME' |sudo tee -a /etc/profile
   echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile
 
   export NODE_JS_HOME=/opt/node
   PATH=$PATH:$NODE_JS_HOME/bin
 
-  sudo npm install -g serialport   # 1.1.3
-  sudo npm install -g firmata      # 0.2.9
-  sudo npm install -g johnny-five  # 0.7.2
-  sudo npm install -g socket.io    # 0.9.16
+  sudo -i npm install -g serialport   # 1.1.3
+  sudo -i npm install -g firmata      # 0.2.9
+  sudo -i npm install -g johnny-five  # 0.7.2
+  sudo -i npm install -g socket.io    # 0.9.16
 
 fi
 
