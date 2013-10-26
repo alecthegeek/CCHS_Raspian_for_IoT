@@ -125,7 +125,7 @@ if [[ $REPLY =~ ^[Yy]$ ]] ; then
   node_ver=v0.10.17   # Modify to lastest that works
   wget http://nodejs.org/dist/$node_ver/node-$node_ver-linux-arm-pi.tar.gz
   sudo tar -zxpf node-$node_ver-linux-arm-pi.tar.gz -C /opt
-  sudo lnk -s /opt/node-$node_ver-linux-arm-pi /opt/node
+  sudo ln -s /opt/node-$node_ver-linux-arm-pi /opt/node
 
   echo 'NODE_JS_HOME=/opt/node; export NODE_JS_HOME' |sudo tee -a /etc/profile
   echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile
