@@ -36,7 +36,7 @@ ask() {
 }
 
 # Install and enable i2c and SPI
-sudo apt-get -y install i2c-tools lm-sensors
+sudo apt-get -y install i2c-tools lm-sensors python-smbus
 sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -i -e 's/^#blacklist spi-bcm2708/blacklist spi-bcm2708/' \
   -e 's/^#blacklist i2c-bcm2708/blacklist i2c-bcm2708/'
@@ -49,6 +49,7 @@ echo
 
 # Install a few dev tools
 sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep emacs locate
+
 
 # Install the WiringPi
 
