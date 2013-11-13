@@ -253,7 +253,6 @@ fi
 if [[ $(ask "Do you wish to support Zero Conf Bonjour (recommended)? [y/N] ") =~ ^[Yy]$ ]]
 then
   sudo apt-get install -y avahi-daemon avahi-utils
-  echo If all has gone well you will be able to access this device using ssh $USER@$(hostname -s).local
 else
   echo
 fi
@@ -287,6 +286,11 @@ EOF
 
 fi
 
+echo If all has gone well you will be able to access this device using ssh $USER@$(hostname -s).local
+
 #Expand the rootfs and reboot
 sudo raspi-config --expand-rootfs
+echo "System will now reboot. Please then login as $USER and run the command"
+echo "wget -O - http://tinyurl.com/runme2nd | bash"
+read -p "Press any key to continue " -n 1 -r < /dev/tty
 sudo init 6
