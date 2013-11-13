@@ -46,10 +46,10 @@ setOverclock() {
 
   echo
 
-CLOCKSETTINGS=$(echo --title "Over Clocking" --menu "Please select your clock settings from the following list. NB Turbo is NOT recommended " \
-              $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-              $(for ((i=0; i < $(("${clockSettings[@]}"/2));i++)) ; do echo \"${clockSettings[0]:$((i*2)):2}\" ; done) \
-        3>&1 1>&2 2>&3)
+#CLOCKSETTINGS=$(echo --title "Over Clocking" --menu "Please select your clock settings from the following list. NB Turbo is NOT recommended " \
+#              $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
+#              $(for ((i=0; i < $(("${clockSettings[@]}"/2));i++)) ; do echo \"${clockSettings[0]:$((i*2)):2}\" ; done) \
+#        3>&1 1>&2 2>&3)
 
   select c in "${clockSettings[@]}"; do
     echo "$c" |
