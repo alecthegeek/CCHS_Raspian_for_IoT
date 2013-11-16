@@ -125,15 +125,15 @@ if [[ $REPLY =~ ^[Yy]$ ]] ; then
 
   node_ver=v0.10.17   # Modify to lastest that works
   wget http://nodejs.org/dist/$node_ver/node-$node_ver-linux-arm-pi.tar.gz
-  [[ -d /opt/node-$node_ver-linux-arm-pi ]] && sudo rm -rf /opt/node-$node_ver-linux-arm-pi
-  sudo tar -zxpf node-$node_ver-linux-arm-pi.tar.gz -C /opt
-  [[ -L /opt/node ]] && sudo rm /opt/node
-  sudo ln -s /opt/node-$node_ver-linux-arm-pi /opt/node
+  [[ -d /usr/local/node-$node_ver-linux-arm-pi ]] && sudo rm -rf /usr/local/node-$node_ver-linux-arm-pi
+  sudo tar -zxpf node-$node_ver-linux-arm-pi.tar.gz -C /usr/local
+  [[ -L /usr/local/node ]] && sudo rm /usr/local/node
+  sudo ln -s /usr/local/node-$node_ver-linux-arm-pi /usr/local/node
 
-  echo 'NODE_JS_HOME=/opt/node; export NODE_JS_HOME' |sudo tee -a /etc/profile
+  echo 'NODE_JS_HOME=/usr/local/node; export NODE_JS_HOME' |sudo tee -a /etc/profile
   echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile
 
-  export NODE_JS_HOME=/opt/node
+  export NODE_JS_HOME=/usr/local/node
   PATH=$PATH:$NODE_JS_HOME/bin
 
   sudo -i npm install -g serialport   # 1.1.3
