@@ -52,7 +52,7 @@ if [[ $(ask "Do you wish to install MineCraft for Pi? [y/N] ") =~ ^[Yy]$ ]]; the
   echo <<-'EOF'  | sudo tee /usr/local/bin/minecraft
   #!/bin/sh
   /usr/local/mcpi/minecraft &
-  EOF
+EOF
 
   chmod a+x /usr/local/bin/minecraft
 
