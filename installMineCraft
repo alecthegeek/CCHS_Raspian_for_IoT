@@ -37,21 +37,20 @@ if [[ $(ask "Do you wish to install MineCraft for Pi? [y/N] ") =~ ^[Yy]$ ]]; the
 
   [[ -d /usr/local/mcpi ]] && sudo rm -rf /usr/local/mcpi
   sudo tar -xvzpf minecraft-pi-$minecraft.tar.gz -C /usr/local
-  echo  | sudo tee -a /etc/bachrc
-  echo  '# Setup for Minecraft Python API' | sudo tee -a /etc/bachrc
 
-  if [[  -s "$PYTHONPATH" ]] ; then
-    echo 'PYTHONPATH=$PYTHONPATH:/usr/local/mcpi/api/python' | sudo tee -a /etc/bachrc
+  echo  '# Setup for Minecraft Python API' | sudo tee /etc/profile.d/minecraft-py.sh 
+
+  if [[ -n "$PYTHONPATH" ]] ; then
+    echo 'PYTHONPATH=$PYTHONPATH:/usr/local/mcpi/api/python' | sudo -a tee /etc/profile.d/minecraft-py.sh
   else
-    echo 'PYTHONPATH=/usr/local/mcpi/api/python' | sudo tee -a /etc/bachrc
+    echo 'PYTHONPATH=/usr/local/mcpi/api/python' | sudo tee -a /etc/profile.d/minecraft-py.sh
   fi
 
-  echo 'export PYTHONPATH' | sudo tee -a /etc/bachrc
+  echo 'export PYTHONPATH' | sudo tee -a /etc/profile.d/minecraft-py.sh
 
-
-  echo <<-'EOF'  | sudo tee /usr/local/bin/minecraft
-  #!/bin/sh
-  /usr/local/mcpi/minecraft &
+  cat <<'EOF'  | sudo tee /usr/local/bin/minecraft
+#!/bin/sh
+/usr/local/mcpi/minecraft-pi > /dev/null 2>&1 &
 EOF
 
   sudo chmod a+x /usr/local/bin/minecraft
@@ -59,7 +58,7 @@ EOF
   echo Minecraft has been installed as minecraft. Please login in again to use the Python API.
 
   if [[ $(ask "Do you wish to install Java SDK to run the Java demo for Minecraft? [y/N] ") =~ ^[Yy]$ ]] ; then
-    sudo apt-get -y install oracle-java7-jdk oracle-java7-doc
+    sudo apt-get -y install oracle-java7-jdk
     echo "Set the class path to /usr/local/mcpi/api/java/lib/McPi.jar"
   fi
 fi
