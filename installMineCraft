@@ -41,7 +41,7 @@ if [[ $(ask "Do you wish to install MineCraft for Pi? [y/N] ") =~ ^[Yy]$ ]]; the
   echo  '# Setup for Minecraft Python API' | sudo tee /etc/profile.d/minecraft-py.sh 
 
   if [[ -n "$PYTHONPATH" ]] ; then
-    echo 'PYTHONPATH=$PYTHONPATH:/usr/local/mcpi/api/python/mcpi' | sudo -a tee /etc/profile.d/minecraft-py.sh
+    echo 'PYTHONPATH=$PYTHONPATH:/usr/local/mcpi/api/python/mcpi' | sudo tee -a /etc/profile.d/minecraft-py.sh
   else
     echo 'PYTHONPATH=/usr/local/mcpi/api/python/mcpi' | sudo tee -a /etc/profile.d/minecraft-py.sh
   fi
