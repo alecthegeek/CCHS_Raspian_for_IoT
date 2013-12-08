@@ -94,8 +94,8 @@ then
     ros-groovy-roscpp-tutorials ros-groovy-turtlesim \
     ros-groovy-rosserial-arduino 
 
-  echo '# Setup for ROS ' |sudo tee -a /etc/profile
-  echo source /opt/ros/groovy/setup.bash |sudo tee -a  /etc/profile
+  echo '# Setup for ROS ' |sudo tee /etc/profile.d/ros.sh
+  echo source /opt/ros/groovy/setup.bash |sudo tee -a  /etc/profile.d/ros.sh
 else
   echo
 fi
@@ -130,8 +130,9 @@ if [[ $REPLY =~ ^[Yy]$ ]] ; then
   [[ -L /usr/local/node ]] && sudo rm /usr/local/node
   sudo ln -s /usr/local/node-$node_ver-linux-arm-pi /usr/local/node
 
-  echo 'NODE_JS_HOME=/usr/local/node; export NODE_JS_HOME' |sudo tee -a /etc/profile
-  echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile
+  echo '# Setup for NodeBots ' |sudo tee /etc/profile.d/nodejs.sh
+  echo 'NODE_JS_HOME=/usr/local/node; export NODE_JS_HOME' |sudo tee -a /etc/profile.d/nodejs.sh
+  echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile.d/nodejs.sh
 
   export NODE_JS_HOME=/usr/local/node
   PATH=$PATH:$NODE_JS_HOME/bin

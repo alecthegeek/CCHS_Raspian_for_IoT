@@ -42,7 +42,8 @@ setOverclock() {
     "Modest ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0" \
     "Medium ARM:900MHz core:250MHz SDRAM:450MHz overvolt:2" \
     "High ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6" \
-    "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6" )
+    # "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6"
+     )
 
   echo
 
@@ -62,6 +63,7 @@ setOverclock() {
 
 splitMemory() {
   REPLY=0
+  echo N.B. For Minecraft 64Mb of Video Memory is recommended
   while [[ ! $REPLY =~ (16|32|64|128|256) ]] ; do
     read -p  "How much video memory do you want? (16|32|64|128|256) " -r < /dev/tty
   done
