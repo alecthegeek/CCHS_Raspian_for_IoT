@@ -46,10 +46,6 @@ if [[ $(ask "Do you wish to install MineCraft for Pi? [y/N] ") =~ ^[Yy]$ ]]; the
     echo 'PYTHONPATH=/usr/local/mcpi/api/python/mcpi' | sudo tee -a /etc/profile.d/minecraft-py.sh
   fi
   
-  /usr/local/mcpi/api/python/mcpi
-
-  echo 'export PYTHONPATH' | sudo tee -a /etc/profile.d/minecraft-py.sh
-
   cat <<'EOF'  | sudo tee /usr/local/bin/minecraft
 #!/bin/sh
 /usr/local/mcpi/minecraft-pi > /dev/null 2>&1 &
