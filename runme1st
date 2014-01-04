@@ -284,6 +284,8 @@ cat <<'EOF' | sudo bash -s $USER $REPLY $HOME
      mv $3 /home/$2
 EOF
 
+    USER=$REPLY
+
     echo "User name changed to $USER"
 
 fi
