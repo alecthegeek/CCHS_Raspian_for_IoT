@@ -295,6 +295,6 @@ echo If all has gone well you will be able to access this device using ssh $USER
 #Expand the rootfs and reboot
 sudo raspi-config --expand-rootfs
 echo "System will now reboot. Please then login as $USER and run the command"
-echo "wget -O - http://tinyurl.com/runme2nd | bash"
+echo "wget -O - http://tinyurl.com/RasPiIoT-2 | bash"
 read -p "Press any key to continue " -n 1 -r < /dev/tty
 sudo init 6

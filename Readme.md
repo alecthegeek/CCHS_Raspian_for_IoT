@@ -39,9 +39,12 @@ After following this process you should have
 11. [NodeBots](http://nodebots.io/) (optional). Will also install Arduino and Java SDK.
 12. The default user account renamed to something of your own choice (optional)
 
+<!--
 13. A optional script is provided to install Minecraft and set up the API for development. It is *not* depenedent on the other scripts. To install Minefraft type the following at the terminal
 
 `wget http://tinyurl.com/MinecraftOnPi -O - | bash`
+
+-->
 
 Assumes you are using Raspian Linux
 
@@ -58,13 +61,13 @@ ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 
 * Now run the following command.
 
-`wget http://tinyurl.com/runme1st -O - | bash`
+`wget http://tinyurl.com/RasPiIoT-1 -O - | bash`
 
 Pi computer now reboots
 
 * Log in as the default user and run the following commands
 
-`wget http://tinyurl.com/runme2nd -O - | bash`
+`wget http://tinyurl.com/RasPiIoT-2 -O - | bash`
 
 This is a long process and will require user input at various stages.
 
