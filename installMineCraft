@@ -38,6 +38,10 @@ if [[ $(ask "Do you wish to install MineCraft for Pi? [y/N] ") =~ ^[Yy]$ ]]; the
   [[ -d /usr/local/mcpi ]] && sudo rm -rf /usr/local/mcpi
   sudo tar -xvzpf minecraft-pi-$minecraft.tar.gz -C /usr/local
 
+  sudo wget https://raw.github.com/martinohanlon/minecraft-stuff/master/minecraftstuff.py \
+        -O /usr/local/mcpi/api/python/mcpi/minecraftstuff.py
+  sudo chmod a+x /usr/local/mcpi/api/python/mcpi/minecraftstuff.py
+
   echo  '# Setup for Minecraft Python API' | sudo tee /etc/profile.d/minecraft-py.sh 
 
   if [[ -n "$PYTHONPATH" ]] ; then
@@ -55,7 +59,11 @@ EOF
 
   sudo chmod a+x /usr/local/bin/minecraft-pi
 
+  echo
   echo Type minecraft-pi to run Minecraft.
+  echo The Mincraft Stuff utility library has also been installed. See
+  echo http://www.stuffaboutcode.com/2013/11/coding-shapes-in-minecraft.html for details
+  echo
 
   if [[ $(ask "Do you wish to install Java SDK to run the Java demo for Minecraft? [y/N] ") =~ ^[Yy]$ ]] ; then
     sudo apt-get -y install oracle-java7-jdk
