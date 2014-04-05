@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Copyright (c) 2014 All Right Reserved  Alec Clews
+#
+# author: Alec Clews
+# alecclews@gmail.com
+#
+#    This program is free software; you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation; either version 2 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License along
+#    with this program; if not, write to the Free Software Foundation, Inc.,
+#    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+#
+#    Special thanks to @mikered for wifi set up code
+
+echo
+echo About to fully upgrade all relevent packges and install curses plus git
+echo This will take some time
+echo
+
+
+# Make sure system is fully up to date
+sudo apt-get -y dist-upgrade
+sudo apt-get -y install libncurses5-dev git
+
+git clone https://github.com/geekscape/contiki.git
+
+
+wget #TODO -O - | sudo tar -xzf - -C /usr/local
+
+PATH=$PATH:/usr/local/avr/bin
+
+echo '# Setup for AVR compiler ' |sudo tee /etc/profile.d/avr.sh
+echo 'PATH=$PATH:/usr/local/avr/bin' |sudo tee -a  /etc/profile.d/avr.sh
+
+
+# Remove anything out of date
+sudo apt-get autoremove
+# Maybe save a few hundred Mb of disk space by removing downloaded deb archives
+sudo apt-get clean
