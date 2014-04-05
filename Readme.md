@@ -67,7 +67,7 @@ Pi computer now reboots
 
 * Log in as the default user and run the following commands
 
-`wget http://preview.tinyurl.com/RasPiIoT-2 -O - | bash`
+`wget http://tinyurl.com/RasPiIoT-2 -O - | bash`
 
 This is a long process and will require user input at various stages.
 
