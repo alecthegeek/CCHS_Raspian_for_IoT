@@ -28,13 +28,13 @@ echo
 
 
 # Make sure system is fully up to date
+sudo apt-get update
 sudo apt-get -y dist-upgrade
-sudo apt-get -y install libncurses5-dev git
+sudo apt-get -y install git
 
 git clone https://github.com/geekscape/contiki.git
 
-
-wget #TODO -O - | sudo tar -xzf - -C /usr/local
+wget https://www.dropbox.com/s/jdo6egxaxfnogtj/avr-gcc.tgz -O - | sudo tar -xzf - -C /usr/local
 
 PATH=$PATH:/usr/local/avr/bin
 
@@ -46,3 +46,8 @@ echo 'PATH=$PATH:/usr/local/avr/bin' |sudo tee -a  /etc/profile.d/avr.sh
 sudo apt-get autoremove
 # Maybe save a few hundred Mb of disk space by removing downloaded deb archives
 sudo apt-get clean
+
+cd ~/contiki
+git checkout avr-meshthing
+cd hello
+make
