@@ -35,7 +35,7 @@ echo
 # Make sure system is fully up to date
 sudo apt-get update
 sudo apt-get -y dist-upgrade
-sudo apt-get -y install git
+sudo apt-get -y install git libncurses5-dev
 
 [[ -d $CONTIKI_DIR ]] && rm -rf $CONTIKI_DIR
 
@@ -56,6 +56,6 @@ sudo apt-get autoremove
 # Maybe save a few hundred Mb of disk space by removing downloaded deb archives
 sudo apt-get clean
 
-cd $CONTIKI_DIR/helloworld
+cd $CONTIKI_DIR/examples/hello-world
 git checkout avr-meshthing
 make
