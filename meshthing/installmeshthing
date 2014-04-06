@@ -24,7 +24,7 @@
 
 AVR_PREFIX=/usr/local
 
-CONTIKI_PREFIX=~/contiki
+CONTIKI_DIR=~/contiki
 
 echo
 echo About to fully upgrade all relevent packges and install curses plus git
@@ -37,11 +37,11 @@ sudo apt-get update
 sudo apt-get -y dist-upgrade
 sudo apt-get -y install git
 
-[[ -d $CONTIKI_PREFIX ]] && rm -rf $CONTIKI_PREFIX
+[[ -d $CONTIKI_DIR ]] && rm -rf $CONTIKI_DIR
 
 git clone https://github.com/geekscape/contiki.git
 
-[[ -d $AVR_PREFIX ]] && sudo rm -rf $AVR_PREFIX
+[[ -d $AVR_PREFIXi/avr ]] && sudo rm -rf $AVR_PREFIX/avr
 
 wget https://www.dropbox.com/s/jdo6egxaxfnogtj/avr-gcc.tgz -O - | sudo tar -xzf - -C $AVR_PREFIX
 
@@ -56,7 +56,6 @@ sudo apt-get autoremove
 # Maybe save a few hundred Mb of disk space by removing downloaded deb archives
 sudo apt-get clean
 
-cd ~/contiki
+cd $CONTIKI_DIR/helloworld
 git checkout avr-meshthing
-cd hello
 make
