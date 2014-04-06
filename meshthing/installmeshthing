@@ -19,7 +19,12 @@
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 #
-#    Special thanks to @mikered for wifi set up code
+
+
+
+AVR_PREFIX=/usr/local
+
+CONTIKI_PREFIX=~/contiki
 
 echo
 echo About to fully upgrade all relevent packges and install curses plus git
@@ -32,14 +37,18 @@ sudo apt-get update
 sudo apt-get -y dist-upgrade
 sudo apt-get -y install git
 
+[[ -d $CONTIKI_PREFIX ]] && rm -rf $CONTIKI_PREFIX
+
 git clone https://github.com/geekscape/contiki.git
 
-wget https://www.dropbox.com/s/jdo6egxaxfnogtj/avr-gcc.tgz -O - | sudo tar -xzf - -C /usr/local
+[[ -d $AVR_PREFIX ]] && sudo rm -rf $AVR_PREFIX
 
-PATH=$PATH:/usr/local/avr/bin
+wget https://www.dropbox.com/s/jdo6egxaxfnogtj/avr-gcc.tgz -O - | sudo tar -xzf - -C $AVR_PREFIX
+
+PATH=$PATH:$AVR_PREFIX/avr/bin
 
 echo '# Setup for AVR compiler ' |sudo tee /etc/profile.d/avr.sh
-echo 'PATH=$PATH:/usr/local/avr/bin' |sudo tee -a  /etc/profile.d/avr.sh
+echo 'PATH=$PATH:$AVR_PREFIX/avr/bin' |sudo tee -a  /etc/profile.d/avr.sh
 
 
 # Remove anything out of date
