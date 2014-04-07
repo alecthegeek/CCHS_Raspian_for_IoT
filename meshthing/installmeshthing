@@ -39,9 +39,9 @@ sudo apt-get -y install git libncurses5-dev
 
 [[ -d $CONTIKI_DIR ]] && rm -rf $CONTIKI_DIR
 
-git clone https://github.com/geekscape/contiki.git
+git clone https://github.com/geekscape/contiki.git $CONTIKI_DIR
 
-[[ -d $AVR_PREFIXi/avr ]] && sudo rm -rf $AVR_PREFIX/avr
+[[ -d $AVR_PREFIX/avr ]] && sudo rm -rf $AVR_PREFIX/avr
 
 wget https://www.dropbox.com/s/jdo6egxaxfnogtj/avr-gcc.tgz -O - | sudo tar -xzf - -C $AVR_PREFIX
 
