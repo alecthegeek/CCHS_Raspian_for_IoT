@@ -48,7 +48,7 @@ wget https://www.dropbox.com/s/jdo6egxaxfnogtj/avr-gcc.tgz -O - | sudo tar -xzf 
 PATH=$PATH:$AVR_PREFIX/avr/bin
 
 echo '# Setup for AVR compiler ' |sudo tee /etc/profile.d/avr.sh
-echo 'PATH=$PATH:$AVR_PREFIX/avr/bin' |sudo tee -a  /etc/profile.d/avr.sh
+echo PATH='$PATH':$AVR_PREFIX/avr/bin' |sudo tee -a  /etc/profile.d/avr.sh
 
 
 # Remove anything out of date
