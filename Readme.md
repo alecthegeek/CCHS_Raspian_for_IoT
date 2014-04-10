@@ -22,22 +22,28 @@
 
 
 These scripts are designed to support @geekscape's Embedded Network Robots workshop at the Melbourne
-Connected Community Hacker Space. They should be generally useful.
+Connected Community Hacker Space. They should be generally useful for people working on Internet of
+Things projects (mesh networking, robotics, Arduino, etc etc).
 
 After following this process you should have
 
 1. A fully updated Raspian system
-2. The [Robot Operating System](http://www.ros.org/wiki/) installed and ready to use (optional)
-3. Working WiFi
-4. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software) (to access your Pi by hostname instead IP address)
-5. Java development kit installed (optional -- larger SD card recommended)
-6. Installation of lm-sensors and [i2c](http://en.wikipedia.org/wiki/I%C2%B2C) software
-7. [WiringPi](http://wiringpi.com/) library 
-8. Raspian configured for your environment (location, language etc)
-9. A few select development tools installed (Vim, Emacs, Git, GNU Screen, tmux, ack-grep and Subversion)
-10. [Arduino](http://arduino.cc/en/Main/Software) development environment (optional)
-11. [NodeBots](http://nodebots.io/) (optional). Will also install Arduino and Java SDK.
-12. The default user account renamed to something of your own choice (optional)
+2. Working WiFi
+3. Installation of lm-sensors and [i2c](http://en.wikipedia.org/wiki/I%C2%B2C) software
+4. Raspian configured for your environment (location, language etc)
+5. A few select development tools installed (Vim, Emacs, Git, GNU Screen, tmux, ack-grep and Subversion)
+6. The default user account renamed to something of your own choice and your own choise of hostname (optional)
+7. [WiringPi](http://wiringpi.com/) library
+8. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software) (to access your Pi by hostname instead of IP address)
+9. The [Robot Operating System](http://www.ros.org/wiki/) installed and ready to use (optional)
+10. Java development kit installed (optional -- larger SD card recommended)
+11. [Arduino](http://arduino.cc/en/Main/Software) development environment (optional)
+12. [NodeBots](http://nodebots.io/) (optional). Will also install Arduino and Java SDK.
+
+13. A optional script is provided to install support for [M9 Design](http://www.m9design.co/)'s Meshthing IPv6 mesh networking platform. After running the `RasPiI0T-1` and `RasPiI0T-2` (see below) run
+
+`wget http://tinyurl.com/meshthing -O - | bash`
+
 
 <!--
 13. A optional script is provided to install Minecraft and set up the API for development. It is *not* depenedent on the other scripts. To install Minefraft type the following at the terminal
