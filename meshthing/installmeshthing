@@ -58,4 +58,4 @@ sudo apt-get clean
 
 cd $CONTIKI_DIR/examples/hello-world
 git checkout avr-meshthing
-make
+make TARGET=avr-meshthing hello-world.hex
