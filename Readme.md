@@ -1,7 +1,7 @@
 #Guided install and configuration for Raspberry Pi Debian
 
 
- Copyright (c) 2013 All Right Reserved  Alec Clews
+ Copyright (c) 2013-2014 All Right Reserved  Alec Clews
 
  author: Alec Clews
  alecclews@gmail.com
@@ -34,7 +34,7 @@ After following this process you should have
 5. A few select development tools installed (Vim, Emacs, Git, GNU Screen, tmux, ack-grep and Subversion)
 6. The default user account renamed to something of your own choice and your own choise of hostname (optional)
 7. [WiringPi](http://wiringpi.com/) library
-8. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software) (to access your Pi by hostname instead of IP address)
+8. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software)) (to access your Pi by hostname instead of IP address)
 9. The [Robot Operating System](http://www.ros.org/wiki/) installed and ready to use (optional)
 10. Java development kit installed (optional -- larger SD card recommended)
 11. [Arduino](http://arduino.cc/en/Main/Software) development environment (optional)
