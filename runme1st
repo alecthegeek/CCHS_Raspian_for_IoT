@@ -208,6 +208,9 @@ sudo apt-get update
 # Make sure we using the lastest veriosn of config script
 sudo apt-get install -y raspi-config
 
+#save 1/2G of space
+sudo apt-get purge wolfram-engine
+
 oldhostname=$(cat /etc/hostname)
 echo
 echo It is highly recommended that the hostname is changed to something unique on the network.
