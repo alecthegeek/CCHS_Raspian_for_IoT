@@ -36,11 +36,11 @@ After following this process you should have
 7. [WiringPi](http://wiringpi.com/) library
 8. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software)) (to access your Pi by hostname instead of IP address)
 9. The [Robot Operating System](http://www.ros.org/wiki/) installed and ready to use (optional)
-10. Java development kit installed (optional -- larger SD card recommended)
+10. Java development kit installed for older images (optional -- larger SD card recommended)
 11. [Arduino](http://arduino.cc/en/Main/Software) development environment (optional)
 12. [NodeBots](http://nodebots.io/) (optional). Will also install Arduino and Java SDK.
 
-13. A optional script is provided to install support for [M9 Design](http://www.m9design.co/)'s Meshthing IPv6 mesh networking platform. After running the `RasPiI0T-1` and `RasPiI0T-2` (see below) run
+13. A optional script is provided to install support for [M9Design](http://www.m9design.co/)'s MeshThing IPv6 mesh networking platform. After running the `RasPiI0T-1` and `RasPiI0T-2` (see below) run
 
 `wget http://tinyurl.com/meshthing -O - | bash`
 
@@ -52,11 +52,11 @@ After following this process you should have
 
 -->
 
-Assumes you are using Raspian Linux
+NB These scripts assume you are using Raspian Linux
 
-ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
+<!-- ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 ## Instructions
-
+-->
 * Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough (leaves about 1Gb free)
 * Boot the Pi from the new SD image and log in as the default user (initially `pi`)
 * If the Raspi Config menu utility appears then configure your keyboard and exit back to the command prompt
