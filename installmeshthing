@@ -22,9 +22,9 @@
 
 
 
-AVR_PREFIX=/usr/local
+AVR_PREFIX=/usr/local ; export AVR_PREFIX
 
-CONTIKI_DIR=~/contiki
+CONTIKI_DIR=~/contiki ; export CONTIKI_DIR
 
 echo
 echo About to fully upgrade all relevent packges and install curses plus git
@@ -45,11 +45,13 @@ git clone https://github.com/geekscape/contiki.git $CONTIKI_DIR
 
 wget https://www.dropbox.com/s/jdo6egxaxfnogtj/avr-gcc.tgz -O - | sudo tar -xzf - -C $AVR_PREFIX
 
-PATH=$PATH:$AVR_PREFIX/avr/bin
 
 echo '# Setup for AVR compiler ' |sudo tee /etc/profile.d/avr.sh
-echo PATH='$PATH':$AVR_PREFIX/avr/bin |sudo tee -a  /etc/profile.d/avr.sh
+echo 'AVR_PREFIX=$AVR_PREFIX ; export AVR_PREFIX' |sudo tee -a  /etc/profile.d/avr.sh
+echo 'PATH=$PATH:$AVR_PREFIX/avr/bin' |sudo tee -a  /etc/profile.d/avr.sh
+echo 'CONTIKI_DIR=~/contiki ; export CONTIKI_DIR'  |sudo tee -a  /etc/profile.d/avr.sh
 
+. /etc/profile.d/avr.sh
 
 # Remove anything out of date
 sudo apt-get autoremove
