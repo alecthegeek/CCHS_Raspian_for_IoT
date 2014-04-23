@@ -209,7 +209,7 @@ sudo apt-get update
 sudo apt-get install -y raspi-config
 
 #save 1/2G of space
-sudo apt-get purge wolfram-engine
+sudo apt-get purge wolfram-engine || true #apt-get weirdness
 
 oldhostname=$(cat /etc/hostname)
 echo
