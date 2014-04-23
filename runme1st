@@ -205,11 +205,21 @@ wget http://64.91.227.57/repos/rospbian.key -O - | sudo apt-key add -
 # Get updated package list
 sudo apt-get update
 
-# Make sure we using the lastest veriosn of config script
+# Make sure we using the lastest version of config script
 sudo apt-get install -y raspi-config
 
+echo
+echo I suggest removing the Wolframe engine as it\'s of limited use in IoT
+echo projects. It will save about 1/2G of disk space and a *lot* of time
+echo during upgrades
+
+
+if [[ $(ask "Do you wish to remove Wolframe engine? [y/N] ") =~ ^[Yy]$ ]]
+then
 #save 1/2G of space
-sudo apt-get purge wolfram-engine || true #apt-get weirdness
+        sudo apt-get -y purge wolfram-engine
+fi
+
 
 oldhostname=$(cat /etc/hostname)
 echo
