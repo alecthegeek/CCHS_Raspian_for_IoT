@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+# Build the AVR build chain on a Raspberry Pi for MeshThing
+# Based on work by @geekscape at https://gist.github.com/geekscape/10336517
+
+# Sun Mar 16 19:44:44 EST 2014 [andyg]
+# Build avr-gcc tool chain for ATMega256RFR2
+# - See http://www.nongnu.org/avr-libc/user-manual/install_tools.html
+# - See http://permalink.gmane.org/gmane.comp.gcc.patches/283638
+# - See https://github.com/matthijskooijman/pinoccio-firmware
+# - See http://apt.stderr.nl/pool/main/g/gcc-avr/gcc-avr_4.8-2.pinoccio1.tar.gz
+#   Contains avr-gcc "02_support_rfr2.patch" used below
+  
+echo Warning! Takes approx 10 hours and 2.5G of disk space to build and install
+echo Press any key to continue
+read x
+
+AVR_PREFIX=/usr/local/avr
+
+if [[ ! -f   /etc/profile.d/avr.sh ]] ; then
+    echo '# Setup for AVR compiler ' |sudo tee /etc/profile.d/avr.sh
+    echo AVR_PREFIX=$AVR_PREFIX \; export AVR_PREFIX |sudo tee -a  /etc/profile.d/avr.sh
+    echo 'PATH=$AVR_PREFIX/bin:$PATH' |sudo tee -a  /etc/profile.d/avr.sh
+    echo 'CONTIKI_DIR=~/contiki ; export CONTIKI_DIR'  |sudo tee -a  /etc/profile.d/avr.sh
+fi
+
+. /etc/profile.d/avr.sh
+
+sudo apt-get install libgmp-dev libmpfr-dev libmpc-dev texinfo flex bison automake libelf-dev libgusb-dev \
+                     libftdi-dev libftdi1 
+  
+sudo mkdir $AVR_PREFIX
+mkdir downloads src  #local build area in current default directory
+
+cd downloads
+
+wget ftp://sourceware.org/pub/binutils/releases/binutils-2.24.tar.bz2
+wget http://www.netgull.com/gcc/releases/gcc-4.8.2/gcc-4.8.2.tar.bz2
+wget http://apt.stderr.nl/pool/main/g/gcc-avr/gcc-avr_4.8-2.pinoccio1.tar.gz
+wget http://ftp.twaren.net/Unix/NonGNU/avrdude/avrdude-6.1.tar.gz
+
+# Build avr binutils
+# http://sources.redhat.com/binutils
+
+cd ../src
+tar xjf ../downloads/binutils-2.24.tar.bz2
+cd binutils-2.24
+mkdir obj-avr
+cd obj-avr
+../configure --prefix=$AVR_PREFIX --target=avr --disable-nls
+make
+
+# Test new avr binutils
+if !  ./gas/as-new --help | grep -i "atmega256rfr2" ; then
+    echo Build of avr binuntils has failed
+    exit 1
+fi
+
+sudo make install
+
+# Build avr-gcc
+# http://gcc.gnu.org
+
+cd ../..
+tar xjf ../downloads/gcc-4.8.2.tar.bz2
+tar xzf ../downloads/gcc-avr_4.8-2.pinoccio1.tar.gz
+cd gcc-4.8.2
+patch gcc/config/avr/avr-mcus.def   ../gcc-avr-4.8/debian/debian_patches/02_support_rfr2.patch
+mkdir obj-avr
+cd obj-avr
+../configure --prefix=$AVR_PREFIX --target=avr --enable-languages=c,c++ \
+    --disable-nls --disable-libssp --with-dwarf2
+make
+
+# Test new avr-gcc
+
+if ! ./gcc/xgcc -E -mmcu=atmega256rfr2 \
+	<(echo 'int main(int charc, char **charv){return 0;}') ; then
+# Should not complain about an unsupported MCU type
+    echo Build of avr GCC has failed
+    exit 1
+fi
+
+echo cd $(pwd) \; make install | sudo -E sh
+
+# Build avr-libc
+# http://savannah.nongnu.org/projects/avr-libc
+cd ../..
+svn co svn://svn.sv.gnu.org/avr-libc/trunk/avr-libc
+cd avr-libc
+./bootstrap
+./configure --prefix=$AVR_PREFIX --build=`./config.guess` --host=avr
+make
+sudo make install
+
+# Build avrdude 6.1 (support for ATMega256RFR2)
+# http://savannah.nongnu.org/projects/avrdude
+
+cd ..
+tar xzf ../downloads/avrdude-6.1.tar.gz
+cd avrdude-6.1
+mkdir obj-avr
+cd obj-avr
+../configure --prefix=$AVR_PREFIX
+make
+
+# Test new avrdude
+if ./avrdude -c stk500 -p atmega256rfr2 | grep "avrdude done.  Thank you." ; then
+    echo Build of avrdude binuntils has failed
+    exit 1
+fi
+
+sudo make install
