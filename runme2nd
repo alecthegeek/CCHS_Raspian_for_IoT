@@ -157,7 +157,7 @@ echo 'no_of_days=7' |sudo tee -a /etc/profile.d/checkUpgrade.sh
 echo 'if [[ $(( ( $(date +%s) - $(stat -c %Y /var/lib/apt/periodic/update-success-stamp)) > ($no_of_days * 24 * 60 *60 ) )) ]] ; then' |\
                  sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo 'echo It has been at least $no_of_days days since the last update' |sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
-echo 'echo Please run \"sudo apt-get update \&\& sudo apt-get -y upgrade"' |\
+echo 'echo Please run \"sudo apt-get update \&\& sudo apt-get -y upgrade\"' |\
                  sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo fi | sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 
