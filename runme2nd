@@ -21,6 +21,26 @@
 #
 #    Special thanks to @mikered for wifi set up code
 
+
+
+# Add Check to encourage users to keep system up to date
+
+
+echo 'APT::Update::Post-Invoke-Success {"touch /var/lib/apt/periodic/update-success-stamp 2>/dev/null || true";};' | \
+				sudo tee -a /etc/apt/apt.conf.d/15update-stamp > /dev/null
+
+# Set initial check to every 7 days
+
+echo '# Check apt-get is run every few days' |sudo tee /etc/profile.d/checkUpgrade.sh
+echo 'no_of_days=7' |sudo tee -a /etc/profile.d/checkUpgrade.sh
+echo 'if [[ $(( ( $(date +%s) - $(stat -c %Y /var/lib/apt/periodic/update-success-stamp)) > ($no_of_days * 24 * 60 *60 ) )) ]] ; then' |\
+                 sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
+echo '  echo It has been at least $no_of_days days since the last update' |sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
+echo '  echo Please run \"sudo apt-get update \&\& sudo apt-get -y upgrade\"' |\
+                 sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
+echo fi | sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
+
+
 echo
 echo About to fully upgrade all relevant packages and optionally install others
 echo This will take some time
@@ -143,23 +163,6 @@ if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed
   sudo -i npm install -g socket.io    # 0.9.16
 
 fi
-
-# Add Check to encourage users to keep system up to date
-
-
-echo 'APT::Update::Post-Invoke-Success {"touch /var/lib/apt/periodic/update-success-stamp 2>/dev/null || true";};' | \
-				sudo tee -a /etc/apt/apt.conf.d/15update-stamp > /dev/null
-
-# Set initial check to every 7 days
-
-echo '# Check apt-get is run every few days' |sudo tee /etc/profile.d/checkUpgrade.sh
-echo 'no_of_days=7' |sudo tee -a /etc/profile.d/checkUpgrade.sh
-echo 'if [[ $(( ( $(date +%s) - $(stat -c %Y /var/lib/apt/periodic/update-success-stamp)) > ($no_of_days * 24 * 60 *60 ) )) ]] ; then' |\
-                 sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
-echo 'echo It has been at least $no_of_days days since the last update' |sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
-echo 'echo Please run \"sudo apt-get update \&\& sudo apt-get -y upgrade\"' |\
-                 sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
-echo fi | sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 
 # Remove anything out of date
 sudo apt-get autoremove
