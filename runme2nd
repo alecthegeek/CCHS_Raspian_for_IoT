@@ -107,7 +107,7 @@ else
 fi
 
 if [[ $(ask "Do you wish to install a Java Development Kit?[y/N] ") =~ ^[Yy]$ ]] ; then
-  sudo apt-get -y install oracle-java7-jdk oracle-java7-doc
+  sudo apt-get -y install oracle-java7-jdk
 else
   echo
 fi
