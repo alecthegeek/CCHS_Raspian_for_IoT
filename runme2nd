@@ -46,6 +46,9 @@ echo About to fully upgrade all relevant packages and optionally install others
 echo This will take some time
 echo
 
+# In case the upgrade does nothing create the masrker file
+
+sudo touch /var/lib/apt/periodic/update-success-stamp
 
 # Make sure system is fully up to date
 sudo apt-get -y dist-upgrade
