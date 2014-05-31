@@ -19,7 +19,7 @@
 #    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 #
-# Run this script on a new install of Raspberry Pi Raspian
+# NB These Scripts support Pi Raspian (Debian)
 
 
 export UPDATE_LABEL="Updated_$(date +%F)"
@@ -220,29 +220,6 @@ then
         sudo apt-get -y purge wolfram-engine
 fi
 
-
-oldhostname=$(cat /etc/hostname)
-echo
-echo It is highly recommended that the hostname is changed to something unique on the network.
-echo Later you will have the option to install Zero conf which requires ALL machines to have
-echo a unique name. If you can\'t think of anything I suggest something like \<yourName\>pi\<n\> where
-echo n is some single digit number. The current hostname is \"$oldhostname\"
-echo
-
-read -p  "Do you wish to change the hostname?[y/N] " -n 1 -r < /dev/tty
-echo
-
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-
-  read -p  "Please enter the hostname (letters and numbers only) " -r < /dev/tty
-
-  echo $REPLY | sudo tee /etc/hostname > /dev/null
-
-  sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
-
-fi
-
 echo Processing
 sudo dpkg-reconfigure locales
 sudo dpkg-reconfigure tzdata
@@ -274,7 +251,29 @@ fi
 
 
 
-# Rename the pi user accountA
+oldhostname=$(cat /etc/hostname)
+echo
+echo It is highly recommended that the hostname is changed to something unique on the network.
+echo Later you will have the option to install Zero conf which requires ALL machines to have
+echo a unique name. If you can\'t think of anything I suggest something like \<yourName\>pi\<n\> where
+echo n is some single digit number. The current hostname is \"$oldhostname\"
+echo
+
+if [[ $(ask "Do you wish to change the hostname?[y/N]  ") =~ ^[Yy]$ ]]
+then
+
+  read -p  "Please enter the hostname (letters and numbers only) " -r < /dev/tty
+
+  echo $REPLY | sudo tee /etc/hostname > /dev/null
+
+  sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
+
+else
+  echo
+fi
+
+
+# Rename the pi user account
 echo
 echo "You will now be offered to the chance to change the user name of the current user account"
 echo "from $USER to something of your own choosing"
@@ -282,10 +281,7 @@ echo
 echo "N.B. If this process fails you will probably have to re-image your SD card"
 echo
 
-read -p  "Do you wish to rename the $USER user account?[y/N] " -n 1 -r < /dev/tty
-echo
-
-if [[ $REPLY =~ ^[Yy]$ ]]
+if [[ $(ask "Do you wish to rename the $USER user account?[y/N] ") =~ ^[Yy]$ ]]
 then
 
     read -p  "Please enter the new user name " -r < /dev/tty
@@ -300,10 +296,12 @@ EOF
     USER=$REPLY
 
     echo "User name changed to $USER"
-
+else
+  echo
 fi
 
-echo If all has gone well you will be able to access this device using ssh $USER@$(hostname -s).local
+echo If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local
+echo assuming you have installed Avahi Zero Conf above
 
 #Expand the rootfs and reboot
 sudo raspi-config --expand-rootfs

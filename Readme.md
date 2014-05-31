@@ -21,9 +21,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-These scripts are designed to support @geekscape's Embedded Network Robots workshop at the Melbourne
-Connected Community Hacker Space. They should be generally useful for people working on Internet of
-Things projects (mesh networking, robotics, Arduino, etc etc).
+These scripts are designed to support @geekscape's Embedded Network Robots
+workshop at the Melbourne Connected Community Hacker Space. They should be
+generally useful for people working on Internet of Things projects
+(.e.g mesh networking, robotics, Arduino, etc etc).
 
 After following this process you should have
 
@@ -52,17 +53,20 @@ After following this process you should have
 
 -->
 
-NB These scripts assume you are using Raspian Linux
+NB These scripts assume you are using Raspian Linux (Debian Linux)
 
 <!-- ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 ## Instructions
 -->
-* Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough (leaves about 1Gb free)
+* Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough
+for the basics
 * Boot the Pi from the new SD image and log in as the default user (initially `pi`)
-* If the Raspi Config menu utility appears then configure your keyboard and exit back to the command prompt
+* If the Raspi Config menu utility appears then configure your keyboard and exit
+back to the command prompt
 * Make sure your Pi has access to the Internet
  * If you have a supported WiFi adapter you can configure it as follows:
-  `wpa_passphrase <SSID> <WPA_PASSWORD> | sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf`
+  `wpa_passphrase <SSID> <WPA_PASSWORD> | \
+          sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf`
    then reboot and log as the default user again
 
 * Now run the following command.
@@ -81,7 +85,7 @@ At the end the Pi will reboot
 
 
 You can use the already existing default user account for development or feel free to create a different user account if you want. The rest
-of these notes should be run as that development account. 
+of these notes should be run as that development account.
   * Edit `~/.bashrc` and add the line `source /opt/ros/groovy/setup.bash` (if you are using the default user account this has already been done for you)
   * Logout and login again
   * Read and review [http://www.ros.org/wiki/ROS/StartGuide]
