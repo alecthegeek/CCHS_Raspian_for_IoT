@@ -33,7 +33,7 @@ echo 'APT::Update::Post-Invoke-Success {"touch /var/lib/apt/periodic/update-succ
 
 echo '# Check apt-get is run every few days' |sudo tee /etc/profile.d/checkUpgrade.sh
 echo 'no_of_days=7' |sudo tee -a /etc/profile.d/checkUpgrade.sh
-echo 'no_of_days=$(($no_of_days*24*60*60))' |sudo tee -a /etc/profile.d/checkUpgrade.sh
+echo 'no_of_seconds=$(($no_of_days*24*60*60))' |sudo tee -a /etc/profile.d/checkUpgrade.sh
 echo 'if [[  ! -e /var/lib/apt/periodic/update-success-stamp ]] ||\' |sudo tee -a /etc/profile.d/checkUpgrade.sh
 echo '	 (( ( $(date +%s) - $(stat -c %Y /var/lib/apt/periodic/update-success-stamp) ) > $no_of_seconds )) ; then' |\
             sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
