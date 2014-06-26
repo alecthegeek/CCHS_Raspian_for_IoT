@@ -148,7 +148,7 @@ if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed
   sudo apt-get -y install oracle-java7-jdk
   sudo apt-get -y install minicom arduino arduino-mk libdevice-serialport-perl
 
-  node_ver=v0.10.17   # Modify to lastest that works
+  node_ver=v0.10.26   # Modify to lastest that works
   wget http://nodejs.org/dist/$node_ver/node-$node_ver-linux-arm-pi.tar.gz
   [[ -d /usr/local/node-$node_ver-linux-arm-pi ]] && sudo rm -rf /usr/local/node-$node_ver-linux-arm-pi
   sudo tar -zxpf node-$node_ver-linux-arm-pi.tar.gz -C /usr/local
@@ -162,11 +162,11 @@ if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed
   export NODE_JS_HOME=/usr/local/node
   PATH=$PATH:$NODE_JS_HOME/bin
 
-  sudo -i npm install -g serialport   # 1.1.3
-  sudo -i npm install -g firmata      # 0.2.9
-  sudo -i npm install -g johnny-five  # 0.7.2
-  sudo -i npm install -g socket.io    # 0.9.16
-
+  sudo -i npm install -g serialport
+  sudo -i npm install -g firmata
+  sudo -i npm install -g johnny-five
+  sudo -i npm install -g socket.io
+  sudo -i npm install -g raspo.io  
 fi
 
 # Remove anything out of date
