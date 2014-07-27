@@ -65,7 +65,7 @@ for the basics
 back to the command prompt
 * Make sure your Pi has access to the Internet
  * If you have a supported WiFi adapter you can configure it as follows:
-  `wpa_passphrase <SSID> <WPA_PASSWORD> | \
+  `wpa_passphrase <SSID> <WPA_PASSWORD> | 
           sudo tee -a /etc/wpa_supplicant/wpa_supplicant.conf`
    then reboot and log as the default user again
 
