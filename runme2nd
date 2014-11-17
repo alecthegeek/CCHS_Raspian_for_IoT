@@ -148,19 +148,16 @@ if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed
   sudo apt-get -y install oracle-java8-jdk
   sudo apt-get -y install minicom arduino arduino-mk libdevice-serialport-perl
 
-  node_ver=v0.11.9   # Modify to lastest that works
-  [[ -d /usr/local/node-$node_ver-linux-arm-pi ]] && sudo rm -rf /usr/local/node-$node_ver-linux-arm-pi
-  wget http://nodejs.org/dist/$node_ver/node-$node_ver-linux-arm-pi.tar.gz -O - |
-  sudo tar -xzpf - -C /usr/local
-  [[ -L /usr/local/node ]] && sudo rm /usr/local/node
-  sudo ln -s /usr/local/node-$node_ver-linux-arm-pi /usr/local/node
+  wget http://node-arm.herokuapp.com/node_latest_armhf.deb
+  sudo dpkg -i node_latest_armhf.deb
+  rm node_latest_armhf.deb
 
-  echo '# Setup for NodeBots ' |sudo tee /etc/profile.d/nodejs.sh
-  echo 'NODE_JS_HOME=/usr/local/node; export NODE_JS_HOME' |sudo tee -a /etc/profile.d/nodejs.sh
-  echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile.d/nodejs.sh
+  #echo '# Setup for NodeBots ' |sudo tee /etc/profile.d/nodejs.sh
+  #echo 'NODE_JS_HOME=/usr/local/node; export NODE_JS_HOME' |sudo tee -a /etc/profile.d/nodejs.sh
+  #echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile.d/nodejs.sh
 
-  export NODE_JS_HOME=/usr/local/node
-  PATH=$PATH:$NODE_JS_HOME/bin
+  #export NODE_JS_HOME=/usr/local/node
+  #PATH=$PATH:$NODE_JS_HOME/bin
 
   sudo -i npm install -g serialport
   sudo -i npm install -g firmata
