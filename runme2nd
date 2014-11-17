@@ -148,10 +148,10 @@ if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed
   sudo apt-get -y install oracle-java8-jdk
   sudo apt-get -y install minicom arduino arduino-mk libdevice-serialport-perl
 
-  node_ver=v0.10.28   # Modify to lastest that works
-  wget http://nodejs.org/dist/$node_ver/node-$node_ver-linux-arm-pi.tar.gz
+  node_ver=v0.11.9   # Modify to lastest that works
   [[ -d /usr/local/node-$node_ver-linux-arm-pi ]] && sudo rm -rf /usr/local/node-$node_ver-linux-arm-pi
-  sudo tar -zxpf node-$node_ver-linux-arm-pi.tar.gz -C /usr/local
+  wget http://nodejs.org/dist/$node_ver/node-$node_ver-linux-arm-pi.tar.gz -O - |
+  sudo tar -xzpf - -C /usr/local
   [[ -L /usr/local/node ]] && sudo rm /usr/local/node
   sudo ln -s /usr/local/node-$node_ver-linux-arm-pi /usr/local/node
 
