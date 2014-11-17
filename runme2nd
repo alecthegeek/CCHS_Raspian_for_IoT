@@ -132,20 +132,20 @@ else
 fi
 
 if [[ $(ask "Do you wish to install a Java Development Kit?[y/N] ") =~ ^[Yy]$ ]] ; then
-  sudo apt-get -y install oracle-java7-jdk
+  sudo apt-get -y install oracle-java8-jdk
 else
   echo
 fi
 
 
 if [[ $(ask "Do you wish to install the Arduino IDE (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ; then
-  sudo apt-get -y install oracle-java7-jdk arduino arduino-mk libdevice-serialport-perl
+  sudo apt-get -y install oracle-java8-jdk arduino arduino-mk libdevice-serialport-perl
 else
   echo
 fi
 
 if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ;then
-  sudo apt-get -y install oracle-java7-jdk
+  sudo apt-get -y install oracle-java8-jdk
   sudo apt-get -y install minicom arduino arduino-mk libdevice-serialport-perl
 
   node_ver=v0.10.28   # Modify to lastest that works
