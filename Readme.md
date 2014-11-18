@@ -43,7 +43,7 @@ After following this process you should have
 
 13. A optional script is provided to install support for [M9Design](http://www.m9design.co/)'s MeshThing IPv6 mesh networking platform. After running the `RasPiI0T-1` and `RasPiI0T-2` (see below) run
 
-`wget http://tinyurl.com/meshthing -O - | bash`
+`wget https://tinyurl.com/meshthing -O - | bash`
 
 
 <!--
@@ -71,13 +71,13 @@ back to the command prompt
 
 * Now run the following command.
 
-`wget http://tinyurl.com/RasPiIoT-1 -O - | bash`
+`wget https://tinyurl.com/RasPiIoT-1 -O - | bash`
 
 Pi computer now reboots
 
 * Log in as the default user and run the following commands
 
-`wget http://tinyurl.com/RasPiIoT-2 -O - | bash`
+`wget https://tinyurl.com/RasPiIoT-2 -O - | bash`
 
 This is a long process and will require user input at various stages.
 
