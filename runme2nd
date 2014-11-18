@@ -143,8 +143,8 @@ then
   sudo apt-get install -y checkinstall cmake
   
   # libconsole-bridge-dev
-  # When check-install asks for any changes, the name (2) needs to change from
-  # "console-bridge" to "libconsole-bridge-dev" otherwise the rosdep install wont find it.
+  echo 'When check-install asks for any changes, the name (2) needs to change from'
+  echo 'console-bridge" to "libconsole-bridge-dev" otherwise the rosdep install wont find it.'
   cd ~/ros_catkin_ws/external_src
   sudo apt-get install -y libboost-system-dev libboost-thread-dev
   git clone https://github.com/ros/console_bridge.git
@@ -159,8 +159,8 @@ then
   sudo dpkg -i liblz4-1_0.0~r122-2_armhf.deb liblz4-dev_0.0~r122-2_armhf.deb
 
   # liburdfdom-headers-dev
-  echo  When check-install asks for any changes, the name (2) needs to change from
-  echo  "urdfdom-headers" to "liburdfdom-headers-dev" otherwise the rosdep install wont find it.
+  echo  'When check-install asks for any changes, the name (2) needs to change from'
+  echo  '"urdfdom-headers" to "liburdfdom-headers-dev" otherwise the rosdep install wont find it.'
   cd ~/ros_catkin_ws/external_src
   git clone https://github.com/ros/urdfdom_headers.git
   cd urdfdom_headers
@@ -168,8 +168,8 @@ then
   sudo checkinstall make install
   
   # liburdfdom-dev
-  echo  When check-install asks for any changes, the name (2) needs to change from
-  echo "urdfdom" to "liburdfdom-dev" otherwise the rosdep install wont find it.
+  echo 'When check-install asks for any changes, the name (2) needs to change from'
+  echo '"urdfdom" to "liburdfdom-dev" otherwise the rosdep install wont find it.'
   cd ~/ros_catkin_ws/external_src
   sudo apt-get install libboost-test-dev libtinyxml-dev
   git clone https://github.com/ros/urdfdom.git
@@ -178,8 +178,8 @@ then
   sudo checkinstall make install
   
   # collada-dom-dev
-  echo When check-install asks for any changes, the name (2) needs to change from
-  echo "collada-dom" to "collada-dom-dev" otherwise the rosdep install wont find it.
+  echo 'When check-install asks for any changes, the name (2) needs to change from'
+  echo '"collada-dom" to "collada-dom-dev" otherwise the rosdep install wont find it.'
   cd ~/ros_catkin_ws/external_src
   sudo apt-get install libboost-filesystem-dev libxml2-dev
   wget http://downloads.sourceforge.net/project/collada-dom/Collada%20DOM/Collada%20DOM%202.4/collada-dom-2.4.0.tgz
