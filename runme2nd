@@ -114,7 +114,7 @@ fi
 if [[ $(ask "Do you wish to install the Robot OS? (http://ros.org)[y/N] ") =~ ^[Yy]$ ]]
 then
   # Add repo for Robot operating System
-  sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu wheezy main"' > /etc/apt/sources.list.d/ros-latest.list
+  echo "deb http://packages.ros.org/ros/ubuntu wheezy main" | sudo tee /etc/apt/sources.list.d/ros-latest.list
   wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
   sudo apt-get update
   
