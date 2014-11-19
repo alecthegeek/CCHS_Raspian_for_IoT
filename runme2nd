@@ -136,8 +136,8 @@ then
   
   rosinstall_generator ros_comm --rosdistro indigo --deps --wet-only --exclude roslisp --tar > indigo-ros_comm-wet.rosinstall
   wstool init -j8 src indigo-ros_comm-wet.rosinstall
-  rosinstall_generator desktop --rosdistro indigo --deps --wet-only --exclude roslisp --tar > indigo-desktop-wet.rosinstall
-  wstool init -j8 src indigo-desktop-wet.rosinstall
+  # rosinstall_generator desktop --rosdistro indigo --deps --wet-only --exclude roslisp --tar > indigo-desktop-wet.rosinstall
+  # wstool init -j8 src indigo-desktop-wet.rosinstall
   
   mkdir ~/ros_catkin_ws/external_src
   sudo apt-get install -y checkinstall cmake
