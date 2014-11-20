@@ -73,13 +73,23 @@ back to the command prompt
 
 `wget https://tinyurl.com/RasPiIoT-1 -O - | bash`
 
+the following variation is useful as it provides a log of the script output.
+
+`script install1.script -c "bash <(wget -O -  https://tinyurl.com/RasPiIoT-1)"`
+
 Pi computer now reboots
 
 * Log in as the default user and run the following commands
 
 `wget https://tinyurl.com/RasPiIoT-2 -O - | bash`
 
+and again the following variation is useful as it provides a log of the script output.
+
+`script install2.script -c "bash <(wget -O -  https://tinyurl.com/RasPiIoT-2)"`
+
 This is a long process and will require user input at various stages.
+
+WARNING: Installing and building Robot Operating System (ROS) takes appro 4 hours.
 
 At the end the Pi will reboot
 
