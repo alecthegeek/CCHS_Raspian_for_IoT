@@ -195,13 +195,6 @@ ask() {
   echo $REPLY
 }
 
-# Add experimental repository for Robot Operating System (ROS Groovy)
-# See http://wiki.ros.org/groovy/Installation/Raspbian
-sudo sh -c 'echo \
-"deb http://64.91.227.57/repos/rospbian wheezy main" > \
-/etc/apt/sources.list.d/rospbian.list'
-wget http://64.91.227.57/repos/rospbian.key -O - | sudo apt-key add -
-
 # Get updated package list
 sudo apt-get update
 
