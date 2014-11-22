@@ -230,7 +230,7 @@ if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed
   sudo -i npm install -g firmata
   sudo -i npm install -g johnny-five
   sudo -i npm install -g socket.io
-  sudo -i npm install -g raspo.io  
+  sudo -i npm install -g raspi-io  
 fi
 
 # Remove anything out of date
