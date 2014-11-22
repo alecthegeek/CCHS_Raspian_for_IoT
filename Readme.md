@@ -73,9 +73,7 @@ back to the command prompt
 
 `wget https://tinyurl.com/RasPiIoT-1 -O - | bash`
 
-the following variation is useful as it provides a log of the script output.
 
-`script install1.script -c "bash <(wget -O -  https://tinyurl.com/RasPiIoT-1)"`
 
 Pi computer now reboots
 
@@ -83,9 +81,9 @@ Pi computer now reboots
 
 `wget https://tinyurl.com/RasPiIoT-2 -O - | bash`
 
-and again the following variation is useful as it provides a log of the script output.
+the following variation is useful as it provides a log of the script output with total time.
 
-`script install2.script -c "bash <(wget -O -  https://tinyurl.com/RasPiIoT-2)"`
+`script install2.script -c "time bash <(wget -O - https://tinyurl.com/RasPiIoT-2)"`
 
 This is a long process and will require user input at various stages.
 
