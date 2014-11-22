@@ -243,6 +243,6 @@ sudo apt-get clean
 [[ -e /etc/profile.d/raspi-config.sh ]] && sudo rm -f /etc/profile.d/raspi-config.sh
 
 echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis
-read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
+read -p "System will reboot in 1 minute. Press any key to continue and be patient" -n 1 -r < /dev/tty
 
-sudo shutdown -rF +1& # Force disk check
+(sleep 5; sudo shutdown -rF +1)& # Force disk check
