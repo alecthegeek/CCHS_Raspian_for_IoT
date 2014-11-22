@@ -245,4 +245,4 @@ sudo apt-get clean
 echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis
 read -p "System will reboot in 5 seconds. Press any key to continue" -n 1 -r < /dev/tty
 
-(sleep 5; sudo shutdown -rF now)& # Force disk check
+nohup bash -c 'sleep 5; sudo shutdown -rF now'& # Force disk check
