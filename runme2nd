@@ -233,13 +233,6 @@ then
   sudo dpkg -i node_latest_armhf.deb
   rm node_latest_armhf.deb
 
-  echo '# Setup for NodeBots ' |sudo tee /etc/profile.d/nodejs.sh
-  echo 'NODE_JS_HOME=/usr/local/node; export NODE_JS_HOME' |sudo tee -a /etc/profile.d/nodejs.sh
-  echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile.d/nodejs.sh
-
-  export NODE_JS_HOME=/usr/local/node
-  PATH=$PATH:$NODE_JS_HOME/bin
-
 fi
 
 # Remove anything out of date
