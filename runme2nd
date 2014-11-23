@@ -21,10 +21,12 @@
 #
 #    Special thanks to @mikered for wifi set up code
 
-
+export UPDATE_LABEL="Updated_$(date +%F)"
+export LOG_FILE="/home/$USER/$UPDATE_LABEL.log"
+echo "Logging second CCHS update script: $LOG_FILE" | tee -a $LOG_FILE 2>&1
 
 # Add Check to encourage users to keep system up to date
-
+echo "__ Update Checking ____________________________" | tee -a $LOG_FILE 2>&1
 
 echo 'APT::Update::Post-Invoke-Success {"touch /var/lib/apt/periodic/update-success-stamp 2>/dev/null || true";};' | \
 				sudo tee -a /etc/apt/apt.conf.d/15update-stamp > /dev/null
@@ -41,11 +43,12 @@ echo '  echo It has been at least $no_of_days days since the last update' |sudo 
 echo '  echo Please run \"sudo apt-get update \&\& sudo apt-get -y upgrade\"' |\
                  sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo fi | sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
-
+echo "Update promt setup." >> $LOG_FILE 2>&1
 
 echo
-echo About to fully upgrade all relevant packages and optionally install others
-echo This will take some time
+echo "__ Updating ___________________________________" >> $LOG_FILE 2>&1
+echo About to fully upgrade all relevant packages and optionally install others | tee -a $LOG_FILE 2>&1
+echo This will take some time | tee -a $LOG_FILE 2>&1
 echo
 
 # In case the upgrade does nothing create the masrker file
@@ -53,7 +56,7 @@ echo
 sudo touch /var/lib/apt/periodic/update-success-stamp
 
 # Make sure system is fully up to date
-sudo apt-get -y dist-upgrade
+sudo apt-get -y dist-upgrade | tee -a $LOG_FILE 2>&1
 
 ask() {
   read -p "$1" -r < /dev/tty
@@ -61,15 +64,15 @@ ask() {
 }
 
 # Install and enable i2c and SPI
-sudo apt-get -y install i2c-tools lm-sensors python-smbus
+sudo apt-get -y install i2c-tools lm-sensors python-smbus | tee -a $LOG_FILE 2>&1
 sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -i -e 's/^#blacklist spi-bcm2708/blacklist spi-bcm2708/' \
   -e 's/^#blacklist i2c-bcm2708/blacklist i2c-bcm2708/'
 
-sudo adduser $USER i2c
+sudo adduser $USER i2c | tee -a $LOG_FILE 2>&1
 
-echo Installed support for I2C serial interface and LM sensors
-echo added $USER to the i2c group
+echo Installed support for I2C serial interface and LM sensors | tee -a $LOG_FILE 2>&1
+echo added $USER to the i2c group | tee -a $LOG_FILE 2>&1
 echo
 
 echo 'We will now install a few useful development tools (editors, source code control etc.)'
@@ -89,6 +92,7 @@ then
   wget -O - https://github.com/freetronics/PiLeven-tools/releases/download/v1.0/install_pileven.sh | sudo bash
 fi
   
+
 if [[ $(ask "Do you wish to install the Wiring Pi library? (http://wiringpi.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
 
@@ -96,13 +100,13 @@ then
 
   WP=/usr/src/wiringPi
 
-  sudo mkdir -p $WP
-  sudo chown $USER:$(id -g -n $USER) $WP
+  sudo mkdir -p $WP | tee -a $LOG_FILE 2>&1
+  sudo chown $USER:$(id -g -n $USER) $WP | tee -a $LOG_FILE 2>&1
 
-  pushd $WP
+  pushd $WP | tee -a $LOG_FILE 2>&1
 
-  git clone git://git.drogon.net/wiringPi .
-  ./build
+  git clone git://git.drogon.net/wiringPi . | tee -a $LOG_FILE 2>&1
+  ./build | tee -a $LOG_FILE 2>&1
 
   cat <<EOF |sudo tee /usr/local/bin/updateWiringPi
 #!/usr/bin/env sh
@@ -115,22 +119,23 @@ echo WiringPi updated ||
 echo WiringPi update failed
 EOF
 
-  sudo chmod + /usr/local/bin/updateWiringPi
+  sudo chmod + /usr/local/bin/updateWiringPi | tee -a $LOG_FILE 2>&1
 
-  echo "To update the wiringPi library run the script /usr/local/bin/updateWiringPi as needed"
+  echo "To update the wiringPi library run the script /usr/local/bin/updateWiringPi as needed" | tee -a $LOG_FILE 2>&1
   echo
 
-  popd
+  popd | tee -a $LOG_FILE 2>&1
 else
-  echo
+  echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
 if [[ $(ask "Do you wish to install the Robot OS? (http://ros.org)[y/N] ") =~ ^[Yy]$ ]]
 then
+  echo "__ Robot OS ___________________________________" | tee -a $LOG_FILE 2>&1
   # Add repo for Robot operating System
   echo "deb http://packages.ros.org/ros/ubuntu wheezy main" | sudo tee /etc/apt/sources.list.d/ros-latest.list
   wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
-  sudo apt-get update
+  sudo apt-get update | tee -a $LOG_FILE 2>&1
   
   # from http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi#Installation
 
@@ -208,20 +213,23 @@ then
   echo '# Setup for ROS ' |sudo tee /etc/profile.d/ros.sh
   echo source /opt/ros/indigo/setup.bash |sudo tee -a  /etc/profile.d/ros.sh
 else
-  echo
+  echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
+echo "__ JDK ________________________________________" | tee -a $LOG_FILE 2>&1
 if [[ $(ask "Do you wish to install a Java Development Kit?[y/N] ") =~ ^[Yy]$ ]] ; then
-  sudo apt-get -y install oracle-java8-jdk
+  sudo apt-get -y install oracle-java8-jdk | tee -a $LOG_FILE 2>&1
 else
-  echo
+  echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
 
+
+echo "__ Arduino ____________________________________" | tee -a $LOG_FILE 2>&1
 if [[ $(ask "Do you wish to install the Arduino IDE (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ; then
-  sudo apt-get -y install oracle-java8-jdk arduino arduino-mk libdevice-serialport-perl
+  sudo apt-get -y install oracle-java7-jdk arduino arduino-mk libdevice-serialport-perl | tee -a $LOG_FILE 2>&1
 else
-  echo
+  echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
 if [[ $(ask "Do you wish to install node.js etc for NodeBot dev? (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]]
@@ -229,16 +237,17 @@ then
   sudo apt-get -y install oracle-java8-jdk minicom arduino arduino-mk libdevice-serialport-perl
   sudo pip install ino
 
-  wget https://node-arm.herokuapp.com/node_latest_armhf.deb
-  sudo dpkg -i node_latest_armhf.deb
-  rm node_latest_armhf.deb
+  wget https://node-arm.herokuapp.com/node_latest_armhf.deb | tee -a $LOG_FILE 2>&1
+  sudo dpkg -i node_latest_armhf.deb | tee -a $LOG_FILE 2>&1
+  rm node_latest_armhf.deb | tee -a $LOG_FILE 2>&1
 
 fi
 
+echo "__ Cleanup ____________________________________" | tee -a $LOG_FILE 2>&1
 # Remove anything out of date
-sudo apt-get autoremove
+sudo apt-get autoremove | tee -a $LOG_FILE 2>&1
 # Save a few hundred Mb of disk space by removing downloaded deb archives
-sudo apt-get clean
+sudo apt-get clean | tee -a $LOG_FILE 2>&1
 
 # Stop raspi-config from running on next reboot
 
@@ -248,3 +257,4 @@ echo Please use sudo raspi-config to configure additional options and use sudo a
 read -p "System will reboot in 5 seconds. Press any key to continue" -n 1 -r < /dev/tty
 
 nohup bash -c 'sleep 5; sudo shutdown -rF now'& # Force disk check
+

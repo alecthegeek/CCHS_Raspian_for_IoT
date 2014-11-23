@@ -34,9 +34,11 @@ setConfigOption() {
 }
 
 export -f setConfigOption
+export LOG_FILE="/home/$USER/$UPDATE_LABEL.log"
+echo "Logging CCHS update script: $LOG_FILE" | tee -a $LOG_FILE 2>&1
 
 setOverclock() {
-
+  echo "__ Overclocking _______________________________" | tee -a $LOG_FILE 2>&1
 
   clockSettings=( "None ARM:700MHz core:250MHz SDRAM:400MHz overvolt:0" \
     "Modest ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0" \
@@ -44,8 +46,7 @@ setOverclock() {
     "High ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6" \
     # "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6"
      )
-
-  echo
+  echo "ClockSettings: $clockSettings"  | tee -a $LOG_FILE 2>&1
 
 #CLOCKSETTINGS=$(echo --title "Over Clocking" --menu "Please select your clock settings from the following list. NB Turbo is NOT recommended " \
 #              $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
@@ -57,11 +58,13 @@ setOverclock() {
     sed -re 's/^.+ARM:([0-9]+)MHz core:([0-9]+)MHz SDRAM:([0-9]+)MHz overvolt:([0-9]+)$/arm_freq \1 core_freq \2 sdram_freq \3 over_voltage \4/' |
     xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
     break
+    echo "Selected: $c"  | tee -a $LOG_FILE 2>&1
   done < /dev/tty
 
 }
 
 splitMemory() {
+  echo "__ Memory _____________________________________" | tee -a $LOG_FILE 2>&1
   REPLY=0
   echo N.B. For Minecraft 64Mb of Video Memory is recommended
   while [[ ! $REPLY =~ (16|32|64|128|256) ]] ; do
@@ -69,6 +72,7 @@ splitMemory() {
   done
 
   setConfigOption gpu_mem $REPLY
+  echo "Video Memory: $REPLY"  | tee -a $LOG_FILE 2>&1
 }
 
 
@@ -86,6 +90,7 @@ calc_wt_size() {
     WT_WIDTH=120
   fi
   WT_MENU_HEIGHT=$(($WT_HEIGHT-8))
+  echo "Wt Size: $WT_WIDTH x $WT_HEIGHT"  | tee -a $LOG_FILE 2>&1
 }
 
 calc_wt_size
@@ -93,6 +98,7 @@ calc_wt_size
 
 do_wifi() {
 # Written by @mikerr and stolen by @alecthegeek, see https://github.com/mikerr/raspi-config
+echo "__ Wifi _______________________________________" | tee -a $LOG_FILE 2>&1
 
 wifidevice=wlan0
 WPAFILE=/etc/wpa_supplicant/wpa_supplicant.conf
@@ -186,42 +192,58 @@ whiptail --msgbox "Wifi settings updated for SSID: $SSID" 20 60 1
 # connect right now ?
 #wpa_supplicant -B -i$wifidevice -c $WPAFILE
 #dhclient $wifidevice -1 
+  echo "SSID: $SSID on wifidevice { $ENCRYPTION }" | tee -a $LOG_FILE 2>&1
+  echo "Wpa File: $WPAFILE" | tee -a $LOG_FILE 2>&1
 
 }
 
 
 ask() {
   read -p "$1" -r < /dev/tty
-  echo $REPLY
+  echo "$REPLY" | tee -a $LOG_FILE 2>&1
 }
 
 # Get updated package list
-sudo apt-get update
+echo "__ Apt-get ____________________________________" | tee -a $LOG_FILE 2>&1
+sudo apt-get update | tee -a $LOG_FILE 2>&1
+echo "Apt-Get: update complete." | tee -a $LOG_FILE 2>&1
 
 # Make sure we using the lastest version of config script
-sudo apt-get install -y raspi-config
+sudo apt-get install -y raspi-config | tee -a $LOG_FILE 2>&1
 
 echo
 echo I suggest removing the Wolframe engine as it\'s of limited use in IoT
 echo projects. It will save about 1/2G of disk space and a *lot* of time
 echo during upgrades
+echo "__ Wolfram ____________________________________" | tee -a $LOG_FILE 2>&1
 
 
 if [[ $(ask "Do you wish to remove Wolframe engine? [y/N] ") =~ ^[Yy]$ ]]
 then
 #save 1/2G of space
-        sudo apt-get -y purge wolfram-engine
+        df -h  | tee -a $LOG_FILE 2>&1
+        sudo apt-get -y purge wolfram-engine | tee -a $LOG_FILE 2>&1
+        df -h | tee -a $LOG_FILE 2>&1
+else
+  echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
+echo "__ Interactive Menus ___________________________" | tee -a $LOG_FILE 2>&1
 echo Processing
 sudo dpkg-reconfigure locales
+echo "Interactive: Update locales." | tee -a $LOG_FILE 2>&1
 sudo dpkg-reconfigure tzdata
+echo "Interactive: Update time zone." | tee -a $LOG_FILE 2>&1
 echo Processing
 sudo dpkg-reconfigure keyboard-configuration
 sudo invoke-rc.d keyboard-setup start
+echo "Interactive: Update keyboard config." | tee -a $LOG_FILE 2>&1
 splitMemory
+echo "Batch: Memory." | tee -a $LOG_FILE 2>&1
 setOverclock
+echo "Batch: Overclock." | tee -a $LOG_FILE 2>&1
 
+echo "__ Wifi _______________________________________" | tee -a $LOG_FILE 2>&1
 if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
 then
 
@@ -234,18 +256,20 @@ then
     sudo ifup wlan0
   fi
 else
-  echo
+  echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
+echo "__ Zero Conf ____________________________________" | tee -a $LOG_FILE 2>&1
 if [[ $(ask "Do you wish to support Zero Conf Bonjour (recommended)? [y/N] ") =~ ^[Yy]$ ]]
 then
-  sudo apt-get install -y avahi-daemon avahi-utils
+  sudo apt-get install -y avahi-daemon avahi-utils | tee -a $LOG_FILE 2>&1
 else
-  echo
+  echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
 
 
+echo "__ Hostname ___________________________________" | tee -a $LOG_FILE 2>&1
 oldhostname=$(cat /etc/hostname)
 echo
 echo It is highly recommended that the hostname is changed to something unique on the network.
@@ -262,9 +286,9 @@ then
   echo $REPLY | sudo tee /etc/hostname > /dev/null
 
   sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
-
+  echo "Hostname: $oldhostname -> $REPLY"  | tee -a $LOG_FILE 2>&1
 else
-  echo
+  echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
 
@@ -275,6 +299,7 @@ echo "from $USER to something of your own choosing"
 echo
 echo "N.B. If this process fails you will probably have to re-image your SD card"
 echo
+echo "__ Username ____________________________________" | tee -a $LOG_FILE 2>&1
 
 if [[ $(ask "Do you wish to rename the $USER user account?[y/N] ") =~ ^[Yy]$ ]]
 then
@@ -290,17 +315,19 @@ EOF
 
     USER=$REPLY
 
-    echo "User name changed to $USER"
+    export LOG_FILE="/home/$USER/$UPDATE_LABEL.log" # renew logfile location
+    echo "User name changed to $USER" | tee -a $LOG_FILE 2>&1
 else
-  echo
+  echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
-echo If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local
-echo assuming you have installed Avahi Zero Conf above
+echo If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local | tee -a $LOG_FILE 2>&1
+echo assuming you have installed Avahi Zero Conf above. | tee -a $LOG_FILE 2>&1
 
 #Expand the rootfs and reboot
-sudo raspi-config --expand-rootfs
-echo "System will now reboot. Please then login as $USER and run the command"
-echo "wget -O - http://tinyurl.com/RasPiIoT-2 | bash"
+echo "__ Expand FS __________________________________" | tee -a $LOG_FILE 2>&1
+sudo raspi-config --expand-rootfs | tee -a $LOG_FILE 2>&1
+echo "System will now reboot. Please then login as $USER and run the command" | tee -a $LOG_FILE 2>&1
+echo "wget -O - http://tinyurl.com/RasPiIoT-2 | bash" | tee -a $LOG_FILE 2>&1
 read -p "Press any key to continue " -n 1 -r < /dev/tty
 sudo init 6
