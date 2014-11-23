@@ -83,6 +83,11 @@ then
  bash <(wget --no-check-certificate -O - https://copy.com/YJYNOLByOoYpmgRy)
 fi
 
+
+if [[ $(ask "Do you wish to install support for the Freetronics Pileven board?[y/N] ") =~ ^[Yy]$ ]]
+then
+  wget -O - https://github.com/freetronics/PiLeven-tools/releases/download/v1.0/install_pileven.sh | sudo bash
+fi
   
 if [[ $(ask "Do you wish to install the Wiring Pi library? (http://wiringpi.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
