@@ -211,7 +211,7 @@ else
   echo
 fi
 
-if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ;then
+if [[ $(ask "Do you wish to install the NodeBots (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ;then
   sudo apt-get -y install oracle-java8-jdk
   sudo apt-get -y install minicom arduino arduino-mk libdevice-serialport-perl
 
