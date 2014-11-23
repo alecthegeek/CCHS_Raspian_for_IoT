@@ -75,7 +75,7 @@ echo
 echo 'We will now install a few useful development tools (editors, source code control etc.)'
 sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep emacs locate python-setuptools
 sudo easy_install pip
-pip install virtualenv virtualenvwrapper  
+sudo pip install virtualenv virtualenvwrapper  
 
 echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
 if [[ $(ask "Do you wish to install and configure the Copy client? (http://copy.com/)[y/N] ") =~ ^[Yy]$ ]]
