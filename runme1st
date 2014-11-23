@@ -226,11 +226,13 @@ if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
 then
 
   sudo apt-get install -y wpasupplicant
+  if [[ $(ask "Do you wish to configure a WiFI connection now? [y/N] ") =~ ^[Yy]$ ]]
+  then
+    do_wifi
 
-  do_wifi
-
-  sudo ifdown wlan0
-  sudo ifup wlan0
+     sudo ifdown wlan0
+    sudo ifup wlan0
+  fi
 else
   echo
 fi
