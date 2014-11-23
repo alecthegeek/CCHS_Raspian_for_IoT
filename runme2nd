@@ -73,8 +73,10 @@ echo added $USER to the i2c group
 echo
 
 echo 'We will now install a few useful development tools (editors, source code control etc.)'
-sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep emacs locate
-
+sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep emacs locate python-setuptools
+sudo easy_install pip
+pip install virtualenv virtualenvwrapper  
+  
 if [[ $(ask "Do you wish to install the Wiring Pi library? (http://wiringpi.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
 
@@ -125,8 +127,7 @@ then
   #  ros-groovy-roscpp-tutorials ros-groovy-turtlesim \
   #  ros-groovy-rosserial-arduino 
 
-  sudo apt-get install -y python-setuptools
-  sudo easy_install pip
+
   sudo pip install -U rosdep rosinstall_generator wstool rosinstall
   sudo rosdep init
   rosdep update
@@ -211,26 +212,22 @@ else
   echo
 fi
 
-if [[ $(ask "Do you wish to install the NodeBots (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ;then
-  sudo apt-get -y install oracle-java8-jdk
-  sudo apt-get -y install minicom arduino arduino-mk libdevice-serialport-perl
+if [[ $(ask "Do you wish to install node.js etc for NodeBot dev? (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]]
+then
+  sudo apt-get -y install oracle-java8-jdk minicom arduino arduino-mk libdevice-serialport-perl
+  sudo pip install ino
 
   wget https://node-arm.herokuapp.com/node_latest_armhf.deb
   sudo dpkg -i node_latest_armhf.deb
   rm node_latest_armhf.deb
 
-  #echo '# Setup for NodeBots ' |sudo tee /etc/profile.d/nodejs.sh
-  #echo 'NODE_JS_HOME=/usr/local/node; export NODE_JS_HOME' |sudo tee -a /etc/profile.d/nodejs.sh
-  #echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile.d/nodejs.sh
+  echo '# Setup for NodeBots ' |sudo tee /etc/profile.d/nodejs.sh
+  echo 'NODE_JS_HOME=/usr/local/node; export NODE_JS_HOME' |sudo tee -a /etc/profile.d/nodejs.sh
+  echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile.d/nodejs.sh
 
-  #export NODE_JS_HOME=/usr/local/node
-  #PATH=$PATH:$NODE_JS_HOME/bin
+  export NODE_JS_HOME=/usr/local/node
+  PATH=$PATH:$NODE_JS_HOME/bin
 
-  sudo -i npm install -g serialport
-  sudo -i npm install -g firmata
-  sudo -i npm install -g johnny-five
-  sudo -i npm install -g socket.io
-  sudo -i npm install -g raspi-io  
 fi
 
 # Remove anything out of date
