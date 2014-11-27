@@ -33,7 +33,7 @@ After following this process you should have
 3. Installation of lm-sensors and [i2c](http://en.wikipedia.org/wiki/I%C2%B2C) software
 4. Raspian configured for your environment (location, language etc)
 5. A few select development tools installed (Vim, Emacs, Git, GNU Screen, tmux, ack-grep and Subversion)
-6. The default user account renamed to something of your own choice and your own choise of hostname (optional)
+6. The default user account renamed to something of your own choice and your own choice of hostname (optional)
 7. [WiringPi](http://wiringpi.com/) library
 8. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software)) (to access your Pi by hostname instead of IP address)
 9. The [Robot Operating System](http://www.ros.org/wiki/) installed and ready to use (optional)
@@ -73,9 +73,7 @@ back to the command prompt
 
 `wget https://tinyurl.com/RasPiIoT-1 -O - | bash`
 
-the following variation is useful as it provides a log of the script output.
 
-`script install1.script -c "bash <(wget -O -  https://tinyurl.com/RasPiIoT-1)"`
 
 Pi computer now reboots
 
@@ -83,9 +81,9 @@ Pi computer now reboots
 
 `wget https://tinyurl.com/RasPiIoT-2 -O - | bash`
 
-and again the following variation is useful as it provides a log of the script output.
+the following variation is useful as it provides a log of the script output with total time.
 
-`script install2.script -c "bash <(wget -O -  https://tinyurl.com/RasPiIoT-2)"`
+`script install2.script -c "time bash <(wget -O - https://tinyurl.com/RasPiIoT-2)"`
 
 This is a long process and will require user input at various stages.
 

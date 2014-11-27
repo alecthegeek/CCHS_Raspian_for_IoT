@@ -75,10 +75,30 @@ echo Installed support for I2C serial interface and LM sensors | tee -a $LOG_FIL
 echo added $USER to the i2c group | tee -a $LOG_FILE 2>&1
 echo
 
+<<<<<<< HEAD
 echo 'We will now install a few useful development tools (editors, source code control etc.)' | tee -a $LOG_FILE 2>&1
 sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep emacs locate | tee -a $LOG_FILE 2>&1
 
 echo "__ Wiring Pi __________________________________" | tee -a $LOG_FILE 2>&1
+=======
+echo 'We will now install a few useful development tools (editors, source code control etc.)'
+sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep emacs locate python-setuptools
+sudo easy_install pip
+sudo pip install virtualenv virtualenvwrapper  
+
+echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
+if [[ $(ask "Do you wish to install and configure the Copy client? (http://copy.com/)[y/N] ") =~ ^[Yy]$ ]]
+then
+ bash <(wget --no-check-certificate -O - https://copy.com/YJYNOLByOoYpmgRy)
+fi
+
+
+if [[ $(ask "Do you wish to install support for the Freetronics Pileven board?[y/N] ") =~ ^[Yy]$ ]]
+then
+  wget -O - https://github.com/freetronics/PiLeven-tools/releases/download/v1.0/install_pileven.sh | sudo bash
+fi
+  
+>>>>>>> upstream/master
 if [[ $(ask "Do you wish to install the Wiring Pi library? (http://wiringpi.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
 
@@ -130,11 +150,18 @@ then
   #  ros-groovy-roscpp-tutorials ros-groovy-turtlesim \
   #  ros-groovy-rosserial-arduino 
 
+<<<<<<< HEAD
   sudo apt-get install -y python-setuptools | tee -a $LOG_FILE 2>&1
   sudo easy_install pip | tee -a $LOG_FILE 2>&1
   sudo pip install -U rosdep rosinstall_generator wstool rosinstall | tee -a $LOG_FILE 2>&1
   sudo rosdep init | tee -a $LOG_FILE 2>&1
   rosdep update | tee -a $LOG_FILE 2>&1
+=======
+
+  sudo pip install -U rosdep rosinstall_generator wstool rosinstall
+  sudo rosdep init
+  rosdep update
+>>>>>>> upstream/master
   
   mkdir ~/ros_catkin_ws
   cd ~/ros_catkin_ws
@@ -219,15 +246,23 @@ else
   echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
 
+<<<<<<< HEAD
 echo "__ NodeBotes __________________________________" | tee -a $LOG_FILE 2>&1
 if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ;then
   sudo apt-get -y install oracle-java8-jdk | tee -a $LOG_FILE 2>&1
   sudo apt-get -y install minicom arduino arduino-mk libdevice-serialport-perl | tee -a $LOG_FILE 2>&1
+=======
+if [[ $(ask "Do you wish to install node.js etc for NodeBot dev? (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]]
+then
+  sudo apt-get -y install oracle-java8-jdk minicom arduino arduino-mk libdevice-serialport-perl
+  sudo pip install ino
+>>>>>>> upstream/master
 
   wget https://node-arm.herokuapp.com/node_latest_armhf.deb | tee -a $LOG_FILE 2>&1
   sudo dpkg -i node_latest_armhf.deb | tee -a $LOG_FILE 2>&1
   rm node_latest_armhf.deb | tee -a $LOG_FILE 2>&1
 
+<<<<<<< HEAD
   #echo '# Setup for NodeBots ' |sudo tee /etc/profile.d/nodejs.sh
   #echo 'NODE_JS_HOME=/usr/local/node; export NODE_JS_HOME' |sudo tee -a /etc/profile.d/nodejs.sh
   #echo 'PATH=$PATH:$NODE_JS_HOME/bin' |sudo tee -a /etc/profile.d/nodejs.sh
@@ -242,6 +277,8 @@ if [[ $(ask "Do you wish to install the NodeBotes (NB Will install JDK if needed
   sudo -i npm install -g raspo.io | tee -a $LOG_FILE 2>&1
 else
   echo "Operation not performed." | tee -a $LOG_FILE 2>&1
+=======
+>>>>>>> upstream/master
 fi
 
 echo "__ Cleanup ____________________________________" | tee -a $LOG_FILE 2>&1
@@ -254,7 +291,14 @@ sudo apt-get clean | tee -a $LOG_FILE 2>&1
 
 [[ -e /etc/profile.d/raspi-config.sh ]] && sudo rm -f /etc/profile.d/raspi-config.sh
 
+<<<<<<< HEAD
 echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis | tee -a $LOG_FILE 2>&1
 read -p "System will now reboot. Press any key to continue " -n 1 -r < /dev/tty
 
 sudo shutdown -rF now # Force disk check  | tee -a $LOG_FILE 2>&1
+=======
+echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis
+read -p "System will reboot in 5 seconds. Press any key to continue" -n 1 -r < /dev/tty
+
+nohup bash -c 'sleep 5; sudo shutdown -rF now'& # Force disk check
+>>>>>>> upstream/master
