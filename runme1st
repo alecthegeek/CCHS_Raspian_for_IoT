@@ -247,6 +247,14 @@ echo "__ Wifi _______________________________________" | tee -a $LOG_FILE 2>&1
 if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
 then
 
+<<<<<<< HEAD
+  sudo apt-get install -y wpasupplicant | tee -a $LOG_FILE 2>&1
+
+  do_wifi
+
+  sudo ifdown wlan0 | tee -a $LOG_FILE 2>&1
+  sudo ifup wlan0 | tee -a $LOG_FILE 2>&1
+=======
   sudo apt-get install -y wpasupplicant
   if [[ $(ask "Do you wish to configure a WiFI connection now? [y/N] ") =~ ^[Yy]$ ]]
   then
@@ -255,6 +263,7 @@ then
      sudo ifdown wlan0
     sudo ifup wlan0
   fi
+>>>>>>> upstream/master
 else
   echo "Operation not performed." | tee -a $LOG_FILE 2>&1
 fi
