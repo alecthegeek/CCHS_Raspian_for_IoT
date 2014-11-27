@@ -129,5 +129,5 @@ Additional Notes
 #TO DO
 
 1. Ask user all questions at the start and then perform an unattended install
-2. Provide an activity log
-3. Better error detection
+2. Better error detection
+

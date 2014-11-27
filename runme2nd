@@ -21,10 +21,12 @@
 #
 #    Special thanks to @mikered for wifi set up code
 
-
+export UPDATE_LABEL="Updated_$(date +%F)"
+export LOG_FILE="/home/$USER/$UPDATE_LABEL.log"
+echo "Logging second CCHS update script: $LOG_FILE" | tee -a $LOG_FILE 2>&1
 
 # Add Check to encourage users to keep system up to date
-
+echo "__ Update Checking ____________________________" | tee -a $LOG_FILE 2>&1
 
 echo 'APT::Update::Post-Invoke-Success {"touch /var/lib/apt/periodic/update-success-stamp 2>/dev/null || true";};' | \
 				sudo tee -a /etc/apt/apt.conf.d/15update-stamp > /dev/null
@@ -41,11 +43,12 @@ echo '  echo It has been at least $no_of_days days since the last update' |sudo 
 echo '  echo Please run \"sudo apt-get update \&\& sudo apt-get -y upgrade\"' |\
                  sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo fi | sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
-
+echo "Update promt setup." >> $LOG_FILE 2>&1
 
 echo
-echo About to fully upgrade all relevant packages and optionally install others
-echo This will take some time
+echo "__ Updating ___________________________________" >> $LOG_FILE 2>&1
+echo About to fully upgrade all relevant packages and optionally install others | tee -a $LOG_FILE 2>&1
+echo This will take some time | tee -a $LOG_FILE 2>&1
 echo
 
 # In case the upgrade does nothing create the masrker file
@@ -53,7 +56,7 @@ echo
 sudo touch /var/lib/apt/periodic/update-success-stamp
 
 # Make sure system is fully up to date
-sudo apt-get -y dist-upgrade
+sudo apt-get -y dist-upgrade | tee -a $LOG_FILE 2>&1
 
 ask() {
   read -p "$1" -r < /dev/tty
@@ -61,190 +64,150 @@ ask() {
 }
 
 # Install and enable i2c and SPI
-sudo apt-get -y install i2c-tools lm-sensors python-smbus
+sudo apt-get -y install i2c-tools lm-sensors python-smbus | tee -a $LOG_FILE 2>&1
 sudo sed /etc/modprobe.d/raspi-blacklist.conf \
   -i -e 's/^#blacklist spi-bcm2708/blacklist spi-bcm2708/' \
   -e 's/^#blacklist i2c-bcm2708/blacklist i2c-bcm2708/'
 
-sudo adduser $USER i2c
+sudo adduser $USER i2c | tee -a $LOG_FILE 2>&1
+
 
 echo Installed support for I2C serial interface and LM sensors
 echo added $USER to the i2c group
 echo
-
 echo 'We will now install a few useful development tools (editors, source code control etc.)'
 sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux ack-grep emacs locate python-setuptools
 sudo easy_install pip
-sudo pip install virtualenv virtualenvwrapper  
-
+sudo pip install virtualenv virtualenvwrapper
 echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
 if [[ $(ask "Do you wish to install and configure the Copy client? (http://copy.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
- bash <(wget --no-check-certificate -O - https://copy.com/YJYNOLByOoYpmgRy)
+bash <(wget --no-check-certificate -O - https://copy.com/YJYNOLByOoYpmgRy)
 fi
-
-
 if [[ $(ask "Do you wish to install support for the Freetronics Pileven board?[y/N] ") =~ ^[Yy]$ ]]
 then
-  wget -O - https://github.com/freetronics/PiLeven-tools/releases/download/v1.0/install_pileven.sh | sudo bash
+wget -O - https://github.com/freetronics/PiLeven-tools/releases/download/v1.0/install_pileven.sh | sudo bash
 fi
-  
 if [[ $(ask "Do you wish to install the Wiring Pi library? (http://wiringpi.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
-
-  # Install the WiringPi
-
-  WP=/usr/src/wiringPi
-
-  sudo mkdir -p $WP
-  sudo chown $USER:$(id -g -n $USER) $WP
-
-  pushd $WP
-
-  git clone git://git.drogon.net/wiringPi .
-  ./build
-
-  cat <<EOF |sudo tee /usr/local/bin/updateWiringPi
+# Install the WiringPi
+WP=/usr/src/wiringPi
+sudo mkdir -p $WP
+sudo chown $USER:$(id -g -n $USER) $WP
+pushd $WP
+git clone git://git.drogon.net/wiringPi .
+./build
+cat <<EOF |sudo tee /usr/local/bin/updateWiringPi
 #!/usr/bin/env sh
 # Keep wiringPi updated
-
 cd $WP
 git pull origin &&
 ./build &&
 echo WiringPi updated ||
 echo WiringPi update failed
 EOF
-
-  sudo chmod + /usr/local/bin/updateWiringPi
-
-  echo "To update the wiringPi library run the script /usr/local/bin/updateWiringPi as needed"
-  echo
-
-  popd
+sudo chmod + /usr/local/bin/updateWiringPi
+echo "To update the wiringPi library run the script /usr/local/bin/updateWiringPi as needed"
+echo
+popd
 else
-  echo
+echo
 fi
-
 if [[ $(ask "Do you wish to install the Robot OS? (http://ros.org)[y/N] ") =~ ^[Yy]$ ]]
 then
-  # Add repo for Robot operating System
-  echo "deb http://packages.ros.org/ros/ubuntu wheezy main" | sudo tee /etc/apt/sources.list.d/ros-latest.list
-  wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
-  sudo apt-get update
-  
-  # from http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi#Installation
-
-  # sudo apt-get -y install ros-groovy-ros-comm \
-  #  ros-groovy-rqt-gui ros-groovy-rqt-common-plugins \
-  #  ros-groovy-roscpp-tutorials ros-groovy-turtlesim \
-  #  ros-groovy-rosserial-arduino 
-
-
-  sudo pip install -U rosdep rosinstall_generator wstool rosinstall
-  sudo rosdep init
-  rosdep update
-  
-  mkdir ~/ros_catkin_ws
-  cd ~/ros_catkin_ws
-  
-  rosinstall_generator ros_comm --rosdistro indigo --deps --wet-only --exclude roslisp --tar > indigo-ros_comm-wet.rosinstall
-  wstool init -j8 src indigo-ros_comm-wet.rosinstall
-  # rosinstall_generator desktop --rosdistro indigo --deps --wet-only --exclude roslisp --tar > indigo-desktop-wet.rosinstall
-  # wstool init -j8 src indigo-desktop-wet.rosinstall
-  
-  mkdir ~/ros_catkin_ws/external_src
-  sudo apt-get install -y checkinstall cmake
-  
-  # libconsole-bridge-dev
-  echo 'When check-install asks for any changes, the name (2) needs to change from'
-  echo 'console-bridge" to "libconsole-bridge-dev" otherwise the rosdep install wont find it.'
-  cd ~/ros_catkin_ws/external_src
-  sudo apt-get install -y libboost-system-dev libboost-thread-dev
-  git clone https://github.com/ros/console_bridge.git
-  cd console_bridge
-  cmake .
-  sudo checkinstall make install 
-  
-  # liblz4-dev
-  cd ~/ros_catkin_ws/external_src
-  wget http://archive.raspbian.org/raspbian/pool/main/l/lz4/liblz4-1_0.0~r122-2_armhf.deb
-  wget http://archive.raspbian.org/raspbian/pool/main/l/lz4/liblz4-dev_0.0~r122-2_armhf.deb
-  sudo dpkg -i liblz4-1_0.0~r122-2_armhf.deb liblz4-dev_0.0~r122-2_armhf.deb
-
-  # liburdfdom-headers-dev
-  echo  'When check-install asks for any changes, the name (2) needs to change from'
-  echo  '"urdfdom-headers" to "liburdfdom-headers-dev" otherwise the rosdep install wont find it.'
-  cd ~/ros_catkin_ws/external_src
-  git clone https://github.com/ros/urdfdom_headers.git
-  cd urdfdom_headers
-  cmake .
-  sudo checkinstall make install
-  
-  # liburdfdom-dev
-  echo 'When check-install asks for any changes, the name (2) needs to change from'
-  echo '"urdfdom" to "liburdfdom-dev" otherwise the rosdep install wont find it.'
-  cd ~/ros_catkin_ws/external_src
-  sudo apt-get install libboost-test-dev libtinyxml-dev
-  git clone https://github.com/ros/urdfdom.git
-  cd urdfdom
-  cmake .
-  sudo checkinstall make install
-  
-  # collada-dom-dev
-  echo 'When check-install asks for any changes, the name (2) needs to change from'
-  echo '"collada-dom" to "collada-dom-dev" otherwise the rosdep install wont find it.'
-  cd ~/ros_catkin_ws/external_src
-  sudo apt-get install libboost-filesystem-dev libxml2-dev
-  wget http://downloads.sourceforge.net/project/collada-dom/Collada%20DOM/Collada%20DOM%202.4/collada-dom-2.4.0.tgz
-  tar -xzf collada-dom-2.4.0.tgz
-  cd collada-dom-2.4.0
-  cmake .
-  sudo checkinstall make install
-  
-  cd ~/ros_catkin_ws
-  rosdep install --from-paths src --ignore-src --rosdistro indigo -y -r --os=debian:wheezy
-  sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/indigo
-  
-  echo '# Setup for ROS ' |sudo tee /etc/profile.d/ros.sh
-  echo source /opt/ros/indigo/setup.bash |sudo tee -a  /etc/profile.d/ros.sh
+# Add repo for Robot operating System
+echo "deb http://packages.ros.org/ros/ubuntu wheezy main" | sudo tee /etc/apt/sources.list.d/ros-latest.list
+wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
+sudo apt-get update
+# from http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi#Installation
+# sudo apt-get -y install ros-groovy-ros-comm \
+# ros-groovy-rqt-gui ros-groovy-rqt-common-plugins \
+# ros-groovy-roscpp-tutorials ros-groovy-turtlesim \
+# ros-groovy-rosserial-arduino
+sudo pip install -U rosdep rosinstall_generator wstool rosinstall
+sudo rosdep init
+rosdep update
+mkdir ~/ros_catkin_ws
+cd ~/ros_catkin_ws
+rosinstall_generator ros_comm --rosdistro indigo --deps --wet-only --exclude roslisp --tar > indigo-ros_comm-wet.rosinstall
+wstool init -j8 src indigo-ros_comm-wet.rosinstall
+# rosinstall_generator desktop --rosdistro indigo --deps --wet-only --exclude roslisp --tar > indigo-desktop-wet.rosinstall
+# wstool init -j8 src indigo-desktop-wet.rosinstall
+mkdir ~/ros_catkin_ws/external_src
+sudo apt-get install -y checkinstall cmake
+# libconsole-bridge-dev
+echo 'When check-install asks for any changes, the name (2) needs to change from'
+echo 'console-bridge" to "libconsole-bridge-dev" otherwise the rosdep install wont find it.'
+cd ~/ros_catkin_ws/external_src
+sudo apt-get install -y libboost-system-dev libboost-thread-dev
+git clone https://github.com/ros/console_bridge.git
+cd console_bridge
+cmake .
+sudo checkinstall make install
+# liblz4-dev
+cd ~/ros_catkin_ws/external_src
+wget http://archive.raspbian.org/raspbian/pool/main/l/lz4/liblz4-1_0.0~r122-2_armhf.deb
+wget http://archive.raspbian.org/raspbian/pool/main/l/lz4/liblz4-dev_0.0~r122-2_armhf.deb
+sudo dpkg -i liblz4-1_0.0~r122-2_armhf.deb liblz4-dev_0.0~r122-2_armhf.deb
+# liburdfdom-headers-dev
+echo 'When check-install asks for any changes, the name (2) needs to change from'
+echo '"urdfdom-headers" to "liburdfdom-headers-dev" otherwise the rosdep install wont find it.'
+cd ~/ros_catkin_ws/external_src
+git clone https://github.com/ros/urdfdom_headers.git
+cd urdfdom_headers
+cmake .
+sudo checkinstall make install
+# liburdfdom-dev
+echo 'When check-install asks for any changes, the name (2) needs to change from'
+echo '"urdfdom" to "liburdfdom-dev" otherwise the rosdep install wont find it.'
+cd ~/ros_catkin_ws/external_src
+sudo apt-get install libboost-test-dev libtinyxml-dev
+git clone https://github.com/ros/urdfdom.git
+cd urdfdom
+cmake .
+sudo checkinstall make install
+# collada-dom-dev
+echo 'When check-install asks for any changes, the name (2) needs to change from'
+echo '"collada-dom" to "collada-dom-dev" otherwise the rosdep install wont find it.'
+cd ~/ros_catkin_ws/external_src
+sudo apt-get install libboost-filesystem-dev libxml2-dev
+wget http://downloads.sourceforge.net/project/collada-dom/Collada%20DOM/Collada%20DOM%202.4/collada-dom-2.4.0.tgz
+tar -xzf collada-dom-2.4.0.tgz
+cd collada-dom-2.4.0
+cmake .
+sudo checkinstall make install
+cd ~/ros_catkin_ws
+rosdep install --from-paths src --ignore-src --rosdistro indigo -y -r --os=debian:wheezy
+sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release --install-space /opt/ros/indigo
+echo '# Setup for ROS ' |sudo tee /etc/profile.d/ros.sh
+echo source /opt/ros/indigo/setup.bash |sudo tee -a /etc/profile.d/ros.sh
 else
-  echo
+echo
 fi
-
 if [[ $(ask "Do you wish to install a Java Development Kit?[y/N] ") =~ ^[Yy]$ ]] ; then
-  sudo apt-get -y install oracle-java8-jdk
+sudo apt-get -y install oracle-java8-jdk
 else
-  echo
+echo
 fi
-
-
 if [[ $(ask "Do you wish to install the Arduino IDE (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ; then
-  sudo apt-get -y install oracle-java8-jdk arduino arduino-mk libdevice-serialport-perl
+sudo apt-get -y install oracle-java8-jdk arduino arduino-mk libdevice-serialport-perl
 else
-  echo
+echo
 fi
-
 if [[ $(ask "Do you wish to install node.js etc for NodeBot dev? (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]]
 then
-  sudo apt-get -y install oracle-java8-jdk minicom arduino arduino-mk libdevice-serialport-perl
-  sudo pip install ino
-
-  wget https://node-arm.herokuapp.com/node_latest_armhf.deb
-  sudo dpkg -i node_latest_armhf.deb
-  rm node_latest_armhf.deb
-
+sudo apt-get -y install oracle-java8-jdk minicom arduino arduino-mk libdevice-serialport-perl
+sudo pip install ino
+wget https://node-arm.herokuapp.com/node_latest_armhf.deb
+sudo dpkg -i node_latest_armhf.deb
+rm node_latest_armhf.deb
 fi
-
 # Remove anything out of date
 sudo apt-get autoremove
 # Save a few hundred Mb of disk space by removing downloaded deb archives
 sudo apt-get clean
-
 # Stop raspi-config from running on next reboot
-
 [[ -e /etc/profile.d/raspi-config.sh ]] && sudo rm -f /etc/profile.d/raspi-config.sh
-
 echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis
 read -p "System will reboot in 5 seconds. Press any key to continue" -n 1 -r < /dev/tty
-
 nohup bash -c 'sleep 5; sudo shutdown -rF now'& # Force disk check
