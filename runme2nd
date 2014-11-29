@@ -89,7 +89,8 @@ then
 	sudo tee -a /etc/hostapd/hostapd.conf > /dev/null
 
   cat <<EOF | sudo tee /boot/machine.local
-#hostname=acp5-test
+#hostname=raspberrypi  # Host for /etc/host
+#wifihostname=wfipi   # Hostname for wifi interface
 #wifi_ap_network=16 #  01-254
 #interface=wlan0
 #channel=6
@@ -101,11 +102,16 @@ EOF
 if [ -f /boot/machine.local ] ; then
   . /boot/machine.local # dash does not support `source` keyword
   oldhostname=$(cat /etc/hostname)
-  #todo Add hostname tp interface
-  logger "Changed hostname to $hostname on $interface"
+  if [$hostname -ne $(cat /etc/hostname)] ; then
+    sudo hostname $hostname
+    sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
+    sudo /etc/init.d/network restart
+    logger "Changed hostname to $hostname on $interface"
+  fi
+  #todo Add wifihostname to interface
 else
   network=01
-  hostname=$(hostname)
+  wifihostname=$(hostname)
   channel_number=6
 fi
 
