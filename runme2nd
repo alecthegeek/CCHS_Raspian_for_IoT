@@ -85,38 +85,59 @@ then
   sudo update-rc.d -f hostapd remove
   sudo update-rc.d -f dnsmasq remove
 
-  if [[ -f /boot/machine.local ]] ; then
-	source /boot/machine.local
-  else
-	network=01
-        hostname=$(hostname)
-  fi
+  gzip -dc  /usr/share/doc/hostapd/examples/hostapd.conf.gz|
+	sudo tee -a /etc/hostapd/hostapd.conf > /dev/null
 
-  sudo sed -Ei -e 's/^[#\s]*(DAEMON_CONF)\s*=.*$/\1="/etc/hostapd/hostapd.conf"/' \
+  cat <<EOF | sudo tee /boot/machine.local
+#hostname=acp5-test
+#wifi_ap_network=16 #  01-254
+#interface=wlan0
+#channel=6
+EOF
+
+  cat <<'EOF' | sudo tee /usr/local/sbin/start-wifi-ap
+#!/bin/sh
+
+if [ -f /boot/machine.local ] ; then
+  . /boot/machine.local # dash does not support `source` keyword
+  oldhostname=$(cat /etc/hostname)
+  #todo Add hostname tp interface
+  logger "Changed hostname to $hostname on $interface"
+else
+  network=01
+  hostname=$(hostname)
+  channel_number=6
+fi
+
+sudo sed -Ei -e 's/^[#\s]*(DAEMON_CONF)\s*=.*$/\1="\/etc\/hostapd\/hostapd.conf"/' \
                   /etc/default/hostapd 
 
-  sudo sed -Ei -e 's/^[#\s]*domain-neded.*$/domain-needed/;
-                   s/^[#\s]*interface\s=.*$/interface=wlan0/;
+sudo sed -Eie 's/^[#\s]*domain-neded.*$/domain-needed/;
+                   s/^[#\s]*interface\s=.*$/interface='$interface'/;
                    s/^[#\s]*dhcp-range\s=.*$/dhcp-range=192.168.'$network'.5,192.168.'$network'.100,255.255.255.0,12h/' \
                 /etc/dnsmasq.conf
 
 
-  gzip -dc  /usr/share/doc/hostapd/examples/hostapd.conf.gz|
-	sed -Ee 's/^[#\s]*ssid\s*=.*$/ssid='$(echo -n $hostname|cut -c1-25)'-wifi/;
+sudo sed -Eie 's/^[#\s]*ssid\s*=.*$/ssid='$(echo -n $hostname|cut -c1-25)'-wifi/;
 		 s/^[#\s]*wpa\s*=.*$/wpa=1/;
 		 s/^[#\s]*wpa_passphrase\s*=.*$/wpa_passphrase=a secret/;
 		 s/^[#\s]*wpa_key_mgmt\s*=.*$/wpa_key_mgmt=WPA-PSK/;
 		 s/^[#\s]*wpa_pairwise\s*=.*$/wpa_pairwise=TKIP/;
 		 s/^[#\s]*rsn_pairwise\s*=.*$/rsn_pairwise=CCMP/;
-		 s/^[#\s]*channel\s*=.*$/channel=6/'|
-	sudo tee -a /etc/hostapd/hostapd.conf > /dev/null
+		 s/^[#\s]*channel\s*=.*$/channel='$channel_number'/' \
+           /etc/hostapd/hostapd.conf
 
-  sudo ifdown wlan0
-  echo about to test
-  hostapd -d /etc/hostapd/hostapd.conf 
+sudo ifdown wlan0
 
-else
+hostapd -d /etc/hostapd/hostapd.conf 
+
+EOF
+
+
+
+  echo Configure the Wifi AP by editing the file /boot/machine.local and rebooting
   echo 
+
 fi
 
 echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
