@@ -85,15 +85,25 @@ then
   sudo update-rc.d -f hostapd remove
   sudo update-rc.d -f dnsmasq remove
 
+
+  #wget ftp://WebUser:Lc9FuH5r@202.134.71.21/cn/wlan/RTL8188C_8192C_USB_linux_v4.0.2_9000.20130911.zip
+  #unzip RTL8188C_8192C_USB_linux_v4.0.2_9000.20130911.zip
+
+
   gzip -dc  /usr/share/doc/hostapd/examples/hostapd.conf.gz|
-	sudo tee -a /etc/hostapd/hostapd.conf > /dev/null
+        sed -Ee 's/^[#\s]*(DAEMON_CONF)\s*=.*$/\1="\/etc\/hostapd\/hostapd.conf"/'|
+	sudo tee /etc/hostapd/hostapd.conf > /dev/null
 
   cat <<EOF | sudo tee /boot/machine.local
-#hostname=raspberrypi  # Host for /etc/host
+#newhostname=raspberrypi  # Host for /etc/host
 #wifihostname=wfipi   # Hostname for wifi interface
+#wifiSSID=wifipi-ap
+#wifipsk=secretpsk
 #wifi_ap_network=16 #  01-254
 #interface=wlan0
 #channel=6
+#driver=hostpad
+#
 EOF
 
   cat <<'EOF' | sudo tee /usr/local/sbin/start-wifi-ap
@@ -102,29 +112,26 @@ EOF
 if [ -f /boot/machine.local ] ; then
   . /boot/machine.local # dash does not support `source` keyword
   oldhostname=$(cat /etc/hostname)
-  if [$hostname -ne $(cat /etc/hostname)] ; then
-    sudo hostname $hostname
-    sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
+  if [ -n "$newhostname" -a "$hostname" != "$(cat /etc/hostname)"] ; then
+    sudo hostname $newhostname
+    sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$newhostname'\2/' /etc/hosts
     sudo /etc/init.d/network restart
-    logger "Changed hostname to $hostname on $interface"
+    logger "Changed hostname to $(hostname) on $interface"
   fi
   #todo Add wifihostname to interface
 else
   network=01
   wifihostname=$(hostname)
   channel_number=6
+  driver=hostpad
 fi
-
-sudo sed -Ei -e 's/^[#\s]*(DAEMON_CONF)\s*=.*$/\1="\/etc\/hostapd\/hostapd.conf"/' \
-                  /etc/default/hostapd 
 
 sudo sed -Eie 's/^[#\s]*domain-neded.*$/domain-needed/;
                    s/^[#\s]*interface\s=.*$/interface='$interface'/;
                    s/^[#\s]*dhcp-range\s=.*$/dhcp-range=192.168.'$network'.5,192.168.'$network'.100,255.255.255.0,12h/' \
                 /etc/dnsmasq.conf
 
-
-sudo sed -Eie 's/^[#\s]*ssid\s*=.*$/ssid='$(echo -n $hostname|cut -c1-25)'-wifi/;
+sudo sed -Eie 's/^[#\s]*ssid\s*=.*$/ssid='$(echo -n $wifihostname|cut -c1-25)'-wifi/;
 		 s/^[#\s]*wpa\s*=.*$/wpa=1/;
 		 s/^[#\s]*wpa_passphrase\s*=.*$/wpa_passphrase=a secret/;
 		 s/^[#\s]*wpa_key_mgmt\s*=.*$/wpa_key_mgmt=WPA-PSK/;
@@ -132,6 +139,10 @@ sudo sed -Eie 's/^[#\s]*ssid\s*=.*$/ssid='$(echo -n $hostname|cut -c1-25)'-wifi/
 		 s/^[#\s]*rsn_pairwise\s*=.*$/rsn_pairwise=CCMP/;
 		 s/^[#\s]*channel\s*=.*$/channel='$channel_number'/' \
            /etc/hostapd/hostapd.conf
+
+sudo sed -Eie 's/^[#\s]*INTERFACES\s*=.*$/INTERFACES="eth0"/;
+               s/^[#\s]*HOTPLUG_INTERFACES\s*=.*$/HOTPLUG_INTERFACES="eth0"/' \
+			/etc/default/ifplugd
 
 sudo ifdown wlan0
 
