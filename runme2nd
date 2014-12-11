@@ -300,21 +300,26 @@ else
 fi
 
 
-if [[ $(ask "Do you wish to install the Arduino IDE (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ; then
+if [[ $(ask "Do you wish to install the Arduino Dev Tools (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ; then
   sudo apt-get -y install oracle-java8-jdk arduino arduino-mk libdevice-serialport-perl
+  sudo pip install ino
 else
   echo
 fi
 
-if [[ $(ask "Do you wish to install node.js etc for NodeBot dev? (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]]
+if [[ $(ask "Do you wish to install node.js (e.g. for NodeBot dev) (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]]
 then
   sudo apt-get -y install oracle-java8-jdk minicom arduino arduino-mk libdevice-serialport-perl
-  sudo pip install ino
 
   wget https://node-arm.herokuapp.com/node_latest_armhf.deb
   sudo dpkg -i node_latest_armhf.deb
   rm node_latest_armhf.deb
 
+fi
+
+if [[ $(ask "Do you wish to install Go lang (e.g. for SimpleBot dev)? [y/N] ") =~ ^[Yy]$ ]]
+then
+  sudo apt-get -y install golang
 fi
 
 # Remove anything out of date
