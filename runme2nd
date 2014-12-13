@@ -77,17 +77,56 @@ sudo apt-get -y install vim git git-gui git-doc git-svn subversion screen tmux a
 sudo easy_install pip
 sudo pip install virtualenv virtualenvwrapper  
 
+echo
+
+
+  cat <<EOF | sudo tee /boot/machine.local
+#newhostname=raspberrypi  # Host for /etc/host
+#wifihostname=wfipi   # Hostname for wifi interface
+#wifiSSID=wifipi-ap
+#wifipsk=secretpsk
+#wifi_ap_network=16 #  01-254
+#interface=wlan0
+#channel=6
+#driver=hostpad
+#
+EOF
+
+  cat <<'EOF' | sudo tee /usr/local/sbin/start-wifi-ap
+#!/bin/sh
+
+if [ -f /boot/machine.local ] ; then
+  . /boot/machine.local # dash does not support `source` keyword
+  oldhostname=$(cat /etc/hostname)
+  if [ -n "$newhostname" -a "$hostname" != "$(cat /etc/hostname)"] ; then
+    sudo hostname $newhostname
+    sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$newhostname'\2/' /etc/hosts
+    sudo /etc/init.d/network restart
+    logger "Changed hostname to $(hostname) on $interface"
+  fi
+  #todo Add wifihostname to interface
+else
+  network=01
+  wifihostname=$(hostname)
+  channel_number=6
+  driver=hostpad
+fi
+
+EOF
+
 echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
 if [[ $(ask "Do you wish to install and configure the Copy client? (http://copy.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
  bash <(wget --no-check-certificate -O - https://copy.com/YJYNOLByOoYpmgRy)
 fi
-
+echo 
 
 if [[ $(ask "Do you wish to install support for the Freetronics Pileven board?[y/N] ") =~ ^[Yy]$ ]]
 then
   wget -O - https://github.com/freetronics/PiLeven-tools/releases/download/v1.0/install_pileven.sh | sudo bash
 fi
+
+echo 
   
 if [[ $(ask "Do you wish to install the Wiring Pi library? (http://wiringpi.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
