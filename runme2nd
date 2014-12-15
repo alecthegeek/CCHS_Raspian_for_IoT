@@ -56,7 +56,7 @@ sudo touch /var/lib/apt/periodic/update-success-stamp
 sudo apt-get -y dist-upgrade
 
 ask() {
-  read -p "$1" -r < /dev/tty
+  read -p "$@" -r < /dev/tty
   echo $REPLY
 }
 
@@ -79,9 +79,20 @@ sudo pip install virtualenv virtualenvwrapper
 
 echo
 
+echo We can do put some host setttings in the /boot/machine.local and you can edit them on your laptop as needed
+
+if [[ $(ask "Do you wish to configure the /boot/machine.local file?[y/N] ") =~ ^[Yy]$ ]]
+then
+
+  if [[ $(ask 'Do you wish to use an initial hostname of a) '$(hostname)' or a b) MAC  based hostname?[A/b] ') =~ ^[Aa]$ ]]
+  then
+    newhostname=$($hostname)
+  else
+    newhostname='ifconfig eth0 | sed -nEe \'/^.+HWaddr ([a-f0-9]{2}):([a-f0-9]{2}):([a-f0-9]{2}):([a-f0-9]{2}):([a-f0-9]{2}):([a-f0-9]{2}).*$/s//\1\2\3\4/p\''
+  fi
 
   cat <<EOF | sudo tee /boot/machine.local
-#newhostname=raspberrypi  # Host for /etc/host
+#newhostname=$newhostname  # Host for /etc/host
 #wifihostname=wfipi   # Hostname for wifi interface
 #wifiSSID=wifipi-ap
 #wifipsk=secretpsk
@@ -92,7 +103,7 @@ echo
 #
 EOF
 
-  cat <<'EOF' | sudo tee /usr/local/sbin/start-wifi-ap
+  cat <<'EOF' | sudo tee /usr/local/sbin/config-hostname
 #!/bin/sh
 
 if [ -f /boot/machine.local ] ; then
@@ -113,6 +124,7 @@ else
 fi
 
 EOF
+fi
 
 echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
 if [[ $(ask "Do you wish to install and configure the Copy client? (http://copy.com/)[y/N] ") =~ ^[Yy]$ ]]
