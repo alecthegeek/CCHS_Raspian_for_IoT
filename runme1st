@@ -49,7 +49,7 @@ setOverclock() {
     # "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6"
      )
 
-  echo
+  eLog ""
 
 #CLOCKSETTINGS=$(echo --title "Over Clocking" --menu "Please select your clock settings from the following list. NB Turbo is NOT recommended " \
 #              $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
@@ -67,7 +67,7 @@ setOverclock() {
 
 splitMemory() {
   REPLY=0
-  echo N.B. For Minecraft 64Mb of Video Memory is recommended
+  eLog "N.B. For Minecraft 64Mb of Video Memory is recommended"
   while [[ ! $REPLY =~ (16|32|64|128|256) ]] ; do
     read -p  "How much video memory do you want? (16|32|64|128|256) " -r < /dev/tty
   done
@@ -205,10 +205,10 @@ sudo apt-get update
 # Make sure we using the lastest version of config script
 sudo apt-get install -y raspi-config
 
-echo
-echo I suggest removing the Wolframe engine as it\'s of limited use in IoT
-echo projects. It will save about 1/2G of disk space and a *lot* of time
-echo during upgrades
+eLog ""
+eLog "I suggest removing the Wolframe engine as it\'s of limited use in IoT"
+eLog "projects. It will save about 1/2G of disk space and a *lot* of time"
+eLog "during upgrades"
 
 
 if [[ $(ask "Do you wish to remove Wolframe engine? [y/N] ") =~ ^[Yy]$ ]]
@@ -268,17 +268,17 @@ then
   sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
 
 else
-  echo
+  eLog ""
 fi
 
 
 # Rename the pi user account
-echo
-echo "You will now be offered to the chance to change the user name of the current user account"
-echo "from $USER to something of your own choosing"
-echo
-echo "N.B. If this process fails you will probably have to re-image your SD card"
-echo
+eLog ""
+eLog "You will now be offered to the chance to change the user name of the current user account"
+eLog "from $USER to something of your own choosing"
+eLog
+eLog "N.B. If this process fails you will probably have to re-image your SD card"
+eLog ""
 
 if [[ $(ask "Do you wish to rename the $USER user account?[y/N] ") =~ ^[Yy]$ ]]
 then
@@ -295,16 +295,16 @@ EOF
     USER=$REPLY
     export LOG_FILE="/home/$USER/$UPDATE_LABEL.log" # renew logfile location
 
-    echo "User name changed to $USER"
+    eLog "User name changed to $USER"
 else
-  echo
+  eLog ""
 fi
 
-echo If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local
-echo assuming you have installed Avahi Zero Conf above
+eLog "If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local"
+eLog "assuming you have installed Avahi Zero Conf above"
 
-echo Generally you now want to resize the default image size to occupy the whole of your SD card,
-echo unless you want to archive this image for re-use later
+eLog "Generally you now want to resize the default image size to occupy the whole of your SD card,"
+eLog "unless you want to archive this image for re-use later"
 
 if [[ ! $(ask "Do you wish to expand the file system to occupy the whole SD card?[Y/n] ") =~ ^[Nn]$ ]]
 then
@@ -312,7 +312,7 @@ then
   sudo raspi-config --expand-rootfs
 fi
 
-echo "System will now reboot. Afterwards please login as $USER and run the command"
-echo "wget -O - http://tinyurl.com/RasPiIoT-2 | bash"
+eLog "System will now reboot. Afterwards please login as $USER and run the command"
+eLog "wget -O - http://tinyurl.com/RasPiIoT-2 | bash"
 read -p "Press any key to continue " -n 1 -r < /dev/tty
 sudo init 6
