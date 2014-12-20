@@ -84,15 +84,18 @@ echo We can do put some host setttings in the /boot/machine.local and you can ed
 if [[ $(ask "Do you wish to configure the /boot/machine.local file?[y/N] ") =~ ^[Yy]$ ]]
 then
 
-  if [[ $(ask 'Do you wish to use an initial hostname of a) '$(hostname)' or a b) MAC  based hostname?[A/b] ') =~ ^[Aa]$ ]]
+  if [[ $(ask 'Do you wish to use an initial hostname of a) '$(hostname)' or a b) CPU serial number  based hostname?[A/b] ') =~ ^[Aa]$ ]]
   then
-    newhostname=$($hostname)
+    newhostname=$(hostname)
   else
-    newhostname='ifconfig eth0 | sed -nEe \'/^.+HWaddr ([a-f0-9]{2}):([a-f0-9]{2}):([a-f0-9]{2}):([a-f0-9]{2}):([a-f0-9]{2}):([a-f0-9]{2}).*$/s//\1\2\3\4/p\''
+    newhostname=$'rpi$(sed -nEe \'/^Serial\t\t: ........(........)$/s//\\1/p\' /proc/cpuinfo)'
   fi
 
   cat <<EOF | sudo tee /boot/machine.local
-#newhostname=$newhostname  # Host for /etc/host
+# Edit this file and reboot the Pi.
+# NB Insert the SD card into a workstation and you can edit the file as well
+
+newhostname=$newhostname  # Host for /etc/host
 #wifihostname=wfipi   # Hostname for wifi interface
 #wifiSSID=wifipi-ap
 #wifipsk=secretpsk
@@ -108,11 +111,11 @@ EOF
 
 if [ -f /boot/machine.local ] ; then
   . /boot/machine.local # dash does not support `source` keyword
-  oldhostname=$(cat /etc/hostname)
-  if [ -n "$newhostname" -a "$hostname" != "$(cat /etc/hostname)"] ; then
+  oldhostname=$(hostname)
+  if [ -n "$newhostname" -a "$newhostname" != "$oldhostname" ] ; then
     sudo hostname $newhostname
     sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$newhostname'\2/' /etc/hosts
-    sudo /etc/init.d/network restart
+    sudo /etc/init.d/networking restart
     logger "Changed hostname to $(hostname) on $interface"
   fi
   #todo Add wifihostname to interface
@@ -124,6 +127,8 @@ else
 fi
 
 EOF
+
+sudo chmod +x /usr/local/sbin/config-hostname
 fi
 
 echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
