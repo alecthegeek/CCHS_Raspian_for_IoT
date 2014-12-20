@@ -24,6 +24,9 @@
 
 export UPDATE_LABEL="Updated_$(date +%F)"
 export LOG_FILE="/home/$USER/$UPDATE_LABEL.log"
+function eLog { # Echo & log input
+  echo "$1" | tee -a $LOG_FILE 2>&1
+}
 
 setConfigOption() {
   CONFIG_FILE=/boot/config.txt
