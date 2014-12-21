@@ -27,6 +27,9 @@ export LOG_FILE="/home/$USER/$UPDATE_LABEL.log"
 function eLog { # Echo & log input
   echo "$1" | tee -a $LOG_FILE 2>&1
 }
+function execLog { # Execute & log output
+  $@ | tee -a $LOG_FILE 2>&1
+}
 
 eLog "Logging CCHS update script: $LOG_FILE"
 setConfigOption() {
@@ -208,10 +211,10 @@ ask() {
 
 # Get updated package list
 eLog "__ Apt-get ________________________________________________________"
-sudo apt-get update
+execLog sudo apt-get update
 
 # Make sure we using the lastest version of config script
-sudo apt-get install -y raspi-config
+execLog sudo apt-get install -y raspi-config
 
 eLog "__ Wolfram ________________________________________________________"
 eLog ""
@@ -223,7 +226,7 @@ eLog "during upgrades"
 if [[ $(ask "Do you wish to remove Wolframe engine? [y/N] ") =~ ^[Yy]$ ]]
 then
 #save 1/2G of space
-        sudo apt-get -y purge wolfram-engine
+        execLog sudo apt-get -y purge wolfram-engine
 else
   eLog "Operation not performed."
 fi
@@ -245,7 +248,7 @@ eLog "__ Wifi ___________________________________________________________"
 if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
 then
 
-  sudo apt-get install -y wpasupplicant
+  execLog sudo apt-get install -y wpasupplicant
   if [[ $(ask "Do you wish to configure a WiFI connection now? [y/N] ") =~ ^[Yy]$ ]]
   then
     do_wifi
@@ -260,7 +263,7 @@ fi
 eLog "__ Zero Conf ______________________________________________________"
 if [[ $(ask "Do you wish to support Zero Conf Bonjour (recommended)? [y/N] ") =~ ^[Yy]$ ]]
 then
-  sudo apt-get install -y avahi-daemon avahi-utils
+  execLog sudo apt-get install -y avahi-daemon avahi-utils
 else
   eLog "Operation not performed."
 fi
