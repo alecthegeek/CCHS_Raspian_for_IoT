@@ -28,6 +28,7 @@ function eLog { # Echo & log input
   echo "$1" | tee -a $LOG_FILE 2>&1
 }
 
+eLog "Logging CCHS update script: $LOG_FILE"
 setConfigOption() {
   CONFIG_FILE=/boot/config.txt
   if grep "$1=" $CONFIG_FILE ; then
@@ -36,6 +37,7 @@ setConfigOption() {
     echo $1=$2'  #'$UPDATE_LABEL| sudo tee -a $CONFIG_FILE
   fi
 }
+eLog "Using config file: $CONFIG_FILE"
 
 export -f setConfigOption
 
@@ -62,6 +64,7 @@ setOverclock() {
     xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
     break
   done < /dev/tty
+  eLog "Clock Settings: $clockSettings"
 
 }
 
@@ -73,6 +76,7 @@ splitMemory() {
   done
 
   setConfigOption gpu_mem $REPLY
+  eLog "Video Memory: $REPLY"
 }
 
 
@@ -90,6 +94,7 @@ calc_wt_size() {
     WT_WIDTH=120
   fi
   WT_MENU_HEIGHT=$(($WT_HEIGHT-8))
+  eLog "Wt Size: $WT_WIDTH x $WT_HEIGHT"
 }
 
 calc_wt_size
@@ -97,7 +102,7 @@ calc_wt_size
 
 do_wifi() {
 # Written by @mikerr and stolen by @alecthegeek, see https://github.com/mikerr/raspi-config
-
+eLog "__ Wifi ___________________________________________________________"
 wifidevice=wlan0
 WPAFILE=/etc/wpa_supplicant/wpa_supplicant.conf
 
@@ -190,7 +195,9 @@ whiptail --msgbox "Wifi settings updated for SSID: $SSID" 20 60 1
 # connect right now ?
 #wpa_supplicant -B -i$wifidevice -c $WPAFILE
 #dhclient $wifidevice -1 
-
+eLog "SSID: $SSID"
+eLog "Encryption: $ENCRYPTION"
+eLog "Wpa File: $WPAFILE"
 }
 
 
@@ -200,11 +207,13 @@ ask() {
 }
 
 # Get updated package list
+eLog "__ Apt-get ________________________________________________________"
 sudo apt-get update
 
 # Make sure we using the lastest version of config script
 sudo apt-get install -y raspi-config
 
+eLog "__ Wolfram ________________________________________________________"
 eLog ""
 eLog "I suggest removing the Wolframe engine as it\'s of limited use in IoT"
 eLog "projects. It will save about 1/2G of disk space and a *lot* of time"
@@ -215,17 +224,24 @@ if [[ $(ask "Do you wish to remove Wolframe engine? [y/N] ") =~ ^[Yy]$ ]]
 then
 #save 1/2G of space
         sudo apt-get -y purge wolfram-engine
+else
+  eLog "Operation not performed."
 fi
 
-echo Processing
+eLog "__ Interactive Menus ______________________________________________"
 sudo dpkg-reconfigure locales
+eLog "Interactive: Update locales."
 sudo dpkg-reconfigure tzdata
-echo Processing
+eLog "Interactive: Update time zone."
 sudo dpkg-reconfigure keyboard-configuration
 sudo invoke-rc.d keyboard-setup start
+eLog "Interactive: Configure keyboard."
 splitMemory
+eLog "Batch: Memory."
 setOverclock
+eLog "Batch: Overclock."
 
+eLog "__ Wifi ___________________________________________________________"
 if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
 then
 
@@ -238,18 +254,20 @@ then
     sudo ifup wlan0
   fi
 else
-  echo
+  eLog "Operation not performed."
 fi
 
+eLog "__ Zero Conf ______________________________________________________"
 if [[ $(ask "Do you wish to support Zero Conf Bonjour (recommended)? [y/N] ") =~ ^[Yy]$ ]]
 then
   sudo apt-get install -y avahi-daemon avahi-utils
 else
-  echo
+  eLog "Operation not performed."
 fi
 
 
 
+eLog "__ Host Name ______________________________________________________"
 oldhostname=$(cat /etc/hostname)
 echo
 echo It is highly recommended that the hostname is changed to something unique on the network.
@@ -266,12 +284,13 @@ then
   echo $REPLY | sudo tee /etc/hostname > /dev/null
 
   sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
-
+  eLog "Hostname: $oldhostname -> $REPLY"
 else
-  eLog ""
+  eLog "Operation not performed."
 fi
 
 
+eLog "__ User Name ______________________________________________________"
 # Rename the pi user account
 eLog ""
 eLog "You will now be offered to the chance to change the user name of the current user account"
@@ -297,7 +316,7 @@ EOF
 
     eLog "User name changed to $USER"
 else
-  eLog ""
+  eLog "Operation not performed."
 fi
 
 eLog "If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local"
@@ -306,6 +325,7 @@ eLog "assuming you have installed Avahi Zero Conf above"
 eLog "Generally you now want to resize the default image size to occupy the whole of your SD card,"
 eLog "unless you want to archive this image for re-use later"
 
+eLog "__ Expand FS ______________________________________________________"
 if [[ ! $(ask "Do you wish to expand the file system to occupy the whole SD card?[Y/n] ") =~ ^[Nn]$ ]]
 then
   #Expand the rootfs
