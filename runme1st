@@ -298,7 +298,6 @@ eLog "__ User Name ______________________________________________________"
 eLog ""
 eLog "You will now be offered to the chance to change the user name of the current user account"
 eLog "from $USER to something of your own choosing"
-eLog
 eLog "N.B. If this process fails you will probably have to re-image your SD card"
 eLog ""
 
@@ -317,7 +316,8 @@ EOF
     USER=$REPLY
     export LOG_FILE="/home/$USER/$UPDATE_LABEL.log" # renew logfile location
 
-    eLog "User name changed to $USER"
+    eLog "User name changed to: $USER"
+    eLog ""
 else
   eLog "Operation not performed."
 fi
