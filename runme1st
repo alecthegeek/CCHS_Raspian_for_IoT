@@ -338,4 +338,4 @@ fi
 eLog "System will now reboot. Afterwards please login as $USER and run the command"
 eLog "wget -O - http://tinyurl.com/RasPiIoT-2 | bash"
 read -p "Press any key to continue " -n 1 -r < /dev/tty
-sudo init 6
+execLog sudo init 6
