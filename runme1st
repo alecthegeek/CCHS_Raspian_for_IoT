@@ -31,7 +31,8 @@ function execLog { # Execute & log output
   $@ | tee -a $LOG_FILE 2>&1
 }
 
-eLog "Logging CCHS update script: $LOG_FILE"
+eLog "CCHS update script: runme1st"
+eLog "Logging to: $LOG_FILE"
 setConfigOption() {
   CONFIG_FILE=/boot/config.txt
   if grep "$1=" $CONFIG_FILE ; then
