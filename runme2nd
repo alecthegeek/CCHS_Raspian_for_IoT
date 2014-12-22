@@ -26,6 +26,9 @@ export LOG_FILE="/home/$USER/$UPDATE_LABEL.log"
 function eLog { # Echo & log input
   echo "$1" | tee -a $LOG_FILE 2>&1
 }
+function execLog { # Execute & log output
+  $@ | tee -a $LOG_FILE 2>&1
+}
 eLog "CCHS update script: runme2nd"
 eLog "Logging to: $LOG_FILE"
 
