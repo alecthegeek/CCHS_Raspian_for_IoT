@@ -126,7 +126,7 @@ eLog "__ Baracuda Copy Cloud ____________________________________________"
 eLog "The Baracuda Copy Cloud storage service works nativly on the Pi."
 if [[ $(ask "Do you wish to install and configure the Copy client? (http://copy.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
-  execLog bash <(wget --no-check-certificate -O - https://copy.com/YJYNOLByOoYpmgRy)
+  bash <(wget --no-check-certificate -O - https://copy.com/YJYNOLByOoYpmgRy)
   eLog "Baracuda installed"
 else
   eLog "Operation not performed."
