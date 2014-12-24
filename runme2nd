@@ -184,7 +184,7 @@ if [[ $(ask "Do you wish to install the Robot OS? (http://ros.org)[y/N] ") =~ ^[
 then
   # Add repo for Robot operating System
   echo "deb http://packages.ros.org/ros/ubuntu wheezy main" | sudo tee /etc/apt/sources.list.d/ros-latest.list
-  execLog wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
+  wget https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -O - | sudo apt-key add -
   execLog sudo apt-get update
   
   # from http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Indigo%20on%20Raspberry%20Pi#Installation
