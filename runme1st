@@ -68,7 +68,7 @@ setOverclock() {
     xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
     break
   done < /dev/tty
-  eLog "Clock Settings: $clockSettings"
+  eLog "Clock Settings: $c"
 
 }
 
@@ -326,10 +326,10 @@ fi
 eLog "If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local"
 eLog "assuming you have installed Avahi Zero Conf above"
 
+eLog "__ Expand FS ______________________________________________________"
 eLog "Generally you now want to resize the default image size to occupy the whole of your SD card,"
 eLog "unless you want to archive this image for re-use later"
 
-eLog "__ Expand FS ______________________________________________________"
 if [[ ! $(ask "Do you wish to expand the file system to occupy the whole SD card?[Y/n] ") =~ ^[Nn]$ ]]
 then
   #Expand the rootfs
