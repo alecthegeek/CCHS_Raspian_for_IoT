@@ -23,7 +23,16 @@
 
 
 export UPDATE_LABEL="Updated_$(date +%F)"
+export LOG_FILE="/home/$USER/$UPDATE_LABEL.log"
+function eLog { # Echo & log input
+  echo "$1" | tee -a $LOG_FILE 2>&1
+}
+function execLog { # Execute & log output
+  $@ | tee -a $LOG_FILE 2>&1
+}
 
+eLog "CCHS update script: runme1st"
+eLog "Logging to: $LOG_FILE"
 setConfigOption() {
   CONFIG_FILE=/boot/config.txt
   if grep "$1=" $CONFIG_FILE ; then
@@ -32,6 +41,7 @@ setConfigOption() {
     echo $1=$2'  #'$UPDATE_LABEL| sudo tee -a $CONFIG_FILE
   fi
 }
+eLog "Using config file: $CONFIG_FILE"
 
 export -f setConfigOption
 
@@ -45,7 +55,7 @@ setOverclock() {
     # "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6"
      )
 
-  echo
+  eLog ""
 
 #CLOCKSETTINGS=$(echo --title "Over Clocking" --menu "Please select your clock settings from the following list. NB Turbo is NOT recommended " \
 #              $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
@@ -58,17 +68,19 @@ setOverclock() {
     xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
     break
   done < /dev/tty
+  eLog "Clock Settings: $c"
 
 }
 
 splitMemory() {
   REPLY=0
-  echo N.B. For Minecraft 64Mb of Video Memory is recommended
+  eLog "N.B. For Minecraft 64Mb of Video Memory is recommended"
   while [[ ! $REPLY =~ (16|32|64|128|256) ]] ; do
     read -p  "How much video memory do you want? (16|32|64|128|256) " -r < /dev/tty
   done
 
   setConfigOption gpu_mem $REPLY
+  eLog "Video Memory: $REPLY"
 }
 
 
@@ -86,6 +98,7 @@ calc_wt_size() {
     WT_WIDTH=120
   fi
   WT_MENU_HEIGHT=$(($WT_HEIGHT-8))
+  eLog "Wt Size: $WT_WIDTH x $WT_HEIGHT"
 }
 
 calc_wt_size
@@ -93,7 +106,7 @@ calc_wt_size
 
 do_wifi() {
 # Written by @mikerr and stolen by @alecthegeek, see https://github.com/mikerr/raspi-config
-
+eLog "__ Wifi ___________________________________________________________"
 wifidevice=wlan0
 WPAFILE=/etc/wpa_supplicant/wpa_supplicant.conf
 
@@ -186,7 +199,9 @@ whiptail --msgbox "Wifi settings updated for SSID: $SSID" 20 60 1
 # connect right now ?
 #wpa_supplicant -B -i$wifidevice -c $WPAFILE
 #dhclient $wifidevice -1 
-
+eLog "SSID: $SSID"
+eLog "Encryption: $ENCRYPTION"
+eLog "Wpa File: $WPAFILE"
 }
 
 
@@ -196,36 +211,45 @@ ask() {
 }
 
 # Get updated package list
-sudo apt-get update
+eLog "__ Apt-get ________________________________________________________"
+execLog sudo apt-get update
 
 # Make sure we using the lastest version of config script
-sudo apt-get install -y raspi-config
+execLog sudo apt-get install -y raspi-config
 
-echo
-echo I suggest removing the Wolframe engine as it\'s of limited use in IoT
-echo projects. It will save about 1/2G of disk space and a *lot* of time
-echo during upgrades
+eLog "__ Wolfram ________________________________________________________"
+eLog ""
+eLog "I suggest removing the Wolframe engine as it\'s of limited use in IoT"
+eLog "projects. It will save about 1/2G of disk space and a *lot* of time"
+eLog "during upgrades"
 
 
 if [[ $(ask "Do you wish to remove Wolframe engine? [y/N] ") =~ ^[Yy]$ ]]
 then
 #save 1/2G of space
-        sudo apt-get -y purge wolfram-engine
+        execLog sudo apt-get -y purge wolfram-engine
+else
+  eLog "Operation not performed."
 fi
 
-echo Processing
+eLog "__ Interactive Menus ______________________________________________"
 sudo dpkg-reconfigure locales
+eLog "Interactive: Update locales."
 sudo dpkg-reconfigure tzdata
-echo Processing
+eLog "Interactive: Update time zone."
 sudo dpkg-reconfigure keyboard-configuration
 sudo invoke-rc.d keyboard-setup start
+eLog "Interactive: Configure keyboard."
 splitMemory
+eLog "Batch: Memory."
 setOverclock
+eLog "Batch: Overclock."
 
+eLog "__ Wifi ___________________________________________________________"
 if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
 then
 
-  sudo apt-get install -y wpasupplicant
+  execLog sudo apt-get install -y wpasupplicant
   if [[ $(ask "Do you wish to configure a WiFI connection now? [y/N] ") =~ ^[Yy]$ ]]
   then
     do_wifi
@@ -234,18 +258,20 @@ then
     sudo ifup wlan0
   fi
 else
-  echo
+  eLog "Operation not performed."
 fi
 
+eLog "__ Zero Conf ______________________________________________________"
 if [[ $(ask "Do you wish to support Zero Conf Bonjour (recommended)? [y/N] ") =~ ^[Yy]$ ]]
 then
-  sudo apt-get install -y avahi-daemon avahi-utils
+  execLog sudo apt-get install -y avahi-daemon avahi-utils
 else
-  echo
+  eLog "Operation not performed."
 fi
 
 
 
+eLog "__ Host Name ______________________________________________________"
 oldhostname=$(cat /etc/hostname)
 echo
 echo It is highly recommended that the hostname is changed to something unique on the network.
@@ -262,19 +288,19 @@ then
   echo $REPLY | sudo tee /etc/hostname > /dev/null
 
   sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$REPLY'\2/' /etc/hosts
-
+  eLog "Hostname: $oldhostname -> $REPLY"
 else
-  echo
+  eLog "Operation not performed."
 fi
 
 
+eLog "__ User Name ______________________________________________________"
 # Rename the pi user account
-echo
-echo "You will now be offered to the chance to change the user name of the current user account"
-echo "from $USER to something of your own choosing"
-echo
-echo "N.B. If this process fails you will probably have to re-image your SD card"
-echo
+eLog ""
+eLog "You will now be offered to the chance to change the user name of the current user account"
+eLog "from $USER to something of your own choosing"
+eLog "N.B. If this process fails you will probably have to re-image your SD card"
+eLog ""
 
 if [[ $(ask "Do you wish to rename the $USER user account?[y/N] ") =~ ^[Yy]$ ]]
 then
@@ -289,17 +315,20 @@ cat <<'EOF' | sudo bash -s $USER $REPLY $HOME
 EOF
 
     USER=$REPLY
+    export LOG_FILE="/home/$USER/$UPDATE_LABEL.log" # renew logfile location
 
-    echo "User name changed to $USER"
+    eLog "User name changed to: $USER"
+    eLog ""
 else
-  echo
+  eLog "Operation not performed."
 fi
 
-echo If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local
-echo assuming you have installed Avahi Zero Conf above
+eLog "If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local"
+eLog "assuming you have installed Avahi Zero Conf above"
 
-echo Generally you now want to resize the default image size to occupy the whole of your SD card,
-echo unless you want to archive this image for re-use later
+eLog "__ Expand FS ______________________________________________________"
+eLog "Generally you now want to resize the default image size to occupy the whole of your SD card,"
+eLog "unless you want to archive this image for re-use later"
 
 if [[ ! $(ask "Do you wish to expand the file system to occupy the whole SD card?[Y/n] ") =~ ^[Nn]$ ]]
 then
@@ -307,7 +336,7 @@ then
   sudo raspi-config --expand-rootfs
 fi
 
-echo "System will now reboot. Afterwards please login as $USER and run the command"
-echo "wget -O - http://tinyurl.com/RasPiIoT-2 | bash"
+eLog "System will now reboot. Afterwards please login as $USER and run the command"
+eLog "wget -O - http://tinyurl.com/RasPiIoT-2 | bash"
 read -p "Press any key to continue " -n 1 -r < /dev/tty
-sudo init 6
+execLog sudo init 6
