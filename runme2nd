@@ -114,8 +114,13 @@ if [ -f /boot/machine.local ] ; then
   oldhostname=$(hostname)
   if [ -n "$newhostname" -a "$newhostname" != "$oldhostname" ] ; then
     sudo hostname $newhostname
+    echo $newhostname | sudo tee /etc/hostname > /dev/null
     sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$newhostname'\2/' /etc/hosts
-    sudo /etc/init.d/networking restart
+    sudo invoke-rc.d hostname.sh start
+    sudo invoke-rc.d networking force-reload
+    sudo invoke-rc.d network-manager force-reload
+    sudo invoke-rc.d avahi-daemon force-reload
+    sudo /etc/init.d/ssg restart
     logger "Changed hostname to $(hostname) on $interface"
   fi
   #todo Add wifihostname to interface
@@ -129,6 +134,12 @@ fi
 EOF
 
 sudo chmod +x /usr/local/sbin/config-hostname
+
+sudo sed -ie '/exit 0/i\
+[ -x /usr/local/sbin/config-hostname ] && /usr/local/sbin/config-hostname
+
+' /etc/rc.local
+
 fi
 
 echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
