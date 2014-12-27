@@ -96,6 +96,7 @@ then
 # NB Insert the SD card into a workstation and you can edit the file as well
 
 newhostname=$newhostname  # Host for /etc/host
+#newhostname=<my alternative hostname>  # Host for /etc/host use instead if wanted
 #wifihostname=wfipi   # Hostname for wifi interface
 #wifiSSID=wifipi-ap
 #wifipsk=secretpsk
