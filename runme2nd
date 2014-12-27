@@ -120,7 +120,7 @@ if [ -f /boot/machine.local ] ; then
     sudo invoke-rc.d networking force-reload
     sudo invoke-rc.d network-manager force-reload
     sudo invoke-rc.d avahi-daemon force-reload
-    sudo /etc/init.d/ssg restart
+    sudo /etc/init.d/ssh restart
     logger "Changed hostname to $(hostname) on $interface"
   fi
   #todo Add wifihostname to interface
