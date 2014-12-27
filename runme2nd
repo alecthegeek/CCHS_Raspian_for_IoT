@@ -124,11 +124,7 @@ if [ -f /boot/machine.local ] ; then
     logger "Changed hostname to $(hostname) on $interface"
   fi
   #todo Add wifihostname to interface
-else
-  network=01
-  wifihostname=$(hostname)
-  channel_number=6
-  driver=hostpad
+
 fi
 
 EOF
