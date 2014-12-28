@@ -122,6 +122,8 @@ if [ -f /boot/machine.local ] ; then
     sudo invoke-rc.d avahi-daemon force-reload
     sudo /etc/init.d/ssh restart
     logger "Changed hostname to $(hostname) on $interface"
+    logger "About to reboot"
+    sudo init 6
   fi
   #todo Add wifihostname to interface
 
@@ -315,4 +317,6 @@ sudo apt-get clean
 echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis
 read -p "System will reboot in 5 seconds. Press any key to continue" -n 1 -r < /dev/tty
 
-nohup bash -c 'sleep 5; sudo shutdown -rF now'& # Force disk check
+# nohup bash -c 'sleep 5; sudo shutdown -rF now'& # Force disk check
+sleep5
+sudo shutdown -rF now'
