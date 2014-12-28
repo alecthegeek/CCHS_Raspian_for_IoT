@@ -306,6 +306,7 @@ then
   mkdir -p ~/gobot/{src, bin, pkg}
   export GOPATH=~/gotbot
   go get -d -u github.com/hybridgroup/gobot/..
+  go install github.com/hybridgroup/gobot/platforms/raspi
 fi
 
 # Remove anything out of date
