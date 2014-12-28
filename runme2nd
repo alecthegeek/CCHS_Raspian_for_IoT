@@ -303,10 +303,12 @@ fi
 if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev)? [y/N] ") =~ ^[Yy]$ ]]
 then
   sudo apt-get -y install golang
-  mkdir -p ~/gobot/{src, bin, pkg}
-  export GOPATH=~/gotbot
-  go get -d -u github.com/hybridgroup/gobot/..
+  mkdir -p ~/gobot/{src,bin,pkg}
+  export GOPATH=~/gobot
+  cd $GOPATH
+  go get -d -u github.com/hybridgroup/gobot/...
   go install github.com/hybridgroup/gobot/platforms/raspi
+  go get -u github.com/hybridgroup/gobot/gobot
 fi
 
 # Remove anything out of date
