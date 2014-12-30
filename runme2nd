@@ -306,7 +306,7 @@ then
      npm install
      cd firmware/ino/SBSFirmata
      ino build -m uno
-     #ino upload -m uno -p /dev/ttyS99
+     ino upload -m uno -p /dev/ttyS99
      cd -
      node examples/simplebot.js /dev/ttyS99
      cd ~
