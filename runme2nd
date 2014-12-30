@@ -56,7 +56,7 @@ sudo touch /var/lib/apt/periodic/update-success-stamp
 sudo apt-get -y dist-upgrade
 
 ask() {
-  read -p "$1" -r < /dev/tty
+  read -p "$@" -r < /dev/tty
   echo $REPLY
 }
 
@@ -79,9 +79,24 @@ sudo pip install virtualenv virtualenvwrapper
 
 echo
 
+echo We can do put some host setttings in the /boot/machine.local and you can edit them on your laptop as needed
+
+if [[ $(ask "Do you wish to configure the /boot/machine.local file?[y/N] ") =~ ^[Yy]$ ]]
+then
+
+  if [[ $(ask 'Do you wish to use an initial hostname of a) '$(hostname)' or a b) CPU serial number  based hostname?[A/b] ') =~ ^[Aa]$ ]]
+  then
+    newhostname=$(hostname)
+  else
+    newhostname=$'rpi$(sed -nEe \'/^Serial\t\t: ........(........)$/s//\\1/p\' /proc/cpuinfo)'
+  fi
 
   cat <<EOF | sudo tee /boot/machine.local
-#newhostname=raspberrypi  # Host for /etc/host
+# Edit this file and reboot the Pi.
+# NB Insert the SD card into a workstation and you can edit the file as well
+
+newhostname=$newhostname  # Host for /etc/host
+#newhostname=<my alternative hostname>  # Host for /etc/host use instead if wanted
 #wifihostname=wfipi   # Hostname for wifi interface
 #wifiSSID=wifipi-ap
 #wifipsk=secretpsk
@@ -92,27 +107,38 @@ echo
 #
 EOF
 
-  cat <<'EOF' | sudo tee /usr/local/sbin/start-wifi-ap
+  cat <<'EOF' | sudo tee /usr/local/sbin/config-hostname
 #!/bin/sh
 
 if [ -f /boot/machine.local ] ; then
   . /boot/machine.local # dash does not support `source` keyword
-  oldhostname=$(cat /etc/hostname)
-  if [ -n "$newhostname" -a "$hostname" != "$(cat /etc/hostname)"] ; then
+  oldhostname=$(hostname)
+  if [ -n "$newhostname" -a "$newhostname" != "$oldhostname" ] ; then
     sudo hostname $newhostname
+    echo $newhostname | sudo tee /etc/hostname > /dev/null
     sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$newhostname'\2/' /etc/hosts
-    sudo /etc/init.d/network restart
+    sudo invoke-rc.d hostname.sh start
+    sudo invoke-rc.d networking force-reload
+    sudo invoke-rc.d avahi-daemon force-reload
+    sudo /etc/init.d/ssh restart
     logger "Changed hostname to $(hostname) on $interface"
+    logger "About to reboot"
+    sudo init 6
   fi
   #todo Add wifihostname to interface
-else
-  network=01
-  wifihostname=$(hostname)
-  channel_number=6
-  driver=hostpad
+
 fi
 
 EOF
+
+sudo chmod +x /usr/local/sbin/config-hostname
+
+sudo sed -ie '/exit 0/i\
+[ -x /usr/local/sbin/config-hostname ] && /usr/local/sbin/config-hostname
+
+' /etc/rc.local
+
+fi
 
 echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
 if [[ $(ask "Do you wish to install and configure the Copy client? (http://copy.com/)[y/N] ") =~ ^[Yy]$ ]]
@@ -257,21 +283,38 @@ else
 fi
 
 
-if [[ $(ask "Do you wish to install the Arduino IDE (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ; then
+if [[ $(ask "Do you wish to install the Arduino Dev Tools (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]] ; then
   sudo apt-get -y install oracle-java8-jdk arduino arduino-mk libdevice-serialport-perl
+  sudo pip install ino
 else
   echo
 fi
 
-if [[ $(ask "Do you wish to install node.js etc for NodeBot dev? (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]]
+if [[ $(ask "Do you wish to install node.js (e.g. for NodeBot dev) (NB Will install JDK if needed)? [y/N] ") =~ ^[Yy]$ ]]
 then
   sudo apt-get -y install oracle-java8-jdk minicom arduino arduino-mk libdevice-serialport-perl
-  sudo pip install ino
 
   wget https://node-arm.herokuapp.com/node_latest_armhf.deb
   sudo dpkg -i node_latest_armhf.deb
   rm node_latest_armhf.deb
 
+fi
+
+if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev)? [y/N] ") =~ ^[Yy]$ ]]
+then
+  wget -O - http://dave.cheney.net/paste/go1.4.linux-arm~multiarch-armv6-1.tar.gz|sudo tar -xzC /usr/local -f -
+
+  echo '# Setup for golang' |sudo tee /etc/profile.d/golang.sh
+  echo 'PATH=$PATH:/usr/local/go/bin'|sudo tee -a /etc/profile.d/golang.sh
+
+  source /etc/profile.d/golang.sh
+  
+  mkdir -p ~/gobot/{src,bin,pkg}
+  export GOPATH=~/gobot
+  cd $GOPATH
+  go get -d -u github.com/hybridgroup/gobot/...
+  go install github.com/hybridgroup/gobot/platforms/raspi
+  go get -u github.com/hybridgroup/gobot/gobot
 fi
 
 # Remove anything out of date
@@ -286,4 +329,6 @@ sudo apt-get clean
 echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis
 read -p "System will reboot in 5 seconds. Press any key to continue" -n 1 -r < /dev/tty
 
-nohup bash -c 'sleep 5; sudo shutdown -rF now'& # Force disk check
+# nohup bash -c 'sleep 5; sudo shutdown -rF now'& # Force disk check
+sleep5
+sudo shutdown -rF now'
