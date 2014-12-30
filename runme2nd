@@ -302,11 +302,14 @@ then
   then
      cd ~
      git clone https://github.com/nodebotsau/simplebot
-     cd firmware_build
-     ino build -m uno
+     cd simplebot
      npm install
+     cd firmware/ino/SBSFirmata
+     ino build -m uno
      #ino upload -m uno -p /dev/ttyS99
-     #node examples/simplebot.js /dev/ttyS99
+     cd -
+     node examples/simplebot.js /dev/ttyS99
+     cd ~
   fi
 fi
 
