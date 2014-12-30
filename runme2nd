@@ -298,6 +298,16 @@ then
   sudo dpkg -i node_latest_armhf.deb
   rm node_latest_armhf.deb
 
+  if [[ $(ask "Do you wish to install firmata etc for Simplebot? [y/N] ") =~ ^[Yy]$ ]]
+  then
+     cd ~
+     git clone https://github.com/nodebotsau/simplebot
+     cd firmware_build
+     ino build -m uno
+     npm install
+     #ino upload -m uno -p /dev/ttyS99
+     #node examples/simplebot.js /dev/ttyS99
+  fi
 fi
 
 if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev)? [y/N] ") =~ ^[Yy]$ ]]
