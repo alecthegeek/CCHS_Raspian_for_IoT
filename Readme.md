@@ -90,7 +90,7 @@ At the end the Pi will reboot
 
 There is also an optional script to install support for [M9Design](http://www.m9design.co/)'s MeshThing IPv6 mesh networking platform. After running the `RasPiIoT-1` and `RasPiIoT-2` (see above) run
 
-`script log3 -c "bash <(wget https://tinyurl.com/meshthing)"`
+`script log3 -c "bash <(wget -O - https://tinyurl.com/meshthing)"`
 
 #Note
 
