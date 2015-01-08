@@ -92,6 +92,7 @@ There is also an optional script to install support for [M9Design](http://www.m9
 
 `wget https://tinyurl.com/meshthing -O - | bash`
 
+#Note
 
 * Run the command `sudo apt-get update && sudo apt-get dist-upgrade` on a regular basis
 (e.g. once a week) to keep the software up to date
