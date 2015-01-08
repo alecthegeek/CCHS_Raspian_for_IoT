@@ -88,9 +88,9 @@ WARNING: Installing and building Robot Operating System (ROS) takes appro 4 hour
 
 At the end the Pi will reboot
 
-There is also an optional script to install support for [M9Design](http://www.m9design.co/)'s MeshThing IPv6 mesh networking platform. After running the `RasPiI0T-1` and `RasPiI0T-2` (see above) run
+There is also an optional script to install support for [M9Design](http://www.m9design.co/)'s MeshThing IPv6 mesh networking platform. After running the `RasPiIoT-1` and `RasPiIoT-2` (see above) run
 
-`wget https://tinyurl.com/meshthing -O - | bash`
+`script log3 -c "bash <(wget https://tinyurl.com/meshthing)"`
 
 #Note
 
