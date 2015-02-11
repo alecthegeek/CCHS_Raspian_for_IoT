@@ -62,7 +62,7 @@ ask() {
 
 # Install and enable i2c and SPI
 sudo apt-get -y install i2c-tools lm-sensors python-smbus
-sudo sed /etc/modprobe.d/raspi-blacklist.conf \
+sudo sed $(ls /etc/modprobe.d/{raspi,fbdev}-blacklist.conf 2> /dev/null) \
   -i -e 's/^#blacklist spi-bcm2708/blacklist spi-bcm2708/' \
   -e 's/^#blacklist i2c-bcm2708/blacklist i2c-bcm2708/'
 
@@ -298,23 +298,24 @@ then
   sudo dpkg -i node_latest_armhf.deb
   rm node_latest_armhf.deb
 
-  if [[ $(ask "Do you wish to install firmata etc for Simplebot? [y/N] ") =~ ^[Yy]$ ]]
-  then
+  if [[ $(ask "Do you wish to install firmata etc for Simplebot? [y/N] ") =~ ^[Yy]$ ]] ; then
      cd ~
+     [ -d simplebot ] && rm -rf simplebot
      git clone https://github.com/nodebotsau/simplebot
      cd simplebot
      npm install
      cd firmware/ino/SBSFirmata
      ino build -m uno
-     ino upload -m uno -p /dev/ttyS99
-     cd -
-     node examples/simplebot.js /dev/ttyS99
+     if [[ $(ask "Do you wish to test Simplebot build? [y/N] ") =~ ^[Yy]$ ]] ; then
+       ino upload -m uno -p /dev/ttyS99
+       cd -
+       node examples/simplebot.js /dev/ttyS99
+     fi
      cd ~
   fi
 fi
 
-if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev)? [y/N] ") =~ ^[Yy]$ ]]
-then
+if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev)? [y/N] ") =~ ^[Yy]$ ]] ; then
   wget -O - http://dave.cheney.net/paste/go1.4.linux-arm~multiarch-armv6-1.tar.gz|sudo tar -xzC /usr/local -f -
 
   echo '# Setup for golang' |sudo tee /etc/profile.d/golang.sh
@@ -325,6 +326,7 @@ then
   mkdir -p ~/gobot/{src,bin,pkg}
   export GOPATH=~/gobot
   cd $GOPATH
+  sudo apt-get install mercurial
   go get -d -u github.com/hybridgroup/gobot/...
   go install github.com/hybridgroup/gobot/platforms/raspi
   go get -u github.com/hybridgroup/gobot/gobot
@@ -343,5 +345,5 @@ echo Please use sudo raspi-config to configure additional options and use sudo a
 read -p "System will reboot in 5 seconds. Press any key to continue" -n 1 -r < /dev/tty
 
 # nohup bash -c 'sleep 5; sudo shutdown -rF now'& # Force disk check
-sleep5
-sudo shutdown -rF now'
+sleep 5
+sudo shutdown -rF now
