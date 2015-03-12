@@ -149,7 +149,7 @@ echo
 
 if [[ $(ask "Do you wish to install support for the Freetronics Pileven board?[y/N] ") =~ ^[Yy]$ ]]
 then
-  wget -O - https://github.com/freetronics/PiLeven-tools/releases/download/v1.0/install_pileven.sh | sudo bash
+  wget -O - https://github.com/freetronics/PiLeven-tools/releases/download/v2.0/install_pileven.sh | sudo bash
 fi
 
 echo 
