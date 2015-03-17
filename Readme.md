@@ -2,6 +2,8 @@
 
 
  Copyright (c) 2013-2015 All Right Reserved  Alec Clews
+ 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/alecthegeek/CCHS_Raspian_for_IoT?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) or [IRC] irc://irc.gitter.im/alecthegeek\/CCHS_Raspian_for_IoT
 
  author: Alec Clews
  alecclews@gmail.com
