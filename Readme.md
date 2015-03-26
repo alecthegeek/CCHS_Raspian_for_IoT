@@ -1,3 +1,5 @@
+#This Project is dormant
+
 #Guided install and configuration for Raspberry Pi Debian
 
 
