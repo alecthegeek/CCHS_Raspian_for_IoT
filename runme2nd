@@ -316,7 +316,7 @@ then
 fi
 
 if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev)? [y/N] ") =~ ^[Yy]$ ]] ; then
-  wget -O - http://dave.cheney.net/paste/go1.4.linux-arm~multiarch-armv6-1.tar.gz|sudo tar -xzC /usr/local -f -
+  wget -O - http://dave.cheney.net/paste/go1.4.2.linux-arm~multiarch-armv6-1.tar.gz|sudo tar -xzC /usr/local -f -
 
   echo '# Setup for golang' |sudo tee /etc/profile.d/golang.sh
   echo 'PATH=$PATH:/usr/local/go/bin'|sudo tee -a /etc/profile.d/golang.sh
