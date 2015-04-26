@@ -326,7 +326,7 @@ if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev)? 
   mkdir -p ~/gobot/{src,bin,pkg}
   export GOPATH=~/gobot
   cd $GOPATH
-  sudo apt-get -y install mercurial
+  # sudo apt-get -y install mercurial
   go get -d -u github.com/hybridgroup/gobot/...
   go install github.com/hybridgroup/gobot/platforms/raspi
   go get -u github.com/hybridgroup/gobot/gobot
