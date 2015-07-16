@@ -143,7 +143,7 @@ fi
 echo "The Baracuda Copy Cloud storage service works nativly on the Pi."
 if [[ $(ask "Do you wish to install and configure the Copy client? (http://copy.com/)[y/N] ") =~ ^[Yy]$ ]]
 then
- bash <(wget --no-check-certificate -O - https://copy.com/YJYNOLByOoYpmgRy)
+ bash <(wget --no-check-certificate -O - https://copy.com/3qDeCPhM7Rx4sGzH)
 fi
 echo 
 
