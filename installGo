@@ -52,7 +52,7 @@ echo Now rebuilding Go $INSTALL_VERSION with $(go version) Note: This will take 
 ./clean.bash
 GOROOT_FINAL=/usr/local/go GO_TEST_TIMEOUT_SCALE=10 GOROOT_BOOTSTRAP=$(go env GOROOT) ./all.bash
 
-sudo rm -rf /usr/local/go
+test -d /usr/local/go && sudo rm -rf /usr/local/go
 sudo mv ~/go /usr/local
 
 PATH=$OPATH
@@ -62,9 +62,7 @@ echo 'PATH=$PATH:/usr/local/go/bin'|sudo tee -a /etc/profile.d/golang.sh > /dev/
 
 source /etc/profile.d/golang.sh
 
-echo $(go version) installed
-
-echo No installing the Go tools
+echo Now installing the Go tools
 
 sudo -i GOPATH=/tmp GOBIN=$(go env GOROOT)/bin go get -u golang.org/x/tools/cmd/...
 
