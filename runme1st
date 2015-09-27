@@ -42,7 +42,8 @@ setOverclock() {
     "Modest ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0" \
     "Medium ARM:900MHz core:250MHz SDRAM:450MHz overvolt:2" \
     "High ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6" \
-    # "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6"
+    # "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6" \
+    "Pi2 ARM:1000MHz core:500MHz SDRAM:500MHz overvolt:2" \
      )
 
   echo

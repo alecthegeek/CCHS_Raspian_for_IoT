@@ -2,6 +2,8 @@
 
 
  Copyright (c) 2013-2015 All Right Reserved  Alec Clews
+ 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/alecthegeek/CCHS_Raspian_for_IoT?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) or [IRC] irc://irc.gitter.im/alecthegeek\/CCHS_Raspian_for_IoT
 
  author: Alec Clews
  alecclews@gmail.com
@@ -21,10 +23,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 
-These scripts are designed to support @geekscape's Embedded Network Robots
-workshop at the Melbourne Connected Community Hacker Space. They should be
+These scripts were originally designed to support @geekscape's Embedded Network Robots
+workshop at the Melbourne Connected Community Hacker Space. They should now be
 generally useful for people working on Internet of Things projects
-(.e.g mesh networking, robotics, Arduino, etc etc).
+(.e.g mesh networking, robotics, Arduino, etc etc) and wanting to do
+general development on a Raspberry Pi using Node, Java, Go etc.
 
 After following this process you should have
 
