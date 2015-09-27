@@ -13,8 +13,8 @@
 INSTALL_VERSION=${1:-1.5}
 BOOTSTRAP_VERSION=1.4.2
 
-if type go > /dev/null 2>&1 && [[ $INSTALL_VERSION =~ $(go version 2>/dev/null) ]] ;then
-  echo go $INSTALL_VERION already install at $(go env GOROOT)
+if type go > /dev/null 2>&1 && [[ "$(go version 2>/dev/null)" =~ $INSTALL_VERSION ]] ;then
+  echo $(go version)  already installed at $(go env GOROOT)
   exit 2
 fi
 
