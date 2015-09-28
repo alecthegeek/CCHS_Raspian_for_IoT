@@ -10,7 +10,7 @@
 # 2) Default is to install/upgrade to version 1.5 -- but you can supply an alternative version of you wish
 # 3) After building the new version, the tool chain is rebuild again using the new compiler before install
 
-INSTALL_VERSION=${1:-1.5}
+INSTALL_VERSION=${1:-1.5.1}
 BOOTSTRAP_VERSION=1.4.2
 
 if type go > /dev/null 2>&1 && [[ "$(go version 2>/dev/null)" =~ $INSTALL_VERSION ]] ;then

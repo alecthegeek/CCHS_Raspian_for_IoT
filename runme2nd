@@ -315,17 +315,15 @@ then
   fi
 fi
 
-if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev)? [y/N] ") =~ ^[Yy]$ ]] ; then
-  wget -O - http://dave.cheney.net/paste/go1.4.2.linux-arm~multiarch-armv6-1.tar.gz|sudo tar -xzC /usr/local -f -
+if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev) Note: Takes an hour or two...? [y/N] ") =~ ^[Yy]$ ]] ; then
 
-  echo '# Setup for golang' |sudo tee /etc/profile.d/golang.sh
-  echo 'PATH=$PATH:/usr/local/go/bin'|sudo tee -a /etc/profile.d/golang.sh
+  bash <(wget -O - https://raw.githubusercontent.com/alecthegeek/CCHS_Raspian_for_IoT/master/installGo)
 
-  source /etc/profile.d/golang.sh
-  
   mkdir -p ~/gobot/{src,bin,pkg}
   export GOPATH=~/gobot
   cd $GOPATH
+
+
   sudo apt-get -y install mercurial
   go get -d -u github.com/hybridgroup/gobot/...
   go install github.com/hybridgroup/gobot/platforms/raspi
