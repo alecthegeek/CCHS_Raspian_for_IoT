@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2013 All Right Reserved  Alec Clews
+# Copyright (c) 2013-2106 All Right Reserved  Alec Clews
 #
 # author: Alec Clews
 # alecclews@gmail.com
@@ -35,161 +35,6 @@ setConfigOption() {
 
 export -f setConfigOption
 
-setOverclock() {
-
-
-  clockSettings=( "None ARM:700MHz core:250MHz SDRAM:400MHz overvolt:0" \
-    "Modest ARM:800MHz core:250MHz SDRAM:400MHz overvolt:0" \
-    "Medium ARM:900MHz core:250MHz SDRAM:450MHz overvolt:2" \
-    "High ARM:950MHz core:250MHz SDRAM:450MHz overvolt:6" \
-    # "Turbo ARM:1000MHz core:500MHz SDRAM:600MHz overvolt:6" \
-    "Pi2 ARM:1000MHz core:500MHz SDRAM:500MHz overvolt:2" \
-     )
-
-  echo
-
-#CLOCKSETTINGS=$(echo --title "Over Clocking" --menu "Please select your clock settings from the following list. NB Turbo is NOT recommended " \
-#              $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-#              $(for ((i=0; i < $(("${clockSettings[@]}"/2));i++)) ; do echo \"${clockSettings[0]:$((i*2)):2}\" ; done) \
-#        3>&1 1>&2 2>&3)
-
-  select c in "${clockSettings[@]}"; do
-    echo "$c" |
-    sed -re 's/^.+ARM:([0-9]+)MHz core:([0-9]+)MHz SDRAM:([0-9]+)MHz overvolt:([0-9]+)$/arm_freq \1 core_freq \2 sdram_freq \3 over_voltage \4/' |
-    xargs --no-run-if-empty -n 2 bash -c 'setConfigOption "$@"' {}
-    break
-  done < /dev/tty
-
-}
-
-splitMemory() {
-  REPLY=0
-  echo N.B. For Minecraft 64Mb of Video Memory is recommended
-  while [[ ! $REPLY =~ (16|32|64|128|256) ]] ; do
-    read -p  "How much video memory do you want? (16|32|64|128|256) " -r < /dev/tty
-  done
-
-  setConfigOption gpu_mem $REPLY
-}
-
-
-calc_wt_size() {
-  # NOTE: it's tempting to redirect stderr to /dev/null, so supress error
-  # output from tput. However in this case, tput detects neither stdout or
-  # stderr is a tty and so only gives default 80, 24 values
-  WT_HEIGHT=17
-  WT_WIDTH=$(tput cols)
-
-  if [ -z "$WT_WIDTH" ] || [ "$WT_WIDTH" -lt 60 ]; then
-    WT_WIDTH=80
-  fi
-  if [ "$WT_WIDTH" -gt 178 ]; then
-    WT_WIDTH=120
-  fi
-  WT_MENU_HEIGHT=$(($WT_HEIGHT-8))
-}
-
-calc_wt_size
-
-
-do_wifi() {
-# Written by @mikerr and stolen by @alecthegeek, see https://github.com/mikerr/raspi-config
-
-wifidevice=wlan0
-WPAFILE=/etc/wpa_supplicant/wpa_supplicant.conf
-
-{
-iwlist $wifidevice scan | grep 'ESSID' | sed -e 's/.*ESSID:"\([^"]\+\)".*/  \1/' > /tmp/ap_list.txt 
-} | whiptail --gauge "Scanning Wifi, please wait" 5 50 10
-
-echo "whiptail --title \"Choose SSID, or enter manually\" \\" > /tmp/choose_ap.sh
-echo "--radiolist \"Choose SSID\" \\" >> /tmp/choose_ap.sh
-
-LINES=`wc -l < /tmp/ap_list.txt`
-LINES=$((${LINES}+1))
-echo "10 60 ${LINES} \\" >> /tmp/choose_ap.sh
-for LINE in `cat /tmp/ap_list.txt`
-    do
-    echo "$LINE '' off \\" >> /tmp/choose_ap.sh
-    done
-echo "Enter\ manually '' on 2>/tmp/ssid.ans" >>/tmp/choose_ap.sh
-
-chmod 777 /tmp/choose_ap.sh
-. /tmp/choose_ap.sh
-      
-if [ $? -ne 0 ]; then return 0; fi
-
-SSID=`cat /tmp/ssid.ans`
-if [ "$SSID" = "Enter manually" ]; then
-      SSID=$(whiptail --inputbox "SSID Name" 20 70 3>&1 1>&2 2>&3)
-    if [ -z $SSID ]; then return 0 ; fi
-fi
-
-ENCRYPTION=$(whiptail --title "Encryption" --menu "Encryption for network: $SSID " $WT_HEIGHT $WT_WIDTH $WT_MENU_HEIGHT --cancel-button Back --ok-button Select \
-          "1" "WPA/WPA2" \
-          "2" "WEP (hex)" \
-          "3" "WEP (ascii)" \
-          "4" "None" \
-        3>&1 1>&2 2>&3)
-
-if [ $? -ne 0 ]; then return 0; fi
-
-WPANEW=/tmp/wpanew.conf
-WPATMP=/tmp/wpa.conf
-
-case $ENCRYPTION in
-    '1')
-        PASSPHRASE=$(whiptail --inputbox "WPA Passphrase for $SSID" 20 70 3>&1 1>&2 2>&3)
-        if [ $? -ne 0 ]; then return 0; fi
-       CRYPTPASS=$(wpa_passphrase $SSID $PASSPHRASE | grep -v "^#" | grep -v "#psk=")
-      PASSERROR="Passphrase must be 8..63 characters"
-        if [ "$CRYPTPASS" != "$PASSERROR" ]; then 
-        echo "$CRYPTPASS" > $WPANEW
-      else
-        whiptail --msgbox "ERROR: $PASSERROR" 20 70 1
-        return 0;
-      fi
-    ;;
-    '2')
-        PASSPHRASE=$(whiptail --inputbox "WEP key (Hex)" 20 70 3>&1 1>&2 2>&3)
-        if [ $? -ne 0 ]; then return 0; fi
-
-                  echo "network={
-                           ssid=\"$SSID\"
-                          key_mgmt=NONE
-                            wep_key0=$PASSPHRASE
-                            }" > $WPANEW
-    ;;
-    '3')
-        PASSPHRASE=$(whiptail --inputbox "WEP key (ascii)" 20 70 3>&1 1>&2 2>&3)
-        if [ $? -ne 0 ]; then return 0; fi
-
-       echo "network={
-                   ssid=\"$SSID\"
-                   key_mgmt=NONE
-                   wep_key0=\"$PASSPHRASE\"
-                   }" > $WPANEW
-    ;;
-    '4')
-      echo "network={
-                   ssid=\"$SSID\"
-                   key_mgmt=NONE
-                   }" > $WPANEW
-    ;;
-esac
-# Remove previous matching SSID config first
-sudo cat $WPAFILE | perl -00 -pe "s/network=\{[^}]*ssid=\"$SSID\"*[^}]*\}//g" > $WPATMP
-# append /merge new config at end of config file
-cat $WPATMP $WPANEW | sudo tee  $WPAFILE
-
-whiptail --msgbox "Wifi settings updated for SSID: $SSID" 20 60 1
-
-# connect right now ?
-#wpa_supplicant -B -i$wifidevice -c $WPAFILE
-#dhclient $wifidevice -1 
-
-}
-
 
 ask() {
   read -p "$1" -r < /dev/tty
@@ -214,51 +59,36 @@ then
         sudo apt-get -y purge wolfram-engine
 fi
 
-echo Processing
-sudo dpkg-reconfigure locales
-sudo dpkg-reconfigure tzdata
-echo Processing
-sudo dpkg-reconfigure keyboard-configuration
-sudo invoke-rc.d keyboard-setup start
-splitMemory
-setOverclock
+echo
+echo
+echo 'About to start the Raspbery Pi config program (raspi-config).'
+echo When you are happy with the configuration exit the program and
+echo we will continue with the rest of the setup.
+echo At a miniumum you should configure locale, keyboard and timezone.
+echo Also consider setting up memory GPU split and CPU clocking
+echo Depending on your project you may also want to set up camera, i2c etc.
+echo
+echo
+echo NOTE: If you are prompted to reboot when running this program answer NO.
+echo If you make a mistake and say \"yes\" to reboot, don\'t worry. Just run this process again.
+echo
 
-if [[ $(ask "Do you wish to support WiFI? [y/N] ") =~ ^[Yy]$ ]]
-then
+read -p "Press enter when ready" < /dev/tty
 
-  sudo apt-get install -y wpasupplicant
-  if [[ $(ask "Do you wish to configure a WiFI connection now? [y/N] ") =~ ^[Yy]$ ]]
-  then
-    do_wifi
-
-     sudo ifdown wlan0
-    sudo ifup wlan0
-  fi
-else
-  echo
-fi
-
-if [[ $(ask "Do you wish to support Zero Conf Bonjour (recommended)? [y/N] ") =~ ^[Yy]$ ]]
-then
-  sudo apt-get install -y avahi-daemon avahi-utils
-else
-  echo
-fi
-
+sudo raspi-config
 
 
 oldhostname=$(cat /etc/hostname)
 echo
 echo It is highly recommended that the hostname is changed to something unique on the network.
-echo Later you will have the option to install Zero conf which requires ALL machines to have
-echo a unique name. If you can\'t think of anything I suggest something like \<yourName\>pi\<n\> where
+echo If you can\'t think of anything I suggest something like \<yourName\>pi\<n\> where
 echo n is some single digit number. The current hostname is \"$oldhostname\"
 echo
 
 if [[ $(ask "Do you wish to change the hostname?[y/N]  ") =~ ^[Yy]$ ]]
 then
 
-  read -p  "Please enter the hostname (letters and numbers only) " -r < /dev/tty
+  read -p  "Please enter the hostname (lowercase letters, \"-\" and numbers only) " -r < /dev/tty
 
   echo $REPLY | sudo tee /etc/hostname > /dev/null
 
@@ -283,7 +113,7 @@ then
     read -p  "Please enter the new user name " -r < /dev/tty
 
 cat <<'EOF' | sudo bash -s $USER $REPLY $HOME
-     for i in /etc/group /etc/passwd /etc/sudoers /etc/shadow ; do 
+     for i in /etc/group /etc/passwd /etc/sudoers /etc/shadow ; do
           sed -rie '/\b'$1'\b/s/\b'$1'\b/'$2'/g' $i
      done
      mv $3 /home/$2
@@ -297,18 +127,10 @@ else
 fi
 
 echo If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local
-echo assuming you have installed Avahi Zero Conf above
-
-echo Generally you now want to resize the default image size to occupy the whole of your SD card,
-echo unless you want to archive this image for re-use later
-
-if [[ ! $(ask "Do you wish to expand the file system to occupy the whole SD card?[Y/n] ") =~ ^[Nn]$ ]]
-then
-  #Expand the rootfs
-  sudo raspi-config --expand-rootfs
-fi
+echo assuming you have Bonjur support on your ssh terminal workstation
 
 echo "System will now reboot. Afterwards please login as $USER and run the command"
 echo "wget -O - http://tinyurl.com/RasPiIoT-2 | bash"
 read -p "Press any key to continue " -n 1 -r < /dev/tty
+sudo touch /forcefsck
 sudo init 6

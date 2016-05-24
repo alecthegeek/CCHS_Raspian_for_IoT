@@ -33,32 +33,19 @@ After following this process you should have
 
 1. Raspian configured for your environment (location, language etc)
 2. The default user account renamed to something of your own choice and your own choice of hostname (optional)
-3. Working WiFi
-4. Working [Zero Conf](http://en.wikipedia.org/wiki/Avahi_(software)) to access your Pi by hostname instead of IP address (optional)
 5. A fully updated Raspian system
-6. Installation of lm-sensors and [i2c](http://en.wikipedia.org/wiki/I%C2%B2C) software
-7. A few select development tools installed (Vim, Emacs, Git, GNU Screen, tmux, ack-grep and Subversion)
-8. [WiringPi](http://wiringpi.com/) library (optional)
+7. A few select development tools installed (Vim, GNU Screen, tmux, ack-grep and Subversion)
 9. The [Robot Operating System](http://www.ros.org/wiki/) installed and ready to use (optional)
 10. [Arduino](http://arduino.cc/en/Main/Software) development environment (optional)
 11. [NodeBots](http://nodebots.io/) (optional). Will also install Arduino, ino, Firmata from SimpleBots and Java SDK
-12. The [copy.com](https://copy.com) cloud storage service (optional)
+12. Robotnik
 13. Golang and the [Gobot](http://gobot.io) libraries (otional)
 14. Additional support to change network config by editing a text file (/boot/machine.local) on a workstation (optional)
 
 
-<!--
-13. A optional script is provided to install Minecraft and set up the API for development. It is *not* depenedent on the other scripts. To install Minefraft type the following at the terminal
+NB These scripts assume you are using the current version of Raspian Linux (Debian Linux)
 
-`wget http://tinyurl.com/MinecraftOnPi -O - | bash`
-
--->
-
-NB These scripts assume you are using Raspian Linux (Debian Linux)
-
-<!-- ROS installed as per [http://www.ros.org/wiki/groovy/Installation/Raspbian]
 ## Instructions
--->
 * Write  the Raspian image to an SD card in the normal way. 4Gb is is big enough
 for the basics
 * Boot the Pi from the new SD image and log in as the default user (initially `pi`)
