@@ -10,52 +10,19 @@
 # 2) Default is to install/upgrade to version 1.5 -- but you can supply an alternative version of you wish
 # 3) After building the new version, the tool chain is rebuild again using the new compiler before install
 
-INSTALL_VERSION=${1:-1.5.1}
-BOOTSTRAP_VERSION=1.4.2
+INSTALL_VERSION=${1:-1.6.2}
+$OS=linux
+$ARCH=linux-armv6l
 
 if type go > /dev/null 2>&1 && [[ "$(go version 2>/dev/null)" =~ $INSTALL_VERSION ]] ;then
   echo $(go version)  already installed at $(go env GOROOT)
   exit 2
 fi
 
+[ -d /usr/local/go ] && sudo rm -rf /usr/local/go
+ 
+wget -O -  https://storage.googleapis.com/golang/go${INSTALL_VERSION}.${OS}-${ARCH}.tar.gz | sduo tar -xzC /usr/local  -f -
 
-OPATH=$PATH  # Save the path in case we change it
-
-if ! type go > /dev/null 2>&1  ; then
-
-  rm -rf  ~/go ~/go${BOOTSTRAP_VERSION}
-
-  wget -O - http://dave.cheney.net/paste/go${BOOTSTRAP_VERSION}.linux-arm~multiarch-armv6-1.tar.gz|sudo tar -xzC /usr/local -f -
-
-  PATH=$PATH:/usr/local/go/bin
-
-  if ! type go > /dev/null 2>&1 ; then
-    echo Unable to install go $BOOTSTRAP_VERSION
-    exit 1;
-  fi
-fi
-
-wget -O -  https://storage.googleapis.com/golang/go${INSTALL_VERSION}.src.tar.gz | tar -xzC ~  -f -
-
-ulimit -s 1024     # set the thread stack limit to 1mb
-echo Lower the default stack size to $(ulimit -s)
-
-echo Now building Go $INSTALL_VERSION with $(go version). Note: This will take a long time!
-
-cd ~/go/src
-#Let's not bother with tests for the 1st build
-GO_TEST_TIMEOUT_SCALE=10 GOROOT_BOOTSTRAP=$(go env GOROOT) ./make.bash
-
-PATH=~/go/bin:$OPATH
-
-echo Now rebuilding Go $INSTALL_VERSION with $(go version) Note: This will take a long time!
-./clean.bash
-GOROOT_FINAL=/usr/local/go GO_TEST_TIMEOUT_SCALE=10 GOROOT_BOOTSTRAP=$(go env GOROOT) ./all.bash
-
-test -d /usr/local/go && sudo rm -rf /usr/local/go
-sudo mv ~/go /usr/local
-
-PATH=$OPATH
 
 echo '# Setup for golang' |sudo tee /etc/profile.d/golang.sh  > /dev/null
 echo 'PATH=$PATH:/usr/local/go/bin'|sudo tee -a /etc/profile.d/golang.sh > /dev/null
