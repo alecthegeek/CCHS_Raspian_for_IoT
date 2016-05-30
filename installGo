@@ -11,8 +11,8 @@
 # 3) After building the new version, the tool chain is rebuild again using the new compiler before install
 
 INSTALL_VERSION=${1:-1.6.2}
-$OS=linux
-$ARCH=linux-armv6l
+OS=linux
+ARCH=armv6l
 
 if type go > /dev/null 2>&1 && [[ "$(go version 2>/dev/null)" =~ $INSTALL_VERSION ]] ;then
   echo $(go version)  already installed at $(go env GOROOT)
