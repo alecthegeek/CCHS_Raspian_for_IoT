@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
 
-# From the instructions at
-# http://dave.cheney.net/2015/09/04/building-go-1-5-on-the-raspberry-pi
-# Thanks to @davecheney
-
-#  Runing:
-
-# 1) Will attempt to use the already installed version of Go if possible
-# 2) Default is to install/upgrade to version 1.5 -- but you can supply an alternative version of you wish
-# 3) After building the new version, the tool chain is rebuild again using the new compiler before install
+# https://golang.org/doc/install#install
+# After building the new version, the tool chain is rebuild again using the new compiler before install
 
 INSTALL_VERSION=${1:-1.6.2}
 OS=linux
