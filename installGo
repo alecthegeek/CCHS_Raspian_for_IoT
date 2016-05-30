@@ -14,7 +14,7 @@ fi
 
 [ -d /usr/local/go ] && sudo rm -rf /usr/local/go
  
-wget -O -  https://storage.googleapis.com/golang/go${INSTALL_VERSION}.${OS}-${ARCH}.tar.gz | sduo tar -xzC /usr/local  -f -
+wget -O -  https://storage.googleapis.com/golang/go${INSTALL_VERSION}.${OS}-${ARCH}.tar.gz | sudo tar -xzC /usr/local  -f -
 
 
 echo '# Setup for golang' |sudo tee /etc/profile.d/golang.sh  > /dev/null
