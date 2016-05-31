@@ -193,7 +193,6 @@ fi
 echo
 
 if [[ $(ask "Do you wish to install firmata etc for Simplebot? [y/N] ") =~ ^[Yy]$ ]] ; then
-  sudo pip install ino
   cd ~
   [ -d simplebot ] && rm -rf simplebot
   git clone https://github.com/nodebotsau/simplebot
