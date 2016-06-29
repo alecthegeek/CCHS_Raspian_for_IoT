@@ -255,7 +255,7 @@ sudo apt-get clean
 echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis
 read -p "System will reboot. Press any key to continue" -n 1 -r < /dev/tty
 
-sed -ie '/runme2nd/d'
+sed -ie '/runme2nd/d'  ~/.profile
 
 sudo touch /forcefsck
 sudo init 6
