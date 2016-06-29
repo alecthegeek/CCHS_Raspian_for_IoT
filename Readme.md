@@ -72,9 +72,7 @@ Pi computer now reboots
 
   Log file in `log2`
 
-This is a long process and will require user input at various stages.
-
-WARNING: Installing and building Robot Operating System (ROS) takes appro 4 hours.
+This can be a long process and will require user input at various stages.
 
 At the end the Pi will reboot
 

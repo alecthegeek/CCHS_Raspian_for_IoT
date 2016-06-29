@@ -20,7 +20,13 @@
 #
 #
 
+#Calulate the absoloute of the where we are called from
+
+LOC=$(cd $(dirname "$0") ; pwd)
+
+
 # Add Check to encourage users to keep system up to date
+
 
 echo 'APT::Update::Post-Invoke-Success {"touch /var/lib/apt/periodic/update-success-stamp 2>/dev/null || true";};' | \
     sudo tee -a /etc/apt/apt.conf.d/15update-stamp > /dev/null
@@ -128,7 +134,7 @@ sudo sed -ie '/exit 0/i\
 fi
 
 if [[ $(ask "Do you wish to install support for the Freetronics Pileven board?[y/N] ") =~ ^[Yy]$ ]] ; then
-  wget -O - https://github.com/freetronics/PiLeven-tools/releases/download/v2.0/install_pileven.sh | sudo bash
+  $LOC/installPiLeven.sh
 fi
 
 echo
@@ -248,6 +254,8 @@ sudo apt-get clean
 
 echo Please use sudo raspi-config to configure additional options and use sudo apt-get dist-upgrade on a regular basis
 read -p "System will reboot. Press any key to continue" -n 1 -r < /dev/tty
+
+sed -ie '/runme2nd/d'
 
 sudo touch /forcefsck
 sudo init 6

@@ -127,10 +127,7 @@ else
 fi
 
 echo If all has gone well you will be able to access this device using ssh $USER@$(cat /etc/hostname).local
-echo assuming you have Bonjur support on your ssh terminal workstation
+echo assuming you have Bonjour support on your ssh terminal workstation
 
-echo "System will now reboot. Afterwards please login as $USER and run the command"
-echo "wget -O - http://tinyurl.com/RasPiIoT-2 | bash"
+echo "System will now reboot. Afterwards please login as $USER and the setup process will continue"
 read -p "Press any key to continue " -n 1 -r < /dev/tty
-sudo touch /forcefsck
-sudo init 6
