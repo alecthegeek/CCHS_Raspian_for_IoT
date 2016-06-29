@@ -40,10 +40,10 @@ echo 'no_of_days=7' |sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo 'no_of_seconds=$(($no_of_days*24*60*60))' |sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo 'if [[  ! -e /var/lib/apt/periodic/update-success-stamp ]] ||\' |sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo '	 (( ( $(date +%s) - $(stat -c %Y /var/lib/apt/periodic/update-success-stamp) ) > $no_of_seconds )) ; then' |\
-            sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
+          sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo '  echo It has been at least $no_of_days days since the last update' |sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo '  echo Please run \"sudo apt-get update \&\& sudo apt-get -y upgrade\"' |\
-                 sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
+               sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 echo fi | sudo tee -a /etc/profile.d/checkUpgrade.sh > /dev/null
 
 echo
@@ -51,7 +51,7 @@ echo About to fully upgrade all relevant packages and optionally install others
 echo This will take some time
 echo
 
-# In case the upgrade does nothing create the masrker file
+# In case the upgrade does nothing create the marker file
 
 sudo touch /var/lib/apt/periodic/update-success-stamp
 
@@ -60,8 +60,8 @@ sudo apt-get -y upgrade
 sudo apt-get -y dist-upgrade
 
 ask() {
-  read -p "$@" -r < /dev/tty
-  echo $REPLY
+read -p "$@" -r < /dev/tty
+echo $REPLY
 }
 
 
@@ -74,60 +74,164 @@ echo
 
 echo We can do put some host setttings in the /boot/machine.local and you can edit them on your laptop as needed
 
-if [[ $(ask "Do you wish to configure the /boot/machine.local file?[y/N] ") =~ ^[Yy]$ ]]
+if [[ $(ask "Do you wish to (re)configure the network in /boot/machine.local file?[y/N] ") =~ ^[Yy]$ ]]
 then
 
-  if [[ $(ask 'Do you wish to use an initial hostname of a) '$(hostname)' or a b) CPU serial number  based hostname?[A/b] ') =~ ^[Aa]$ ]]
-  then
-    newhostname=$(hostname)
-  else
-    newhostname=$'rpi$(sed -nEe \'/^Serial\t\t: ........(........)$/s//\\1/p\' /proc/cpuinfo)'
-  fi
+if [[ $(ask 'Do you wish to use an initial hostname of a) '$(hostname)' or a b) CPU serial number  based hostname?[A/b] ') =~ ^[Aa]$ ]]
+then
+  newhostname=$(hostname)
+else
+  newhostname=$'rpi$(sed -nre \'/^Serial\t\t: ........(........)$/s//\\1/p\' /proc/cpuinfo)'
+fi
 
-  cat <<EOF | sudo tee /boot/machine.local
+cat <<EOF | sudo tee /boot/machine.local
 # Edit this file and reboot the Pi.
 # NB Insert the SD card into a workstation and you can edit the file as well
 
 newhostname=$newhostname  # Host for /etc/host
 #newhostname=<my alternative hostname>  # Host for /etc/host use instead if wanted
-#wifihostname=wfipi   # Hostname for wifi interface
-#wifiSSID=wifipi-ap
-#wifipsk=secretpsk
-#wifi_ap_network=16 #  01-254
-#interface=wlan0
-#channel=6
-#driver=hostpad
 #
+# To enable a wifi network uncomment and set the following values as needed
+#
+#ssid=SSID
+#psk=PSK Passphrase
+#id_str=ID  # Optional -- will use SSID if not present
+#interface=wlan0 # Optional. Usually defaults to wlan0
 EOF
 
-  cat <<'EOF' | sudo tee /usr/local/sbin/config-hostname
+cat <<'EOF' | sudo tee /usr/local/sbin/config-hostname
 #!/bin/sh
 
 if [ -f /boot/machine.local ] ; then
-  . /boot/machine.local # dash does not support `source` keyword
-  oldhostname=$(hostname)
-  if [ -n "$newhostname" -a "$newhostname" != "$oldhostname" ] ; then
-    sudo hostname $newhostname
-    echo $newhostname | sudo tee /etc/hostname > /dev/null
-    sudo sed -ie 's/^\(..*\)'$oldhostname'\(.*\)$/\1'$newhostname'\2/' /etc/hosts
-    sudo invoke-rc.d hostname.sh start
-    sudo invoke-rc.d networking force-reload
-    sudo invoke-rc.d avahi-daemon force-reload
-    sudo /etc/init.d/ssh restart
-    logger "Changed hostname to $(hostname) on $interface"
-    logger "About to reboot"
-    sudo init 6
-  fi
-  #todo Add wifihostname to interface
-
+. /boot/machine.local # dash does not support `source` keyword
+oldhostname=$(hostname)
+if [ -n "$newhostname" -a "$newhostname" != "$oldhostname" ] ; then
+  sudo hostname $newhostname
+  echo $newhostname | sudo tee /etc/hostname > /dev/null
+  sudo sed -i -re 's/^(..*)'$oldhostname'(.*)$/\1'$newhostname'\2/' /etc/hosts
+  sudo invoke-rc.d hostname.sh start
+  sudo invoke-rc.d networking force-reload
+  sudo invoke-rc.d avahi-daemon force-reload
+  sudo /etc/init.d/ssh restart
+  logger "Changed hostname to $(hostname) on $interface"
+  logger "About to reboot"
+  sudo init 6
+fi
 fi
 
 EOF
 
-sudo chmod +x /usr/local/sbin/config-hostname
+cat <<'EOFx' | sudo tee /usr/local/sbin/config-wifi
+#!/bin/sh
+if [ -f /boot/machine.local ] ; then
+. /boot/machine.local # dash does not support `source` keyword
 
-sudo sed -ie '/exit 0/i\
-[ -x /usr/local/sbin/config-hostname ] && /usr/local/sbin/config-hostname
+  [ -z "$ssid" ] && exit 0
+
+  [ -z "$id_str" ] && id_str=$ssid
+
+  network_id=$(wpa_cli list_networks | tail -n +3 | grep $ssid |cut -f 1)
+
+  if [ -z  $network_id ] ; then
+    maxNetworkId=$(wpa_cli list_networks | tail -n +3 | tail -n 1 | cut -f 1)]
+    if [ -z  $maxNetworkId ] ; then
+      network_id=0
+    else
+      network_id=$((maxNetworkID + 1 ))
+    fi
+  else
+    wpa_cli remove_network $network_id # Don't care if it fails
+  fi
+
+  if [ -n "$interface" ] && ! grep $interface /etc/network/interfaces ; then
+    cat <<EOF | sudo tee -a /etc/network/interfaces
+
+allow-hotplug $interface
+iface $interface inet manual
+wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
+iface default inet dhcp
+EOF
+  fi
+
+cat <<EOF | wpa_cli
+add_network $network_id
+set_network $network_id ssid "$ssid"
+set_network $network_id id_str "$id_str"
+set_network $network_id psk "$psk"
+enable_network $network_id
+save_config
+quit
+EOF
+fi
+EOFx
+
+sudo chmod +x /usr/local/sbin/config-hostname
+sudo chmod +x /usr/local/sbin/config-wifi
+
+set -xv
+
+sudo sed -i -re '/config-(hostname|wifi)/d;/exit 0/i\
+[ -x /usr/local/sbin/config-hostname ] && /usr/local/sbin/config-hostname\
+[ -x /usr/local/sbin/config-wifi ] && /usr/local/sbin/config-wifi
+' /etc/rc.local
+
+set +xv
+
+fi
+
+if [[ $(ask "Do you wish to configure the Pi as a wifi access point in/boot/machine.local file?[y/N] ") =~ ^[Yy]$ ]]
+then
+
+wifihostname=$(ask "Please enter a hostname for this wifi ap ")
+ssid=${wifihostname}-ap
+echo Hostname is $wifihostname and SSID is $ssid
+network=$(ask "Please enter a network number (1-254) for this wifi ap ")
+echo network address will 192.168.${network}.1
+sudo apt-get install -y hostapd wpasupplicant dnsmasq
+sudo update-rc.d -f hostapd remove
+sudo update-rc.d -f dnsmasq remove
+
+
+cat <<EOF | sudo tee -a /boot/machine.local
+
+
+#
+EOF
+
+
+sudo sed -i -re 's/^[#\s]*INTERFACES\s*=.*$/INTERFACES="eth0"/;
+               s/^[#\s]*HOTPLUG_INTERFACES\s*=.*$/HOTPLUG_INTERFACES="eth0"/' \
+                     /etc/default/ifplugd
+
+gzip -dc  /usr/share/doc/hostapd/examples/hostapd.conf.gz|
+  sudo tee -a /etc/hostapd/hostapd.conf > /dev/null
+
+sudo sed -i -re 's/^[#\s]*(DAEMON_CONF)\s*=.*$/\1="\/etc\/hostapd\/hostapd.conf"/' /etc/default/hostpad
+
+cat <<-'EOF' | sudo tee /usr/local/sbin/config-wifiap
+      #!/bin/sh
+      if [ -f /boot/machine.local ] ; then
+        . /boot/machine.local # dash does not support `source` keyword
+
+        sudo sed -i -re's/^[#\s]*domain-needed.*$/domain-needed/;
+                      s/^[#\s]*interface\s=.*$/interface='$interface'/;
+                      s/^[#\s]*dhcp-range\s=.*$/dhcp-range=192.168.'$network'.5,192.168.'$network'.100,255.255.255.0,12h/' \
+                          /etc/dnsmasq.conf
+
+        sudo sed -i -re  's/^[#\s]*ssid\s*=.*$/ssid='$(echo -n $wifihostname|cut -c1-25)'-wifi/;
+                        s/^[#\s]*wpa\s*=.*$/wpa=1/;
+                        s/^[#\s]*wpa_passphrase\s*=.*$/wpa_passphrase=a secret/;
+                        s/^[#\s]*wpa_key_mgmt\s*=.*$/wpa_key_mgmt=WPA-PSK/;' \
+                           #TODO FILE HERE
+
+      fi
+
+EOF
+
+sudo chmod +x /usr/local/sbin/config-wifi-ap
+
+sudo sed -i -e '/config-wifi-ap/d;/exit 0/i\
+[ -x /usr/local/sbin/config-wifi-ap ] && /usr/local/sbin/config-wifi-ap
 
 ' /etc/rc.local
 
@@ -229,9 +333,11 @@ fi
 
 echo
 
-if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev) Note: Takes an hour or two...? [y/N] ") =~ ^[Yy]$ ]] ; then
+if [[ $(ask "Do you wish to install Go lang and gobot (e.g. for SimpleBot dev)? [y/N] ") =~ ^[Yy]$ ]] ; then
 
   bash <(wget -O - https://raw.githubusercontent.com/alecthegeek/CCHS_Raspian_for_IoT/master/installGo)
+
+  source /etc/profile.d/golang.sh
 
   mkdir -p ~/gobot/{src,bin,pkg}
   export GOPATH=~/gobot
