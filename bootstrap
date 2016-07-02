@@ -23,9 +23,13 @@
 
 echo About to clone the latest script from CCHS Pi setup.
 
-git clone https://github.com/alecthegeek/CCHS_Raspian_for_IoT.git
+git clone https://github.com/alecthegeek/CCHS_Raspian_for_IoT.git ~/CCHS_Raspian_for_IoT
 
-cd CCHS_Raspian_for_IoT
+cd ~/CCHS_Raspian_for_IoT
+
+for branch in `git branch -a | grep remotes | grep -v HEAD | grep -v master `; do
+    git branch --track ${branch#remotes/origin/} $branch
+done
 
 OPS3=$PS3
 
