@@ -43,13 +43,13 @@ select br in $(git branch|sed -e '/^\*\? \? /s///') ; do
     break
 done < /dev/tty
 
-export LOC=$PWD
-
 PS3=$OPS3
 
-./runme1st
+[[ -e $PWD/runme1st ]] && $PWD/runme1st
 
-echo $LOC/CCHS_Raspian_for_IoT/runme2nd >> ~/.profile
+sed -i -e '/runme2nd/d' ~/.profile
+
+echo $PWD/runme2nd >> ~/.profile
 sudo touch /forcefsck
 sudo init 6
 
