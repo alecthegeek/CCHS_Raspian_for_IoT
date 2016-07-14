@@ -29,6 +29,8 @@ echo About to clone the latest script from CCHS Pi setup.
 
 sudo apt-get install git
 
+rm -rf CCHS_Raspian_for_IoT
+
 git clone https://github.com/alecthegeek/CCHS_Raspian_for_IoT.git
 
 cd CCHS_Raspian_for_IoT
