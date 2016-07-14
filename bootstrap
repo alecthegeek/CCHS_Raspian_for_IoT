@@ -33,18 +33,23 @@ git clone https://github.com/alecthegeek/CCHS_Raspian_for_IoT.git
 
 cd CCHS_Raspian_for_IoT
 
-OPS3=$PS3
+git branch -r | grep -v '\->' | while read remote; do echo git branch --track "${remote#origin/}" "$remote"; done
 
-echo There are multiple versions of these sripts. Please select the one you want to use
-PS3='If you not sure just choose "master" '
+if [[ $(( $(git branch|sed -e '/^\*\? \? /s///'|wc -l) > 1)) ]] ; then
 
-select br in $(git branch|sed -e '/^\*\? \? /s///') ; do
-  git checkout $br &&
-    break
-done < /dev/tty
+  OPS3=$PS3
 
-PS3=$OPS3
+  echo There are multiple versions of these sripts. Please select the one you want to use
+  PS3='If you not sure just choose "master" '
 
+  select br in $(git branch|sed -e '/^\*\? \? /s///') ; do
+    git checkout $br &&
+      break
+  done < /dev/tty
+
+  PS3=$OPS3
+
+fi
 [[ -e $PWD/runme1st ]] && $PWD/runme1st
 
 sed -i -e '/runme2nd/d' ~/.profile
