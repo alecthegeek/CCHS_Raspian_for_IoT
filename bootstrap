@@ -21,6 +21,10 @@
 #
 # NB These Scripts support Pi Raspian (Debian)
 
+
+LOC=$(cd $(dirname "$0") ; pwd) # Where are we running from
+
+
 echo About to clone the latest script from CCHS Pi setup.
 
 sudo apt-get install git
@@ -34,17 +38,18 @@ OPS3=$PS3
 echo There are multiple versions of these sripts. Please select the one you want to use
 PS3='If you not sure just choose "master" '
 
-select br in $(git branch|sed -e '/^\*\? \? /s///'); do
+select br in $(git branch|sed -e '/^\*\? \? /s///') ; do
   git checkout $br &&
     break
-done
+done < /dev/tty
 
 export LOC=$PWD
 
 PS3=$OPS3
 
 ./runme1st
-echo $LOC/runme2nd >> ~/.profile
+
+echo $LOC/CCHS_Raspian_for_IoT/runme2nd >> ~/.profile
 sudo touch /forcefsck
 sudo init 6
 
