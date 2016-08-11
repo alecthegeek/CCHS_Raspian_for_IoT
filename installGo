@@ -3,7 +3,7 @@
 # https://golang.org/doc/install#install
 # After building the new version, the tool chain is rebuild again using the new compiler before install
 
-INSTALL_VERSION=${1:-1.6.2}
+INSTALL_VERSION=${1:-1.6.3}
 OS=linux
 ARCH=armv6l
 
