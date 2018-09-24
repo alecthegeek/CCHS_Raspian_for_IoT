@@ -24,7 +24,7 @@ source /etc/profile.d/golang.sh
 
 echo Now installing the Go tools
 
-sudo -i GOPATH=/tmp GOBIN=$(go env GOROOT)/bin go get -u golang.org/x/tools/cmd/...
+sudo -i GOPATH=/tmp GOBIN=$(go env GOROOT)/bin go get -u golang.org/x/tools/...
 
 echo $(go version) installed
 
